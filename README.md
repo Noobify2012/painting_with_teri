@@ -22,15 +22,14 @@ https://youtu.be/F0XVOL1zQHM
 
 ## Team
 
-**Team Name**: *Edit this to your official team name*
+**Team Name**: The Teri Chadbourne Expierence 
 
 Team member Names:
 
-1. *TODO my name is...*
-2. *TODO my name is...*
-3. *TODO my name is...*
-4. *TODO my name is...*
-5. *TODO my name is...*
+1. Elizabeth Pates
+2. Evan Haines
+3. Matt Greene
+4. Lindsay Sutermeister
 
 # Team spread sheet 
 
