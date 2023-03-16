@@ -18,21 +18,25 @@ The first stage we learned in the software development life cycle is planning.
 
 ## Timeline
 
-- Date:
-	- Task/Milestone to be completed
-- Date:
-	- Task/Milestone to be completed
-- Date:
-	- Task/Milestone to be completed
-- Date:
-	- Task/Milestone to be completed
-- Date:
-	- Task/Milestone to be completed
-- Date:
-	- Task/Milestone to be completed
-- Date:
-	- Task/Milestone to be completed
-- Date:
-	- Task/Milestone to be completed
-- Date:
-	- Task/Milestone to be completed
+- Date: 3/17/2023
+	- Milestone 0: Assign dates to all milestone requirements
+- Date: NLT 3/24/2023
+	- Milestone 1: Use cases
+- Date: NLT 3/24/2023
+	- Milestone 2: Integration
+- Date: NLT 4/18/2023
+	- Milestone 3: Networking
+- Date: NLT 3/31/2023
+	- Milestone 4: Prepare talking points and ensure all team members have presentation part
+- Date: NLT 4/18/2023
+	- Milestone 5: Extra feature
+- Date: 4/18/2023
+	- Milestone 6: Milestone check in 2
+- Date: NLT 4/19/2023
+	- Milestone 7: Instructions on buiding software
+- Date: NLT 4/19/2023
+	- Milestone 8: docs and project truct
+- Date: NLT 4/19/2023
+    - Milestone 9: testing, 8 min, 1 networking, extra features - teri voice?
+- Date: NLT 4/19/2023
+    - Milestone 10: Youtube vid
