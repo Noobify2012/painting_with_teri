@@ -20,6 +20,7 @@ The first stage we learned in the software development life cycle is planning.
 
 - Date: 3/17/2023
 	- Milestone 0: Assign dates to all milestone requirements
+        - add sub tasks to each milestone
 - Date: NLT 3/24/2023
 	- Milestone 1: Use cases
 - Date: NLT 3/24/2023
@@ -39,4 +40,4 @@ The first stage we learned in the software development life cycle is planning.
 - Date: NLT 4/19/2023
     - Milestone 9: testing, 8 min, 1 networking, extra features - teri voice?
 - Date: NLT 4/19/2023
-    - Milestone 10: Youtube vid
+    - Milestone 10: Youtube video
