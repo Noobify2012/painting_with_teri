@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/dub_code_coverage
+dub_code_coverage.so
+dub_code_coverage.dylib
+dub_code_coverage.dll
+dub_code_coverage.a
+dub_code_coverage.lib
+dub_code_coverage-test-*
+*.exe
+*.o
+*.obj
+*.lst
