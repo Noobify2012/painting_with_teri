@@ -22,14 +22,14 @@ https://youtu.be/F0XVOL1zQHM
 
 ## Team
 
-**Team Name**: The Teri Chadbourne Expierence 
+**Team Name**: The Teri Chadbourne Experience 
 
 Team member Names:
 
 1. Elizabeth Pates
 2. Evan Haines
 3. Matt Greene
-4. Lindsay Sutermeister
+4. Lindsey Sutermeister
 
 # Team spread sheet 
 
