@@ -1,0 +1,24 @@
+{
+	"authors": [
+		"Matt Greene"
+	],
+	"copyright": "Copyright © 2023, Matt Greene",
+    	"targetType": "executable",
+    	"targetPath": "bin",
+    	"configurations":[
+        {"name":"executable"      },
+        {
+            "name":"unittest",
+            "preBuildCommands": ["dub run unit-threaded -c gen_ut_main -- -f bin/ut.d -d dub"],
+            "mainSourceFile":"bin/ut.d",
+            "excludedSourceFiles": ["source/app.d"],
+            "dependencies": {
+                "bindbc-sdl": "~>1.2.4",
+                "unit-threaded": "~>2.1.2"
+            },
+        }
+    ],
+	"description": "A minimal D application.",
+	"license": "proprietary",
+	"name": "part1"
+}

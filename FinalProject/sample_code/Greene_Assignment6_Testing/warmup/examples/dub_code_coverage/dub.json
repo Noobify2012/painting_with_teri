@@ -1,0 +1,9 @@
+{
+	"authors": [
+		"Michael Shah"
+	],
+	"copyright": "Copyright © 2023, Michael Shah",
+	"description": "A minimal D application.",
+	"license": "proprietary",
+	"name": "dub_code_coverage"
+}
