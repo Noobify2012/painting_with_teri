@@ -1,12 +1,18 @@
 // Import D standard libraries
 import std.stdio;
 import std.string;
+import std.process;
+import std.conv;
 
 // Load the SDL2 library
 import bindbc.sdl;
 import loader = bindbc.loader.sharedlib;
 import SDL_Surfaces :Surface;
 import SDL_Initial :SDLInit;
+//#include SDL.h;
+
+//For printing the key pressed info
+//void PrintKeyInfo( SDL_KeyboardEvent *key );
 
 
 
@@ -18,7 +24,7 @@ class SDLApp{
 
     void MainApplicationLoop(){
         // Create an SDL window
-        SDL_Window* window= SDL_CreateWindow("D SDL Painting",
+        SDL_Window* window= SDL_CreateWindow("A Teri Chadbourne Experience",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
         640,
@@ -33,6 +39,15 @@ class SDLApp{
         // Flag for determining if we are 'drawing' (i.e. mouse has been pressed
         //                                                but not yet released)
         bool drawing = false;
+
+        bool change = false;
+
+        int brush = 1;
+
+        int color = 1;
+        int brushSize = 4;
+
+        //SDL_EnableUNICODE( 1 );
 
         // Main application loop that will run until a quit event has occurred.
         // This is the 'main graphics loop'
@@ -58,16 +73,61 @@ class SDLApp{
                     // Loop through and update specific pixels
                     // NOTE: No bounds checking performed --
                     //       think about how you might fix this :)
-                    int brushSize=4;
+                    if (brush == 1) {
+                        brushSize = 4;
+                    } else if (brush == 2) {
+                        brushSize = 8;
+                    } else {
+                        brushSize = 16;
+                    }
+
                     for(int w=-brushSize; w < brushSize; w++){
                         for(int h=-brushSize; h < brushSize; h++){
                             //blue
-                            imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 255, 128, 32);
-                            //green
-                            //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 32, 255, 128);
-                            //red
-                            //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h,  128, 32, 255);
+                            if (color == 1) {
+                                imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 255, 128, 32);
+                            } else if (color == 2) {
+                                //green
+                                imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 32, 255, 128);
+                            } else if (color == 3) {
+                                //red
+                                imgSurface.UpdateSurfacePixel(xPos+w,yPos+h,  128, 32, 255);
+
+                            }
+
+
                         }
+                    }
+                    //if keyboard is pressed check for change event
+                } else if(e.type == SDL_KEYDOWN) {
+                    //writeln()
+                    //PrintKeyInfo( &e.key );
+                    //printf( ", Name: %s", SDL_GetKeyName( key.keysym.sym ) );
+                    if (e.key.keysym.sym == SDLK_b) {
+                        //printf("Changing brush size");
+
+                    }
+                    //printf( cast(string)(e.key.keysym.sym) , " key pressed ");
+                    //printf( SDL_GetKeyNamse (e.key.keysym.sym ) , " key pressed ");
+
+
+                } else if(e.type == SDL_KEYUP) {
+                    printf("key released: ");
+                    //, to!string(e.key.keysym.sym));
+                    if (e.key.keysym.sym == SDLK_b) {
+                        if (brush < 3) {
+                            brush++;
+                        } else {
+                            brush=1;
+                        }
+                        writeln("Changing to brush size: " , to!string(brush));
+                    } else if (e.key.keysym.sym == SDLK_c) {
+                        if (color < 3) {
+                            color++;
+                        } else {
+                            color=1;
+                        }
+                        writeln("Changing to color : " , to!string(color));
                     }
                 }
             }
@@ -86,6 +146,66 @@ class SDLApp{
         SDL_DestroyWindow(window);
 
     }
+
+    //void PrintKeyInfo( SDL_KeyboardEvent *key ){
+    ///* Is it a release or a press? */
+    //    if( key.type == SDL_KEYUP )
+    //        printf( "Release:- " );
+    //    else
+    //        printf( "Press:- " );
+    //
+    //        /* Print the hardware scancode first */
+    //        printf( "Scancode: 0x%02X", key.keysym.scancode );
+    //        /* Print the name of the key */
+    //        printf( ", Name: %s", SDL_GetKeyName( key.keysym.sym ) );
+    //        /* We want to print the unicode info, but we need to make */
+    //        /* sure its a press event first (remember, release events */
+    //        /* don't have unicode info                                */
+    //        if( key.type == SDL_KEYDOWN ){
+    //            /* If the Unicode value is less than 0x80 then the    */
+    //            /* unicode value can be used to get a printable       */
+    //            /* representation of the key, using (char)unicode.    */
+    //            printf(", Unicode: " );
+    //        if( key.keysym.unicode < 0x80 && key.keysym.unicode > 0 ){
+    //            printf( "%c (0x%04X)", cast(char)key.keysym.unicode,
+    //        key.keysym.unicode );
+    //    }
+    //    else{
+    //        printf( "? (0x%04X)", key.keysym.unicode );
+    //        }
+    //    }
+    //    printf( "\n" );
+    //    /* Print modifier info */
+    //    PrintModifiers( key.keysym.mod );
+    //    }
+    //
+    //    /* Print modifier info */
+    ////void PrintModifiers( SDLMod mod ){
+    //    void PrintModifiers( SDLMod mod ){
+    //        printf( "Modifers: " );
+    //
+    //        /* If there are none then say so and return */
+    //        if( mod == KMOD_NONE ){
+    //            printf( "None\n" );
+    //            return;
+    //        }
+    //
+    //        /* Check for the presence of each SDLMod value */
+    //        /* This looks messy, but there really isn't    */
+    //        /* a clearer way.                              */
+    //        if( mod & KMOD_NUM ) printf( "NUMLOCK " );
+    //        if( mod & KMOD_CAPS ) printf( "CAPSLOCK " );
+    //        if( mod & KMOD_LCTRL ) printf( "LCTRL " );
+    //        if( mod & KMOD_RCTRL ) printf( "RCTRL " );
+    //        if( mod & KMOD_RSHIFT ) printf( "RSHIFT " );
+    //        if( mod & KMOD_LSHIFT ) printf( "LSHIFT " );
+    //        if( mod & KMOD_RALT ) printf( "RALT " );
+    //        if( mod & KMOD_LALT ) printf( "LALT " );
+    //        if( mod & KMOD_CTRL ) printf( "CTRL " );
+    //        if( mod & KMOD_SHIFT ) printf( "SHIFT " );
+    //        if( mod & KMOD_ALT ) printf( "ALT " );
+    //        printf( "\n" );
+    //    }
 }
 
 ///Test: Checks for the surface to be initialized to black RGB values or 0,0,0
@@ -129,3 +249,4 @@ unittest{
     s.PixelAt(1,1)[1] == 128 &&
     s.PixelAt(1,1)[2] == 255, "error bgr value at x,y is wrong!");
 }
+
