@@ -46,6 +46,8 @@ class SDLApp{
 
         int color = 1;
         int brushSize = 4;
+        bool erasing = false;
+        int temp_color = 0;
 
         //SDL_EnableUNICODE( 1 );
 
@@ -59,6 +61,7 @@ class SDLApp{
             // been pushed into the internal SDL queue. Thus, we poll until there
             // are '0' events or a NULL event is returned.
             while(SDL_PollEvent(&e) !=0){
+
                 if(e.type == SDL_QUIT){
                     runApplication= false;
                 }
@@ -92,7 +95,8 @@ class SDLApp{
                             } else if (color == 3) {
                                 //red
                                 imgSurface.UpdateSurfacePixel(xPos+w,yPos+h,  128, 32, 255);
-
+                            } else if (color == -1) {
+                                imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 0, 0, 0);
                             }
 
 
@@ -128,6 +132,18 @@ class SDLApp{
                             color=1;
                         }
                         writeln("Changing to color : " , to!string(color));
+                    } else if (e.key.keysym.sym == SDLK_e) {
+                        if (erasing == false) {
+                            erasing = true;
+                            temp_color = color;
+                            color = -1;
+                            writeln("eraser active, value of temp_color: ", to!string(temp_color));
+                        } else {
+                            erasing = false;
+                            color = temp_color;
+                            writeln("Changing to color : " , to!string(color));
+                        }
+
                     }
                 }
             }
