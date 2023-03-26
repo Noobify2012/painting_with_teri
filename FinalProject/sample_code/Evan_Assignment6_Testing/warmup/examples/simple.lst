@@ -1,0 +1,28 @@
+       |// @file simple.d
+       |// For general code coverage: 
+       |//      dmd  -cov simple.d -of=prog  && ./prog
+       |// For coverage in our test suite:
+       |//      rdmd -unittest -cov simple.d
+       |import std.stdio;
+       |
+       |// Function always returns one
+       |int functionOne(){
+      1|    writeln("functionOne was called");
+      1|    return 1;
+       |}
+       |
+       |// unittest for func()
+       |unittest{
+      1|    assert(functionOne()==1);
+       |}
+       |
+       |void main(){
+       |
+0000000|    for(int i=0; i < 10; i++){
+0000000|        if(i==0){
+0000000|            functionOne();
+       |        }
+       |    }
+       |
+       |}
+simple.d is 50% covered
