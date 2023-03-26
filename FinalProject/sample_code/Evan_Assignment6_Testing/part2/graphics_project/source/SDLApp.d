@@ -74,8 +74,14 @@ class SDLApp {
     bool isRunning = true;
     bool isDrawing = false;
 
+
+    int prevX = -9999;
+    int prevY = -9999;
+    int currentX, currentY;
+
     while (isRunning) {
       SDL_Event e;
+
       while(SDL_PollEvent(&e) !=0){
         if(e.type == SDL_QUIT){
           isRunning= false;
@@ -84,6 +90,8 @@ class SDLApp {
           isDrawing=true;
         }else if(e.type == SDL_MOUSEBUTTONUP){
           isDrawing=false;
+          prevX = -9999;
+          prevY = -9999;
         }else if(e.type == SDL_MOUSEMOTION && isDrawing){
           // retrieve the position
           int xPos = e.button.x;
@@ -97,6 +105,13 @@ class SDLApp {
               surf.UpdateSurfacePixel(xPos + w, yPos + h);
             }
           }
+          currentX = xPos;
+          currentY = yPos;
+          if (prevX > -9999) {
+            surf.linearInterpolation(prevX, prevY, currentX, currentY, brushSize);
+          }
+          prevX = currentX;
+          prevY = currentY;
         }
       }
       // Blit the surace (i.e. update the window with another surfaces pixels
@@ -107,7 +122,7 @@ class SDLApp {
       SDL_UpdateWindowSurface(window);
       // Delay for 16 milliseconds
       // Otherwise the program refreshes too quickly
-      // SDL_Delay(2);
+      SDL_Delay(32);
     }
 
     // Destroy our window
