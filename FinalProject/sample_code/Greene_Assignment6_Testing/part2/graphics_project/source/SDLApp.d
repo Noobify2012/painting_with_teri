@@ -45,9 +45,16 @@ class SDLApp{
         int brush = 1;
 
         int color = 1;
+        ubyte red = 255;
+        ubyte green = 255;
+        ubyte blue = 255;
         int brushSize = 4;
         bool erasing = false;
         int temp_color = 0;
+
+        int prevX = -9999;
+        int prevY = -9999;
+
 
         //SDL_EnableUNICODE( 1 );
 
@@ -69,6 +76,8 @@ class SDLApp{
                     drawing=true;
                 }else if(e.type == SDL_MOUSEBUTTONUP){
                     drawing=false;
+                    prevX = -9999;
+                    prevY = -9999;
                 }else if(e.type == SDL_MOUSEMOTION && drawing){
                     // retrieve the position
                     int xPos = e.button.x;
@@ -87,21 +96,37 @@ class SDLApp{
                     for(int w=-brushSize; w < brushSize; w++){
                         for(int h=-brushSize; h < brushSize; h++){
                             //blue
-                            if (color == 1) {
-                                imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 255, 128, 32);
-                            } else if (color == 2) {
+                            if (color == 1 && !erasing) {
+                                red = 255;
+                                green = 128;
+                                blue = 32;
+                                //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
+                            } else if (color == 2 && !erasing) {
                                 //green
-                                imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 32, 255, 128);
-                            } else if (color == 3) {
+                                red = 32;
+                                green = 255;
+                                blue = 128;
+                                //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 32, 255, 128);
+                            } else if (color == 3 && !erasing) {
                                 //red
-                                imgSurface.UpdateSurfacePixel(xPos+w,yPos+h,  128, 32, 255);
-                            } else if (color == -1) {
-                                imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 0, 0, 0);
+                                red = 128;
+                                green = 32;
+                                blue = 255;
+                                //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h,  128, 32, 255);
+                            } else if (erasing) {
+                                red = 0;
+                                green = 0;
+                                blue = 0;
+                                //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 0, 0, 0);
                             }
-
-
+                            imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
                         }
                     }
+                    if (prevX > -9999) {
+                        imgSurface.linearInterpolation(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                    }
+                    prevX = xPos;
+                    prevY = yPos;
                     //if keyboard is pressed check for change event
                 } else if(e.type == SDL_KEYDOWN) {
                     //writeln()
