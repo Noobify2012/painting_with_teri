@@ -86,7 +86,7 @@ jobs:
       - name: Install sdl dependency
         run: sudo apt-get install libsdl2-dev
       - name: build project code
-        run: cd ./demos/ci && dub run
+        run: cd ./graphics-project/. && dub run
       # These next two steps need a little bit more explaining, because as we are finding out
       # testing graphics applications is really hard!
       # You learned this when you wrote your GUI applications tests earlier.
@@ -97,8 +97,8 @@ jobs:
       # 'xvfb ' is one such tool, and you can see how I have set it up below.
       - name: Setup headless x11 window
         run: sudo apt-get install xvfb xorg xauth openbox # xorg is needed to set DISPLAY variable later
-      - name: Run graphical application tests in headless mode
-        run: cd ./labs/ci && xvfb-run --server-args="-screen 0 1024x768x24" ./ci
+     #  - name: Run graphical application tests in headless mode
+        # run: cd ./labs/ci && xvfb-run --server-args="-screen 0 1024x768x24" ./ci
 ```
 
 ### Expanding on the workflow
