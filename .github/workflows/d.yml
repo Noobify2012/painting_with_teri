@@ -1,50 +1,3 @@
-Skip to content
-Search or jump to…
-Pull requests
-Issues
-Codespaces
-Marketplace
-Explore
- 
-@Noobify2012 
-MikeShah
-/
-C-SoftwareEngineering
-Public
-Fork your own copy of MikeShah/C-SoftwareEngineering
-Code
-Issues
-Pull requests
-1
-Actions
-Projects
-Security
-Insights
-C-SoftwareEngineering/12/action.yml
-
-mike action example
-Latest commit b765559 2 hours ago
- History
- 0 contributors
-76 lines (64 sloc)  4.55 KB
-
-# Resources to help
-
-Provided below are a list of curated resources to help you complete the tasks below. Consult them (read them, or do Ctrl+f for keywords) if you get stuck.
-
-- Task 1
-	1. Github Actions
-		- Introduction to Github Actions video (12:32)
-    			- https://www.youtube.com/watch?v=-xIXFxuZCMI
-		- Introduction to Github Actions (38:46)
-			- https://www.youtube.com/watch?v=e_F_4OB9Mg4
-		- Github Actions Documentation
-			- https://help.github.com/en/actions
- 
-# Task 0 - Find your team!
-
-# **Remember** You are working with your team today in your team repository.
-
 # Task 1 - Continuous Integration
 
 [Github actions](https://github.com/features/actions) are githubs built-in way of providing a continuous integration testing system for your project. Other technologies like Jenkins and Travis exist, though having all of the features located in one spot will make it easy for us to get started. Github actions are also very powerful in what you can do. Today you are going to setup in [finalproject/.github/workflows/MainWorkflow.yml](finalproject/.github/workflows/MainWorkflow.yml) your first workflow that will execute tests every time you push code. In this way, github actions will help ensure that code that you are submitting to your repository for example, is code that actually compiles and passes all of the tests. you have in the project.
@@ -100,21 +53,3 @@ jobs:
      #  - name: Run graphical application tests in headless mode
         # run: cd ./labs/ci && xvfb-run --server-args="-screen 0 1024x768x24" ./ci
 ```
-
-### Expanding on the workflow
-
-Making sure your code compiles and passes tests is one thing, but we can also incorporate some of the other tasks that we have done throughout the semester. As an example, you can add a 'linter' or style checker to your code. For your task, you will have dscanner or dfmt automatically run on all of the ./source files
-Footer
-© 2023 GitHub, Inc.
-Footer navigation
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
