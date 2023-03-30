@@ -1,4 +1,4 @@
-```bash
+
 # A simple DLang Continuous Integration file
 name: DLang CI
 
@@ -46,4 +46,4 @@ jobs:
         run: sudo apt-get install xvfb xorg xauth openbox # xorg is needed to set DISPLAY variable later
      #  - name: Run graphical application tests in headless mode
         # run: cd ./labs/ci && xvfb-run --server-args="-screen 0 1024x768x24" ./ci
-```
+
