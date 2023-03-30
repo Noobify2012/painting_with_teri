@@ -33,7 +33,7 @@ jobs:
       - name: Install sdl dependency
         run: sudo apt-get install libsdl2-dev
       - name: build project code
-        run: cd ../../FinalProject/graphics_project/ && dub run
+        run: cd ../FinalProject/graphics_project/ && dub run
       # These next two steps need a little bit more explaining, because as we are finding out
       # testing graphics applications is really hard!
       # You learned this when you wrote your GUI applications tests earlier.
