@@ -12,7 +12,7 @@ import Packet : Packet;
 //method to send
 //method to recieve changes from server
 
-//TODO: break out method for connecting to a server
+// TODO: break out method for connecting to a server - Complete
 //TODO: break out method to send packets
 //TODO: break out method to recieve color changes from user
 //TODO: method to recieve color changes from server
@@ -44,24 +44,31 @@ void main(){
 
     writeln("On Connect: ", buffer[0 .. received]);
 	write(">");
+
+    // auto changes = Array
+    //TODO: set up array to story Packets needing to be sent out
+
+    //TODO: while not sending data we should be listening and updating
+
     foreach(line; stdin.byLine){
-        Packet data;
-		// The 'with' statement allows us to access an object
-		// (i.e. member variables and member functions)
-		// in a slightly more convenient way
-		with (data){
-			user = "clientName\0";
-			// Just some 'dummy' data for now
-			// that the 'client' will continuously send
-			x = 7;
-			y = 5;
-			r = 49;
-			g = 50;
-			b = 51;
-			message = "test\0";
-		}
-		// Send the packet of information
-        socket.send(data.GetPacketAsBytes());
+        // sendChangeToServer(8,5,49,50,51);
+        // Packet data;
+		// // The 'with' statement allows us to access an object
+		// // (i.e. member variables and member functions)
+		// // in a slightly more convenient way
+		// with (data){
+		// 	user = "clientName\0";
+		// 	// Just some 'dummy' data for now
+		// 	// that the 'client' will continuously send
+		// 	x = 7;
+		// 	y = 5;
+		// 	r = 49;
+		// 	g = 50;
+		// 	b = 51;
+		// 	message = "test\0";
+		// }
+		// // Send the packet of information
+        // socket.send(data.GetPacketAsBytes());
 		// Now we'll immedietely block and await data from the server
 		// Shows you some useful debug information
 		auto fromServer = buffer[0 .. socket.receive(buffer)];
@@ -95,6 +102,31 @@ void main(){
 
 		write(">");
     }
+}
+
+void recieveFromServer() {
+
+}
+
+
+void getChangeForServer(int xPos, int yPos, ubyte blueVal, ubyte greenVal, ubyte redVal) {
+    Packet data;
+		// The 'with' statement allows us to access an object
+		// (i.e. member variables and member functions)
+		// in a slightly more convenient way
+		with (data){
+			user = "clientName\0";
+			// Just some 'dummy' data for now
+			// that the 'client' will continuously send
+			x = xPos;
+			y = yPos;
+			r = redVal;
+			g = greenVal;
+			b = blueVal;
+			message = "update from user: " ~ 1 ~ " test\0";
+		}
+		// Send the packet of information breaks, can't send socket from SDLApp
+        // socket.send(data.GetPacketAsBytes());
 }
 
 string getServerAddress() {
