@@ -29,13 +29,9 @@ void main(){
 	// NOTE: It's possible the port number is in use if you are not
 	//       able to connect. Try another one.
 
-    // Address serverAddress = "127.0.0.1";
     string serverAddress = getServerAddress();
-    // char[] strArr = serverAddress.dup;
-    // ushort serverPort = to!ushort(500002); 
     ushort serverPort = getServerPort();
     socket.connect(new InternetAddress(serverAddress.dup, serverPort));
-    // socket.connect(new InternetAddress("127.0.0.1", 50002));
     // writeln(socket.hostName);
     //  writeln("My IP address is  : ", socket.localAddress);
     //  writeln("the remote address is: ", socket.remoteAddress);

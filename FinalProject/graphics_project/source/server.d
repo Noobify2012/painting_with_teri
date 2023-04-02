@@ -1,11 +1,17 @@
 // @file server.d
 import std.socket;
 import std.stdio;
+import std.conv;
 
 import Packet : Packet;
+import test_addr;
+
 
 
 void main(){
+
+	test_addr.find();
+
 	writeln("Starting server...");
 	writeln("Server must be started before clients may join");
     auto listener = new Socket(AddressFamily.INET, SocketType.STREAM);
@@ -16,6 +22,7 @@ void main(){
     ushort port = 50002;
 	// NOTE: It's possible the port number is in use if you are not able
 	//  	 to connect. Try another one.
+
     listener.bind(new InternetAddress(host,port));
     // Allow 4 connections to be queued up
     listener.listen(4);
@@ -34,6 +41,7 @@ void main(){
     byte[Packet.sizeof] buffer;
 
     bool serverIsRunning=true;
+	// int userID = 1;
 
     // Main application loop for the server
 	writeln("Awaiting client connections");
@@ -73,6 +81,7 @@ void main(){
 					
 					// Send raw bytes from packet,
                     client.send(p.GetPacketAsBytes());
+					writeln("readset is set for client");
                 }
             }
 			// The listener is ready to read
@@ -87,7 +96,13 @@ void main(){
 				// Add a new client to the list
 				connectedClientsList ~= newSocket;
 				writeln("> client",connectedClientsList.length," added to connectedClientsList");
+				writeln("readset is set for listener");
+
 			}
     	}
 	}
 }
+
+//TODO: Method for sending packets to every other client
+// get packet from user
+// loop through all other users and send packet(think broadcast)

@@ -4,8 +4,10 @@ import std.conv;
  
  // Packet
 import Packet : Packet;
- 
-void main(){
+// import my/test_addr.d;
+
+void find(){
+    // test_addr.main();
      writeln("Starting client...attempt to create socket");
      // Create a socket for connecting to a server
      auto socket = new Socket(AddressFamily.INET, SocketType.STREAM);
