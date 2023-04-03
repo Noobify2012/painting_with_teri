@@ -4,6 +4,7 @@ import std.conv;
 import std.math;
 import std.string;
 import std.regex;
+import std.container.array;
  
  // Packet
 import Packet : Packet;
@@ -29,6 +30,8 @@ void main(){
 	// NOTE: It's possible the port number is in use if you are not
 	//       able to connect. Try another one.
 
+    //TODO: add try catch to handle if the connection is refused. 
+
     string serverAddress = getServerAddress();
     ushort serverPort = getServerPort();
     socket.connect(new InternetAddress(serverAddress.dup, serverPort));
@@ -45,7 +48,7 @@ void main(){
     writeln("On Connect: ", buffer[0 .. received]);
 	write(">");
 
-    // auto changes = Array
+    // auto changes = Array!Packet;
     //TODO: set up array to story Packets needing to be sent out
 
     //TODO: while not sending data we should be listening and updating
