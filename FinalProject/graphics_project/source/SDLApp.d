@@ -10,6 +10,7 @@ import loader = bindbc.loader.sharedlib;
 import SDL_Surfaces :Surface;
 import SDL_Initial :SDLInit;
 //#include SDL.h;
+import test_client;
 
 //For printing the key pressed info
 //void PrintKeyInfo( SDL_KeyboardEvent *key );
@@ -41,6 +42,7 @@ class SDLApp{
         bool drawing = false;
 
         bool change = false;
+        bool networked = false;
 
         int brush = 1;
 
@@ -120,6 +122,9 @@ class SDLApp{
                                 //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 0, 0, 0);
                             }
                             imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
+                            if(networked == true) {
+                                test_client.sendChangeToServer(xPos+w,yPos+h, red, green, blue);
+                            }
                         }
                     }
                     if (prevX > -9999) {
@@ -169,6 +174,14 @@ class SDLApp{
                             writeln("Changing to color : " , to!string(color));
                         }
 
+                    } else if (e.key.keysym.sym == SDLK_n) {
+                        if (networked == false) {
+                            test_client.main();
+                            networked = true;
+                        } else {
+                            networked = false;
+                        }
+                        
                     }
                 }
             }
@@ -187,66 +200,6 @@ class SDLApp{
         SDL_DestroyWindow(window);
 
     }
-
-    //void PrintKeyInfo( SDL_KeyboardEvent *key ){
-    ///* Is it a release or a press? */
-    //    if( key.type == SDL_KEYUP )
-    //        printf( "Release:- " );
-    //    else
-    //        printf( "Press:- " );
-    //
-    //        /* Print the hardware scancode first */
-    //        printf( "Scancode: 0x%02X", key.keysym.scancode );
-    //        /* Print the name of the key */
-    //        printf( ", Name: %s", SDL_GetKeyName( key.keysym.sym ) );
-    //        /* We want to print the unicode info, but we need to make */
-    //        /* sure its a press event first (remember, release events */
-    //        /* don't have unicode info                                */
-    //        if( key.type == SDL_KEYDOWN ){
-    //            /* If the Unicode value is less than 0x80 then the    */
-    //            /* unicode value can be used to get a printable       */
-    //            /* representation of the key, using (char)unicode.    */
-    //            printf(", Unicode: " );
-    //        if( key.keysym.unicode < 0x80 && key.keysym.unicode > 0 ){
-    //            printf( "%c (0x%04X)", cast(char)key.keysym.unicode,
-    //        key.keysym.unicode );
-    //    }
-    //    else{
-    //        printf( "? (0x%04X)", key.keysym.unicode );
-    //        }
-    //    }
-    //    printf( "\n" );
-    //    /* Print modifier info */
-    //    PrintModifiers( key.keysym.mod );
-    //    }
-    //
-    //    /* Print modifier info */
-    ////void PrintModifiers( SDLMod mod ){
-    //    void PrintModifiers( SDLMod mod ){
-    //        printf( "Modifers: " );
-    //
-    //        /* If there are none then say so and return */
-    //        if( mod == KMOD_NONE ){
-    //            printf( "None\n" );
-    //            return;
-    //        }
-    //
-    //        /* Check for the presence of each SDLMod value */
-    //        /* This looks messy, but there really isn't    */
-    //        /* a clearer way.                              */
-    //        if( mod & KMOD_NUM ) printf( "NUMLOCK " );
-    //        if( mod & KMOD_CAPS ) printf( "CAPSLOCK " );
-    //        if( mod & KMOD_LCTRL ) printf( "LCTRL " );
-    //        if( mod & KMOD_RCTRL ) printf( "RCTRL " );
-    //        if( mod & KMOD_RSHIFT ) printf( "RSHIFT " );
-    //        if( mod & KMOD_LSHIFT ) printf( "LSHIFT " );
-    //        if( mod & KMOD_RALT ) printf( "RALT " );
-    //        if( mod & KMOD_LALT ) printf( "LALT " );
-    //        if( mod & KMOD_CTRL ) printf( "CTRL " );
-    //        if( mod & KMOD_SHIFT ) printf( "SHIFT " );
-    //        if( mod & KMOD_ALT ) printf( "ALT " );
-    //        printf( "\n" );
-    //    }
 }
 
 ///Test: Checks for the surface to be initialized to black RGB values or 0,0,0
