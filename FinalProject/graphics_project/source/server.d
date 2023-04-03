@@ -13,6 +13,8 @@ void main(){
 
 	Address serverAddr = test_addr.find();
 	writeln(serverAddr);
+	string[] dumb = to!string(serverAddr).split(":");
+	writeln(dumb[0]);
 	// string servAddr = "";
 	// bool colonPassed = false;
 	// string foo = to!string(serverAddr);	
@@ -33,7 +35,7 @@ void main(){
 	scope(exit) listener.close();
 
 	// Set the hostname and port for the socket
-    string host = "localhost";
+    string host = dumb[0];
     ushort port = 50002;
 	// NOTE: It's possible the port number is in use if you are not able
 	//  	 to connect. Try another one.
