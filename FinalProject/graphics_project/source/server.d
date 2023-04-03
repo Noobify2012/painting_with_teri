@@ -2,6 +2,7 @@
 import std.socket;
 import std.stdio;
 import std.conv;
+import std.array;
 
 import Packet : Packet;
 import test_addr;
@@ -10,11 +11,25 @@ import test_addr;
 
 void main(){
 
-	test_addr.find();
+	Address serverAddr = test_addr.find();
+	writeln(serverAddr);
+	// string servAddr = "";
+	// bool colonPassed = false;
+	// string foo = to!string(serverAddr);	
+	// for(int i=0; i<foo.length; i++){
+	// 	if(foo[i] == ":") {
+	// 		colonPassed = true;
+	// 	} else if (colonPassed == false){
+	// 		servAddr = servAddr ~ foo[i];
+	// 	}
+	// }
+	// serverAddr = serverAddr.split(":")[0];
+	// writeln(serverAddr);
 
 	writeln("Starting server...");
 	writeln("Server must be started before clients may join");
     auto listener = new Socket(AddressFamily.INET, SocketType.STREAM);
+	// writeln("this is the family and socket stream: " ~ AddressFamily.INET, SocketType.STREAM);
 	scope(exit) listener.close();
 
 	// Set the hostname and port for the socket
