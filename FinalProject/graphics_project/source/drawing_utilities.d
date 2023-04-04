@@ -1,4 +1,5 @@
 import std.stdio;
+import std.typecons;
 
 import bindbc.sdl;
 import loader = bindbc.loader.sharedlib;
@@ -28,10 +29,22 @@ class DrawingUtility {
     return color;
   }
 
+  bool isSameColor(SDL_Color c1, SDL_Color c2) {
+    return c1.r == c2.r && c1.g == c2.g && c1.b == c1.b;
+  }
+
   void dfs(int x, int y, Surface *surf) {
 
     SDL_Color startingColor = getPixelColorAt(x, y, surf.getSurface());
     writeln("Starting Color: red - ", startingColor.r, " green - ", startingColor.g, " blue - ", startingColor.b);
     writeln("Performing dfs at x: ", x, ", y: ", y);
+
+    Tuple!(int, int)[] pts;
+    pts ~= tuple(x, y);
+
+    while (pts.length > 0) {
+      Tuple!(int, int) currentPoint = pts[pts.length - 1];
+      pts = pts[0 .. pts.length - 1];
+    }
   }
 }
