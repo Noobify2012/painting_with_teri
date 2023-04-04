@@ -12,6 +12,9 @@ import SDL_Initial :SDLInit;
 //#include SDL.h;
 import test_client;
 
+import shapes;
+import drawing_utilities;
+
 //For printing the key pressed info
 //void PrintKeyInfo( SDL_KeyboardEvent *key );
 
@@ -33,7 +36,6 @@ class SDLApp{
         SDL_WINDOW_SHOWN);
         // Load the bitmap surface
         Surface imgSurface = new Surface(0,640,480,32,0,0,0,0);
-
 
         // Flag for determing if we are running the main application loop
         bool runApplication = true;
@@ -57,6 +59,7 @@ class SDLApp{
         int prevX = -9999;
         int prevY = -9999;
 
+        DrawingUtility du = new DrawingUtility();
 
         //SDL_EnableUNICODE( 1 );
 
@@ -123,7 +126,7 @@ class SDLApp{
                             }
                             imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
                             if(networked == true) {
-                                test_client.sendChangeToServer(xPos+w,yPos+h, red, green, blue);
+                                // test_client.sendChangeToServer(xPos+w,yPos+h, red, green, blue);
                             }
                         }
                     }
@@ -176,15 +179,37 @@ class SDLApp{
 
                     } else if (e.key.keysym.sym == SDLK_n) {
                         if (networked == false) {
-                            test_client.main();
+                            // test_client.main();
                             networked = true;
                         } else {
                             networked = false;
                         }
                         
+                    } else if (e.key.keysym.sym == SDLK_f) {
+                        writeln("Starting fill");
+                        bool isFilled = false;
+
+                        while (!isFilled) {
+                        SDL_Event fill;
+                            while (SDL_PollEvent(&fill)) {
+                                if(fill.type == SDL_QUIT){
+                                    runApplication= false;
+                                    break;
+                                } else if (fill.type == SDL_MOUSEBUTTONUP) {
+                                    int fillStartX = fill.button.x, fillStartY = fill.button.y;
+                                    du.dfs(fillStartX, fillStartY, &imgSurface);
+                                    isFilled = true;
+                                }
+                            }
+                        }
+                        writeln("Fill ended");
                     }
                 }
             }
+
+            Shape sh = new Shape();
+
+            sh.drawShape();
 
             // Blit the surace (i.e. update the window with another surfaces pixels
             //                       by copying those pixels onto the window).
