@@ -131,7 +131,8 @@ class SDLApp{
                         }
                     }
                     if (prevX > -9999) {
-                        imgSurface.linearInterpolation(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                        // imgSurface.linearInterpolation(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                        imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
                     }
                     prevX = xPos;
                     prevY = yPos;

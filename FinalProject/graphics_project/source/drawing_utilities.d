@@ -41,6 +41,10 @@ class DrawingUtility {
     return c1.r == c2.r && c1.g == c2.g && c1.b == c1.b;
   }
 
+  bool isSamePoint(Tuple!(int, int) p1, Tuple!(int, int) p2) {
+    return p1[0] == p2[0] && p1[1] == p2[1];
+  }
+
   void dfs(int x, int y, Surface *surf, ubyte r, ubyte g, ubyte b) {
 
     SDL_Color startingColor = getPixelColorAt(x, y, surf.getSurface());

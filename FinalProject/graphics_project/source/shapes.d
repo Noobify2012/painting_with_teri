@@ -124,16 +124,19 @@ class Shape {
           // y = (p2[1] - p1[1]) / (p2[0] - p1[0]) * (x - p1[0]) + p1[1]
           // int y = (p2[1] - p1[1]) / (p2[0] - p1[0]) * (x - p1[0]) + p1[1];
 
-          for (int i = left; i <= right; ++i) {
-            for (int j = top; j <= bottom; ++j) {
-              int currentY = (p2[1] - p1[1]) / (p2[0] - p1[0]) * (i - p1[0]) + p1[1];
-              if (fabs(cast(float) (j - currentY)) <= 0.5f) {
-                surf.UpdateSurfacePixel(i, j, r, g, b);
-              }
-            }
-          }
+          // for (int i = left; i <= right; ++i) {
+          //   for (int j = top; j <= bottom; ++j) {
+          //     int currentY = (p2[1] - p1[1]) / (p2[0] - p1[0]) * (i - p1[0]) + p1[1];
+          //     if (fabs(cast(float) (j - currentY)) <= 0.5f) {
+          //       surf.UpdateSurfacePixel(i, j, r, g, b);
+          //     }
+          //   }
+          // }
 
           // surf.linearInterpolation(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
+          surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
+
+          writeln("Line has been drawn");
           shapeIsDrawn = true;
 
         } else if (e.key.keysym.sym == SDLK_c) {
@@ -211,26 +214,22 @@ class Shape {
             }
           }
 
-          if (fabs(cast(float) (p2[0] - p1[0]))) {
-            continue;
-          }
+          // if (fabs(cast(float) (p2[0] - p1[0]))) {
+          //   continue;
+          // }
 
           // (a, b), (c, d)
           // y - b = (d - b)/(c - a) * (x - a)
 
           int top = min(p1[1], p2[1], p3[1]), bottom = max(p1[1], p2[1], p3[1]), left = min(p1[0], p1[0], p2[0]), right = max(p1[0], p2[0], p3[0]);
 
-          for (int i = left; i <= right; ++i) {
-            for (int j = top; j <= bottom; ++j) {
-              if (j >= top && j <= bottom && i >= left && i <= right) {
-                surf.UpdateSurfacePixel(i, j, r, g, b);
-              }
-            }
-          }
+          surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
+          surf.lerp(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
+          surf.lerp(p1[0], p1[1], p3[0], p3[1], brushSize, r, g, b);
 
-          surf.linearInterpolation(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
-          surf.linearInterpolation(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
-          surf.linearInterpolation(p1[0], p1[1], p3[0], p3[1], brushSize, r, g, b);
+          Tuple!(int, int) centroid = tuple((p1[0] + p2[0] + p3[0]) / 3, (p1[1] + p2[1] + p3[1]) / 3);
+
+          surf.lerp(centroid[0], centroid[1], centroid[0], centroid[1], brushSize, r, g, b);
 
           shapeIsDrawn = true;
         }
