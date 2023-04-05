@@ -67,10 +67,10 @@ class Shape {
           p2 = tuple(p3[0], p1[1]);
           p4 = tuple(p1[0], p3[1]);
 
-          surf.linearInterpolation(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
-          surf.linearInterpolation(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
-          surf.linearInterpolation(p3[0], p3[1], p4[0], p4[1], brushSize, r, g, b);
-          surf.linearInterpolation(p4[0], p4[1], p1[0], p1[1], brushSize, r, g, b);
+          surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
+          surf.lerp(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
+          surf.lerp(p3[0], p3[1], p4[0], p4[1], brushSize, r, g, b);
+          surf.lerp(p4[0], p4[1], p1[0], p1[1], brushSize, r, g, b);
 
           int midX = (p1[0] + p3[0]) / 2;
           int midY = (p1[1] + p3[1]) / 2;
