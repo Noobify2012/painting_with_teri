@@ -22,6 +22,11 @@ class Shape {
   }
   
   void drawShape(Surface* surf, int brushSize, ubyte r, ubyte g, ubyte b) {
+
+    // !!!!!
+    int[Tuple!(int, int)] pixelMap;
+    // !!!!!
+
     DrawingUtility d = new DrawingUtility();
     SDL_Event e;
     // Handle events
@@ -29,7 +34,6 @@ class Shape {
     // handled one at a time within this loop for as many events have
     // been pushed into the internal SDL queue. Thus, we poll until there
     // are '0' events or a NULL event is returned.
-    writeln(r, g, b);
     bool shapeIsDrawn = false;
     while (!shapeIsDrawn) {
       while(SDL_PollEvent(&e) !=0){
@@ -53,8 +57,7 @@ class Shape {
               } else if (f.type == SDL_MOUSEBUTTONDOWN) {
                 if (numPoints == 0) {
                   p1 = tuple(f.button.x, f.button.y);
-                  writeln(f.button.x, " ", f.button.y);
-                  surf.UpdateSurfacePixel(f.button.x, f.button.y, r, g, b);
+                  surf.lerp(p1[0], p1[1], p1[0], p1[1], brushSize, r, g, b);
                 } else {
                   p3 = tuple(f.button.x, f.button.y);
                   surf.UpdateSurfacePixel(p3[0], p3[1], r, g, b);
@@ -117,23 +120,6 @@ class Shape {
           int left = min(p1[0], p2[0]), right = max(p1[0], p2[0]);
           int top = min(p1[1], p2[1]), bottom = max(p1[1], p2[1]);
 
-          // (a, b), (c, d)
-          // y - b = (d - b)/(c - a) * (x - a)
-
-          // (p1[0], p1[1]), (p2[0], p2[1])
-          // y = (p2[1] - p1[1]) / (p2[0] - p1[0]) * (x - p1[0]) + p1[1]
-          // int y = (p2[1] - p1[1]) / (p2[0] - p1[0]) * (x - p1[0]) + p1[1];
-
-          // for (int i = left; i <= right; ++i) {
-          //   for (int j = top; j <= bottom; ++j) {
-          //     int currentY = (p2[1] - p1[1]) / (p2[0] - p1[0]) * (i - p1[0]) + p1[1];
-          //     if (fabs(cast(float) (j - currentY)) <= 0.5f) {
-          //       surf.UpdateSurfacePixel(i, j, r, g, b);
-          //     }
-          //   }
-          // }
-
-          // surf.linearInterpolation(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
           surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
 
           writeln("Line has been drawn");
@@ -173,7 +159,6 @@ class Shape {
           left = max(0, midpoint[0] - radius);
           right = min(640, midpoint[0] + radius);
 
-          writeln("top: ", top, " bot: ", bottom, " left: ", left, " right: ", right);
           for (int i = top; i <= bottom; ++i) {
             for (int j = left; j <= right; ++j) {
               if ((j - midpoint[0]) * (j - midpoint[0]) + (i - midpoint[1]) * (i - midpoint[1]) <= radius * radius) {
@@ -181,9 +166,6 @@ class Shape {
               }
             }
           }
-          
-          writeln(midpoint);
-          writeln(radius);
 
           shapeIsDrawn = true;
 
