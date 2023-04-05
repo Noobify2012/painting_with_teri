@@ -1,66 +1,240 @@
 import std.stdio;
+import std.typecons;
+import std.algorithm.comparison;
+
+import core.math;
 
 import bindbc.sdl;
 import loader = bindbc.loader.sharedlib;
 import SDL_Surfaces :Surface;
 import SDL_Initial :SDLInit;
 
+import drawing_utilities;
+
 class Shape {
 
-  void fill(int x, int y) {
-    
+  this() {
+
+  }
+
+  ~this() {
+
   }
   
-  void drawShape() {
+  void drawShape(Surface* surf, int brushSize, ubyte r, ubyte g, ubyte b) {
+    DrawingUtility d = new DrawingUtility();
     SDL_Event e;
     // Handle events
     // Events are pushed into an 'event queue' internally in SDL, and then
     // handled one at a time within this loop for as many events have
     // been pushed into the internal SDL queue. Thus, we poll until there
     // are '0' events or a NULL event is returned.
-    while(SDL_PollEvent(&e) !=0){
-      if(e.type == SDL_QUIT){
-          break;
+    writeln(r, g, b);
+    bool shapeIsDrawn = false;
+    while (!shapeIsDrawn) {
+      while(SDL_PollEvent(&e) !=0){
+        if(e.type == SDL_QUIT){
+            shapeIsDrawn = true;
+
+        } else if (e.key.keysym.sym == SDLK_r) {
+          writeln("Drawing rectangle");
+
+          int numPoints = 0;
+          int numPointsNeeded = 2;
+
+          Tuple!(int, int) p1, p2, p3, p4;
+
+          while (numPoints < numPointsNeeded) {
+            SDL_Event f;
+            while (SDL_PollEvent(&f) != 0) {
+              if (f.type == SDL_QUIT) {
+                shapeIsDrawn = true;
+                break;
+              } else if (f.type == SDL_MOUSEBUTTONDOWN) {
+                if (numPoints == 0) {
+                  p1 = tuple(f.button.x, f.button.y);
+                  writeln(f.button.x, " ", f.button.y);
+                  surf.UpdateSurfacePixel(f.button.x, f.button.y, r, g, b);
+                } else {
+                  p3 = tuple(f.button.x, f.button.y);
+                  surf.UpdateSurfacePixel(p3[0], p3[1], r, g, b);
+                }
+                ++numPoints;
+              }
+            }
+          }
+
+          p2 = tuple(p3[0], p1[1]);
+          p4 = tuple(p1[0], p3[1]);
+
+          surf.linearInterpolation(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
+          surf.linearInterpolation(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
+          surf.linearInterpolation(p3[0], p3[1], p4[0], p4[1], brushSize, r, g, b);
+          surf.linearInterpolation(p4[0], p4[1], p1[0], p1[1], brushSize, r, g, b);
+
+          int midX = (p1[0] + p3[0]) / 2;
+          int midY = (p1[1] + p3[1]) / 2;
+
+          int minX = min(p1[0], p3[0]);
+          int maxX = max(p1[0], p3[0]);
+
+          int minY = min(p1[1], p3[1]);
+          int maxY = max(p1[1], p3[1]);
+
+          for (int i = minX; i <= maxX; ++i) {
+            for (int j = minY; j <= maxY; ++j) {
+              surf.UpdateSurfacePixel(i, j, r, g, b);
+            }
+          }
+
+          shapeIsDrawn = true;
+
+        } else if (e.key.keysym.sym == SDLK_l) {
+          writeln("Drawing line");
+
+          int numPoints = 0;
+          int numPointsNeeded = 2;
+
+          Tuple!(int, int) p1, p2;
+
+          while (numPoints < numPointsNeeded) {
+            SDL_Event f;
+            while (SDL_PollEvent(&f) != 0) {
+              if (f.type == SDL_QUIT) {
+                shapeIsDrawn = true;
+                break;
+              } else if (f.type == SDL_MOUSEBUTTONDOWN) {
+                if (numPoints == 0) {
+                  p1 = tuple(f.button.x, f.button.y);
+                } else {
+                  p2 = tuple(f.button.x, f.button.y);
+                }
+                ++numPoints;
+              }
+            }
+          }
+
+          int left = min(p1[0], p2[0]), right = max(p1[0], p2[0]);
+          int top = min(p1[1], p2[1]), bottom = max(p1[1], p2[1]);
+
+          // (a, b), (c, d)
+          // y - b = (d - b)/(c - a) * (x - a)
+
+          // (p1[0], p1[1]), (p2[0], p2[1])
+          // y = (p2[1] - p1[1]) / (p2[0] - p1[0]) * (x - p1[0]) + p1[1]
+          // int y = (p2[1] - p1[1]) / (p2[0] - p1[0]) * (x - p1[0]) + p1[1];
+
+          for (int i = left; i <= right; ++i) {
+            for (int j = top; j <= bottom; ++j) {
+              int currentY = (p2[1] - p1[1]) / (p2[0] - p1[0]) * (i - p1[0]) + p1[1];
+              if (fabs(cast(float) (j - currentY)) <= 0.5f) {
+                surf.UpdateSurfacePixel(i, j, r, g, b);
+              }
+            }
+          }
+
+          // surf.linearInterpolation(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
+          shapeIsDrawn = true;
+
+        } else if (e.key.keysym.sym == SDLK_c) {
+          writeln("Drawing circle");
+
+          int numPoints = 0;
+          int numPointsNeeded = 2;
+
+          Tuple!(int, int) p1, p2, midpoint;
+
+          while (numPoints < numPointsNeeded) {
+            SDL_Event f;
+            while (SDL_PollEvent(&f) != 0) {
+              if (f.type == SDL_QUIT) {
+                shapeIsDrawn = true;
+                break;
+              } else if (f.type == SDL_MOUSEBUTTONDOWN) {
+                if (numPoints == 0) {
+                  p1 = tuple(f.button.x, f.button.y);
+                } else {
+                  p2 = tuple(f.button.x, f.button.y);
+                }
+                ++numPoints;
+              }
+            }
+          }
+
+          int radius = cast(int) sqrt(cast(float) ((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]))) / 2;
+          midpoint = tuple(cast(int) ((p1[0] + p2[0]) / 2), cast(int) ((p1[1] + p2[1]) / 2));
+
+          int top, bottom, left, right;
+          top = max(0, midpoint[1] - radius);
+          bottom = min(480, midpoint[1] + radius);
+          left = max(0, midpoint[0] - radius);
+          right = min(640, midpoint[0] + radius);
+
+          writeln("top: ", top, " bot: ", bottom, " left: ", left, " right: ", right);
+          for (int i = top; i <= bottom; ++i) {
+            for (int j = left; j <= right; ++j) {
+              if ((j - midpoint[0]) * (j - midpoint[0]) + (i - midpoint[1]) * (i - midpoint[1]) <= radius * radius) {
+                surf.UpdateSurfacePixel(j, i, r, g, b);
+              }
+            }
+          }
+          
+          writeln(midpoint);
+          writeln(radius);
+
+          shapeIsDrawn = true;
+
+        } else if (e.key.keysym.sym == SDLK_t) {
+          writeln("Drawing triangle");
+
+          int numPoints = 0;
+          int numPointsNeeded = 3;
+
+          Tuple!(int, int) p1, p2, p3;
+
+          while (numPoints < numPointsNeeded) {
+            SDL_Event f;
+            while (SDL_PollEvent(&f) != 0) {
+              if (f.type == SDL_QUIT) {
+                shapeIsDrawn = true;
+                break;
+              } else if (f.type == SDL_MOUSEBUTTONDOWN) {
+                if (numPoints == 0) {
+                  p1 = tuple(f.button.x, f.button.y);
+                } else if (numPoints == 1) {
+                  p2 = tuple(f.button.x, f.button.y);
+                } else {
+                  p3 = tuple(f.button.x, f.button.y);
+                }
+                ++numPoints;
+              }
+            }
+          }
+
+          if (fabs(cast(float) (p2[0] - p1[0]))) {
+            continue;
+          }
+
+          // (a, b), (c, d)
+          // y - b = (d - b)/(c - a) * (x - a)
+
+          int top = min(p1[1], p2[1], p3[1]), bottom = max(p1[1], p2[1], p3[1]), left = min(p1[0], p1[0], p2[0]), right = max(p1[0], p2[0], p3[0]);
+
+          for (int i = left; i <= right; ++i) {
+            for (int j = top; j <= bottom; ++j) {
+              if (j >= top && j <= bottom && i >= left && i <= right) {
+                surf.UpdateSurfacePixel(i, j, r, g, b);
+              }
+            }
+          }
+
+          surf.linearInterpolation(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
+          surf.linearInterpolation(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
+          surf.linearInterpolation(p1[0], p1[1], p3[0], p3[1], brushSize, r, g, b);
+
+          shapeIsDrawn = true;
+        }
       }
     }
-
-    const ubyte* state = SDL_GetKeyboardState(null);
-    if (state[SDL_SCANCODE_L]) {
-      writeln("Line");
-    }
-  //   if (state[SDL_SCANCODE_R]) {
-  //     writeln("Drawing a rectangle");
-  //   } else if (state[SDL_SCANCODE_C]) {
-  //     writeln("Drawing a circle");
-  //   } else if (state[SDL_SCANCODE_T]) {
-  //     writeln("Drawing a triangle");
-  //   } else if (state[SDL_SCANCODE_L]) {
-  //     writeln("Drawing a line");
-      
-  //     int numPoints = 0;
-  //     int numPointsNeeded = 2;
-
-  //     int x1 = -9999, y1 = -9999, x2 = -9999, y2 = -9999;
-  //     SDL_Event p;
-  //     while(SDL_PollEvent(&e) !=0 && numPoints < numPointsNeeded){
-  //       writeln("hi");
-  //       if(p.type == SDL_QUIT){
-  //         break;
-  //       } else if (p.type == SDL_MOUSEBUTTONDOWN) {
-  //         writeln(p.button.x, " ", p.button.y, " ");
-  //         if (x1 == -9999) {
-  //           x1 = p.button.x;
-  //           y1 = p.button.y;
-  //         } else {
-  //           x2 = p.button.x;
-  //           y2 = p.button.y;
-  //         }
-  //         ++numPoints;
-  //       }
-  //     }
-
-  //     writeln("x1:", x1, " y1:", y1, " x2:", x2, " y2:", y2);
-  //   }
-  // }
   }
 }

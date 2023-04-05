@@ -8,6 +8,14 @@ import SDL_Surfaces;
 
 class DrawingUtility {
 
+  this() {
+
+  }
+
+  ~this() {
+
+  }
+
   SDL_Color getPixelColorAt(int x, int y, SDL_Surface* imgSurface) {
 
     assert((x >= 0 && x <= 640) && (y >= 0 && y <= 480));
@@ -33,7 +41,7 @@ class DrawingUtility {
     return c1.r == c2.r && c1.g == c2.g && c1.b == c1.b;
   }
 
-  void dfs(int x, int y, Surface *surf) {
+  void dfs(int x, int y, Surface *surf, ubyte r, ubyte g, ubyte b) {
 
     SDL_Color startingColor = getPixelColorAt(x, y, surf.getSurface());
     writeln("Starting Color: red - ", startingColor.r, " green - ", startingColor.g, " blue - ", startingColor.b);
@@ -42,9 +50,32 @@ class DrawingUtility {
     Tuple!(int, int)[] pts;
     pts ~= tuple(x, y);
 
+    int[Tuple!(int, int)] visited;
+
+
     while (pts.length > 0) {
+      writeln(pts.length);
       Tuple!(int, int) currentPoint = pts[pts.length - 1];
       pts = pts[0 .. pts.length - 1];
+
+      int* hasBeenVisited = currentPoint in visited;
+      if (currentPoint[0] > 0 && currentPoint[0] < 640 && currentPoint[1] > 0 && currentPoint[1] < 480 && hasBeenVisited is null) {
+        if (isSameColor(startingColor, getPixelColorAt(currentPoint[0] + 1, currentPoint[1], surf.getSurface()))) {
+          pts ~= tuple(currentPoint[0] + 1, currentPoint[1]);
+        }
+        if (isSameColor(startingColor, getPixelColorAt(currentPoint[0] - 1, currentPoint[1], surf.getSurface()))) {
+          pts ~= tuple(currentPoint[0] - 1, currentPoint[1]);
+        }
+        if (isSameColor(startingColor, getPixelColorAt(currentPoint[0], currentPoint[1] + 1, surf.getSurface()))) {
+          pts ~= tuple(currentPoint[0], currentPoint[1] + 1);
+        }
+        if (isSameColor(startingColor, getPixelColorAt(currentPoint[0], currentPoint[1] - 1, surf.getSurface()))) {
+          pts ~= tuple(currentPoint[0], currentPoint[1] - 1);
+        }
+      }
+
+      visited[currentPoint] = 1;
+      surf.UpdateSurfacePixel(currentPoint[0], currentPoint[1], r, g, b);
     }
   }
 }

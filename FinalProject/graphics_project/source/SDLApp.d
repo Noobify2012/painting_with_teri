@@ -197,19 +197,20 @@ class SDLApp{
                                     break;
                                 } else if (fill.type == SDL_MOUSEBUTTONUP) {
                                     int fillStartX = fill.button.x, fillStartY = fill.button.y;
-                                    du.dfs(fillStartX, fillStartY, &imgSurface);
+                                    du.dfs(fillStartX, fillStartY, &imgSurface, red, green, blue);
                                     isFilled = true;
                                 }
                             }
                         }
                         writeln("Fill ended");
+
+                    } else if (e.key.keysym.sym == SDLK_s) {
+                        writeln("Drawing shape");
+                        Shape sh = new Shape();
+                        sh.drawShape(&imgSurface, brushSize, red, green, blue);
                     }
                 }
             }
-
-            Shape sh = new Shape();
-
-            sh.drawShape();
 
             // Blit the surace (i.e. update the window with another surfaces pixels
             //                       by copying those pixels onto the window).
