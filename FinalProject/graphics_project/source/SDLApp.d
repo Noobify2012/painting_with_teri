@@ -15,7 +15,7 @@ import SDL_Initial :SDLInit;
 import test_client;
 import Packet : Packet;
 import Deque;
-import server;
+// import server;
 
 
 //For printing the key pressed info
@@ -204,7 +204,7 @@ class SDLApp{
                         }
                     }
                     // } else if (e.key.keysym.sym == SDLK_h) {
-                    //     server.run(); 
+                    //     server.run();
                     // }
                 }
             }
@@ -216,7 +216,8 @@ class SDLApp{
                     //     test_client.sendToServer(traffic.pop_back, socket);
                     // }else {
                         //listen
-                        Packet inbound = test_client.recieveFromServer(buffer, socket);
+                        // Packet inbound;
+                        Packet inbound = test_client.recieveFromServer(socket, buffer);
                         //if traffic recieved update surface.
                         imgSurface.UpdateSurfacePixel(inbound.x, inbound.y, inbound.r, inbound.g, inbound.b);
                     // }

@@ -25,7 +25,7 @@ Inputs: none
 Returns: A socket that is connected to the server
 Notes: Catches the exception if the client failes to connect, loops infinitly if a connection can't be made.
 */
-Socket initialize(){
+Socket initialize() {
 	writeln("Starting client...attempt to create socket");
     // Create a socket for connecting to a server
     auto socket = new Socket(AddressFamily.INET, SocketType.STREAM);
@@ -39,17 +39,23 @@ Socket initialize(){
 	//       able to connect. Try another one.
 
     //TODO: add try catch to handle if the connection is refused. 
-    While(!connected) {
+    while (!connected) {
         //get an address to connect to from the user
         string serverAddress = getServerAddress();
         //get a port to connect to from the user
         ushort serverPort = getServerPort();
-        try {
-            socket.connect(new InternetAddress(serverAddress.dup, serverPort));
-            connected = true;
-        } catch (SocketException e) {
-            writeln("Failed to connect, please check the address and port and try again.")
-        }
+        writeln("attempting to connect to : " ~ to!string(serverAddress) ~ " on port: " ~to!string(serverPort));
+        socket.connect(new InternetAddress(serverAddress.dup, serverPort));
+        connected = true;
+
+        // try {
+        //     socket.connect(new InternetAddress(serverAddress.dup, serverPort));
+        //     connected = true;
+        // } 
+        // catch (SocketException e) 
+        // {
+        //     writeln("Failed to connect, please check the address and port and try again.");
+        // }
     }
     
     // writeln(socket.hostName);
@@ -60,76 +66,89 @@ Socket initialize(){
     return socket;
 }
 
-    // Buffer of data to send out
+//     // Buffer of data to send out
+//     byte[Packet.sizeof] buffer;
+//     auto received = socket.receive(buffer);
+
+//     writeln("On Connect: ", buffer[0 .. received]);
+// 	write(">");
+
+//     // auto changes = Array!Packet;
+//     //TODO: set up array to story Packets needing to be sent out
+
+//     //TODO: while not sending data we should be listening and updating
+
+//     foreach(line; stdin.byLine){
+//         // sendChangeToServer(8,5,49,50,51);
+//         // Packet data;
+// 		// // The 'with' statement allows us to access an object
+// 		// // (i.e. member variables and member functions)
+// 		// // in a slightly more convenient way
+// 		// with (data){
+// 		// 	user = "clientName\0";
+// 		// 	// Just some 'dummy' data for now
+// 		// 	// that the 'client' will continuously send
+// 		// 	x = 7;
+// 		// 	y = 5;
+// 		// 	r = 49;
+// 		// 	g = 50;
+// 		// 	b = 51;
+// 		// 	message = "test\0";
+// 		// }
+// 		// // Send the packet of information
+//         // socket.send(data.GetPacketAsBytes());
+// 		// Now we'll immedietely block and await data from the server
+// 		// Shows you some useful debug information
+// 		auto fromServer = buffer[0 .. socket.receive(buffer)];
+// 		writeln("sizeof fromServer:",fromServer.length);
+// 		writeln("sizeof Packet    :", Packet.sizeof);
+// 		writeln("buffer length    :", buffer.length);
+// 		writeln("fromServer (raw bytes): ",fromServer);
+// 		writeln();
+
+
+// 		// Format the packet. Note, I am doing this in a very
+// 		// verbosoe manner so you can see each step.
+// 		Packet formattedPacket;
+// 		byte[16] field0        = fromServer[0 .. 16].dup;
+// 		formattedPacket.user = cast(char[])(field0);
+//         writeln("Server echos back user: ", formattedPacket.user);
+
+// 		// Get some of the fields
+// 		byte[4] field1        = fromServer[16 .. 20].dup;
+// 		byte[4] field2        = fromServer[20 .. 24].dup;
+// 		int f1 = *cast(int*)&field1;
+// 		int f2 = *cast(int*)&field2;
+// 		formattedPacket.x = f1;
+// 		formattedPacket.y = f2;
+
+// 		writeln("what is field1(x): ",formattedPacket.x);
+// 		writeln("what is field2(y): ",formattedPacket.y);
+// 		// NOTE: You may want to explore std.bitmanip, if you
+// 		//       have different endian machines.
+// //		int value = peek!(int,Endian.littleEndian)(field1);
+
+// 		write(">");
+//     }
+// }
+
+byte[Packet.sizeof] sendConnectionHandshake(Socket socket) {
     byte[Packet.sizeof] buffer;
     auto received = socket.receive(buffer);
 
     writeln("On Connect: ", buffer[0 .. received]);
 	write(">");
-
-    // auto changes = Array!Packet;
-    //TODO: set up array to story Packets needing to be sent out
-
-    //TODO: while not sending data we should be listening and updating
-
-    foreach(line; stdin.byLine){
-        // sendChangeToServer(8,5,49,50,51);
-        // Packet data;
-		// // The 'with' statement allows us to access an object
-		// // (i.e. member variables and member functions)
-		// // in a slightly more convenient way
-		// with (data){
-		// 	user = "clientName\0";
-		// 	// Just some 'dummy' data for now
-		// 	// that the 'client' will continuously send
-		// 	x = 7;
-		// 	y = 5;
-		// 	r = 49;
-		// 	g = 50;
-		// 	b = 51;
-		// 	message = "test\0";
-		// }
-		// // Send the packet of information
-        // socket.send(data.GetPacketAsBytes());
-		// Now we'll immedietely block and await data from the server
-		// Shows you some useful debug information
-		auto fromServer = buffer[0 .. socket.receive(buffer)];
-		writeln("sizeof fromServer:",fromServer.length);
-		writeln("sizeof Packet    :", Packet.sizeof);
-		writeln("buffer length    :", buffer.length);
-		writeln("fromServer (raw bytes): ",fromServer);
-		writeln();
-
-
-		// Format the packet. Note, I am doing this in a very
-		// verbosoe manner so you can see each step.
-		Packet formattedPacket;
-		byte[16] field0        = fromServer[0 .. 16].dup;
-		formattedPacket.user = cast(char[])(field0);
-        writeln("Server echos back user: ", formattedPacket.user);
-
-		// Get some of the fields
-		byte[4] field1        = fromServer[16 .. 20].dup;
-		byte[4] field2        = fromServer[20 .. 24].dup;
-		int f1 = *cast(int*)&field1;
-		int f2 = *cast(int*)&field2;
-		formattedPacket.x = f1;
-		formattedPacket.y = f2;
-
-		writeln("what is field1(x): ",formattedPacket.x);
-		writeln("what is field2(y): ",formattedPacket.y);
-		// NOTE: You may want to explore std.bitmanip, if you
-		//       have different endian machines.
-//		int value = peek!(int,Endian.littleEndian)(field1);
-
-		write(">");
-    }
+    return buffer;
 }
 
-Socket recieveFromServer(Socket socket, byte[Packet.sizeof] buffer) {
+void sendToServer(Packet packet, Socket socket) {
+    socket.send(packet.GetPacketAsBytes());
+}
+
+Packet recieveFromServer(Socket socket, byte[Packet.sizeof] buffer) {
     auto fromServer = buffer[0 .. socket.receive(buffer)];
 		writeln("sizeof fromServer:",fromServer.length);
-		writeln("sizeof Packet    :", Packet.sizeof);
+		// writeln("sizeof Packet    :", Packet.sizeof);
 		writeln("buffer length    :", buffer.length);
 		writeln("fromServer (raw bytes): ",fromServer);
 		writeln();
@@ -169,6 +188,8 @@ Socket recieveFromServer(Socket socket, byte[Packet.sizeof] buffer) {
 //		int value = peek!(int,Endian.littleEndian)(field1);
 
 		write(">");
+
+        return formattedPacket;
 
 }
 
@@ -210,6 +231,7 @@ string getServerAddress() {
         string ip_regex = "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$";
         if (auto m = std.regex.matchFirst(user_input, ip_regex)) {
             good_addr = true;
+            user_addr = user_input;
         } else if(user_input == ""){
             good_addr = true;
         } else {
