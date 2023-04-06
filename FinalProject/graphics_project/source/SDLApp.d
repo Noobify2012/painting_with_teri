@@ -3,6 +3,7 @@ import std.stdio;
 import std.string;
 import std.process;
 import std.conv;
+import std.socket;
 
 // Load the SDL2 library
 import bindbc.sdl;
@@ -10,7 +11,12 @@ import loader = bindbc.loader.sharedlib;
 import SDL_Surfaces :Surface;
 import SDL_Initial :SDLInit;
 //#include SDL.h;
+// include <SDL2/SDL.h>
 import test_client;
+import Packet : Packet;
+import Deque;
+import server;
+
 
 //For printing the key pressed info
 //void PrintKeyInfo( SDL_KeyboardEvent *key );
@@ -57,6 +63,13 @@ class SDLApp{
         int prevX = -9999;
         int prevY = -9999;
 
+        //intialize deque for storing traffic to send
+        // auto traffic = new Deque!(Packet);
+        Socket socket;
+        byte[Packet.sizeof] buffer;
+        bool tear_down = false;
+        
+
 
         //SDL_EnableUNICODE( 1 );
 
@@ -64,6 +77,7 @@ class SDLApp{
         // This is the 'main graphics loop'
         while(runApplication){
             SDL_Event e;
+            
             // Handle events
             // Events are pushed into an 'event queue' internally in SDL, and then
             // handled one at a time within this loop for as many events have
@@ -80,7 +94,7 @@ class SDLApp{
                     drawing=false;
                     prevX = -9999;
                     prevY = -9999;
-                }else if(e.type == SDL_MOUSEMOTION && drawing){
+                } else if(e.type == SDL_MOUSEMOTION && drawing){
                     // retrieve the position
                     int xPos = e.button.x;
                     int yPos = e.button.y;
@@ -123,7 +137,10 @@ class SDLApp{
                             }
                             imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
                             if(networked == true) {
-                                test_client.sendChangeToServer(xPos+w,yPos+h, red, green, blue);
+                                Packet packet;
+                                packet = test_client.getChangeForServer(xPos+w,yPos+h, red, green, blue);
+                                // traffic = test_client.addToSend(traffic, packet);
+                                test_client.sendToServer(packet, socket);
                             }
                         }
                     }
@@ -176,14 +193,35 @@ class SDLApp{
 
                     } else if (e.key.keysym.sym == SDLK_n) {
                         if (networked == false) {
-                            test_client.main();
+                            //set up the socket and connection to server
+                            socket = test_client.initialize();
+                            //perform initial handshake and test connect string
+                            buffer = test_client.sendConnectionHandshake(socket);
                             networked = true;
                         } else {
                             networked = false;
+                            tear_down = true;
                         }
-                        
                     }
+                    // } else if (e.key.keysym.sym == SDLK_h) {
+                    //     server.run(); 
+                    // }
                 }
+            }
+            //if we have turned networking on, the client not the server
+            if (networked == true) {
+                while(!tear_down) {
+                    //check if there is traffic to send, if so send it, else listen
+                    // if(Deque.size > 0) {
+                    //     test_client.sendToServer(traffic.pop_back, socket);
+                    // }else {
+                        //listen
+                        Packet inbound = test_client.recieveFromServer(buffer, socket);
+                        //if traffic recieved update surface.
+                        imgSurface.UpdateSurfacePixel(inbound.x, inbound.y, inbound.r, inbound.g, inbound.b);
+                    // }
+                }
+
             }
 
             // Blit the surace (i.e. update the window with another surfaces pixels
@@ -201,6 +239,13 @@ class SDLApp{
 
     }
 }
+
+// void runClient(Deque traffic, Socket socket, Bool tear_down) {
+//     //if the client is running, loop
+    
+
+// }
+
 
 ///Test: Checks for the surface to be initialized to black RGB values or 0,0,0
 @("Initialization test")
