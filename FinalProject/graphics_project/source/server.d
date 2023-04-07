@@ -9,7 +9,7 @@ import test_addr;
 
 
 
-void main(){
+// void main(){
 
 	Address serverAddr = test_addr.find();
 	writeln(serverAddr);
@@ -40,85 +40,85 @@ void main(){
 	// NOTE: It's possible the port number is in use if you are not able
 	//  	 to connect. Try another one.
 
-    listener.bind(new InternetAddress(host,port));
-    // Allow 4 connections to be queued up
-    listener.listen(4);
+//     listener.bind(new InternetAddress(host,port));
+//     // Allow 4 connections to be queued up
+//     listener.listen(4);
 
-	// A SocketSet is equivalent to 'fd_set'
-	// https://linux.die.net/man/3/fd_set
-	// What SocketSet is used for, is to allow 
-	// 'multiplexing' of sockets -- or put another
-	// way, the ability for multiple clients
-	// to connect a socket to this single server
-	// socket.
-    auto readSet = new SocketSet();
-    Socket[] connectedClientsList;
+// 	// A SocketSet is equivalent to 'fd_set'
+// 	// https://linux.die.net/man/3/fd_set
+// 	// What SocketSet is used for, is to allow 
+// 	// 'multiplexing' of sockets -- or put another
+// 	// way, the ability for multiple clients
+// 	// to connect a socket to this single server
+// 	// socket.
+//     auto readSet = new SocketSet();
+//     Socket[] connectedClientsList;
 
-    // Message buffer will be large enough to send/receive Packet.sizeof
-    byte[Packet.sizeof] buffer;
+//     // Message buffer will be large enough to send/receive Packet.sizeof
+//     byte[Packet.sizeof] buffer;
 
-    bool serverIsRunning=true;
-	// int userID = 1;
+//     bool serverIsRunning=true;
+// 	// int userID = 1;
 
-    // Main application loop for the server
-	writeln("Awaiting client connections");
-    while(serverIsRunning){
-		// Clear the readSet
-        readSet.reset();
-		// Add the server
-        readSet.add(listener);
-        foreach(client ; connectedClientsList){
-            readSet.add(client);
-        }
+//     // Main application loop for the server
+// 	writeln("Awaiting client connections");
+//     while(serverIsRunning){
+// 		// Clear the readSet
+//         readSet.reset();
+// 		// Add the server
+//         readSet.add(listener);
+//         foreach(client ; connectedClientsList){
+//             readSet.add(client);
+//         }
         
-        // Handle each clients message
-        if(Socket.select(readSet, null, null)){
-            foreach(client; connectedClientsList){
-				// Check to ensure that the client
-				// is in the readSet before receving
-				// a message from the client.
-                if(readSet.isSet(client)){
-					// Server effectively is blocked
-					// until a message is received here.
-					// When the message is received, then
-					// we send that message from the 
-					// server to the client
-                    auto got = client.receive(buffer);
+//         // Handle each clients message
+//         if(Socket.select(readSet, null, null)){
+//             foreach(client; connectedClientsList){
+// 				// Check to ensure that the client
+// 				// is in the readSet before receving
+// 				// a message from the client.
+//                 if(readSet.isSet(client)){
+// 					// Server effectively is blocked
+// 					// until a message is received here.
+// 					// When the message is received, then
+// 					// we send that message from the 
+// 					// server to the client
+//                     auto got = client.receive(buffer);
 					
-					// Setup a packet to echo back
-					// to the client
-					Packet p;
-				    p.user 	= "connecting...";
-					byte[4] field1 =  buffer[16 .. 20].dup;
-					byte[4] field2 =  buffer[20 .. 24].dup;
-					int f1 = *cast(int*)&field1;
-					int f2 = *cast(int*)&field2;
-					p.x = f1;
-					p.y = f2;
+// 					// Setup a packet to echo back
+// 					// to the client
+// 					Packet p;
+// 				    p.user 	= "connecting...";
+// 					byte[4] field1 =  buffer[16 .. 20].dup;
+// 					byte[4] field2 =  buffer[20 .. 24].dup;
+// 					int f1 = *cast(int*)&field1;
+// 					int f2 = *cast(int*)&field2;
+// 					p.x = f1;
+// 					p.y = f2;
 					
-					// Send raw bytes from packet,
-                    client.send(p.GetPacketAsBytes());
-					writeln("readset is set for client");
-                }
-            }
-			// The listener is ready to read
-			// Client wants to connect so we accept here.
-			if(readSet.isSet(listener)){
-				auto newSocket = listener.accept();
-				// Based on how our client is setup,
-				// we need to send them an 'acceptance'
-				// message, so that the client can
-				// proceed forward.
-				newSocket.send("Welcome from server, you are now in our connectedClientsList");
-				// Add a new client to the list
-				connectedClientsList ~= newSocket;
-				writeln("> client",connectedClientsList.length," added to connectedClientsList");
-				writeln("readset is set for listener");
+// 					// Send raw bytes from packet,
+//                     client.send(p.GetPacketAsBytes());
+// 					writeln("readset is set for client");
+//                 }
+//             }
+// 			// The listener is ready to read
+// 			// Client wants to connect so we accept here.
+// 			if(readSet.isSet(listener)){
+// 				auto newSocket = listener.accept();
+// 				// Based on how our client is setup,
+// 				// we need to send them an 'acceptance'
+// 				// message, so that the client can
+// 				// proceed forward.
+// 				newSocket.send("Welcome from server, you are now in our connectedClientsList");
+// 				// Add a new client to the list
+// 				connectedClientsList ~= newSocket;
+// 				writeln("> client",connectedClientsList.length," added to connectedClientsList");
+// 				writeln("readset is set for listener");
 
-			}
-    	}
-	}
-}
+// 			}
+//     	}
+// 	}
+// }
 
 //TODO: Method for sending packets to every other client
 // get packet from user
