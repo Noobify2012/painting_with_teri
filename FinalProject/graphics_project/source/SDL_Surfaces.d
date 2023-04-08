@@ -74,6 +74,22 @@ class Surface{
     }
 
     /// https://www.redblobgames.com/grids/line-drawing.html
+    /**
+    * Perform linear interpolation between two points.
+    *
+    * Linear interpolation infers all points between two given points such that a line can be
+    * drawn between the two given points. Each point in the line will be filled at the stated 
+    * brush size and color.
+    *
+    * @param x1 - x coordinate of the first point
+    * @param y1 - y coordinate of the first point
+    * @param x2 - x coordinate of the second point
+    * @param y2 - y coordinate of the second point
+    * @param brushSize - the height and width of each point in the interpolated line
+    * @param red - red value on rgb scale
+    * @param green - green value on rgb scale
+    * @param blue - blue value on rgb scale
+    */
     void lerp(int x1, int y1, int x2, int y2, int brushSize, ubyte red, ubyte green, ubyte blue) {
         
         int numPoints = getNumPoints(x1, y1, x2, y2);
@@ -86,10 +102,38 @@ class Surface{
         }
     }
 
+    /**
+    * Determine number of points needed for linear interpolation.
+    *
+    * To perform linear interpolation between two points, and minimum number of points are needed
+    * to form a continuous line. This number of points is the larger between the vertical distance
+    * of the two points and the horizontal distance between the two points.
+    *
+    * @param x1 - x coordinate of the first point
+    * @param y1 - y coordinate of the first point
+    * @param x2 - x coordinate of the second point
+    * @param y2 - y coordinate of the second point
+    */
     int getNumPoints(int x1, int y1, int x2, int y2) {
         return max(abs(x2 - x1), abs(y2 - y1));
     }
 
+    /**
+    * Draws an interpolated point between two actual points.
+    *
+    * An interpolated point is found by calling lerpHelper to estimate an x coordinate and a y coordinate.
+    * The point is colored according to the color parameters and at the specified brush size.
+    *
+    * @param x1 - x coordinate of the first point
+    * @param y1 - y coordinate of the first point
+    * @param x2 - x coordinate of the second point
+    * @param y2 - y coordinate of the second point
+    * @param t - percentage of the interpolated line that has been drawn, calculated by: num points drawn / num points needed
+    * @param brushSize - the width and height of the point
+    * @param red - the red rgb value of the interpolated point
+    * @param green - the green rgb value of the interpolated point
+    * @param blue - the blue rgb vlaue of the interpolated point
+    */
     void drawLerpPoint(int x1, int y1, int x2, int y2, float t, int brushSize, ubyte red, ubyte green, ubyte blue) {
         int x = cast(int) round(lerpHelper(x1, x2, t));
         int y = cast(int) round(lerpHelper(y1, y2, t));
@@ -100,6 +144,16 @@ class Surface{
         }
     }
 
+    /**
+    * Determine the value of interpolation.
+    *
+    * Given a start and end value, determines the next interpolated value based on the fraction of the line that has
+    * already been drawn.
+    *
+    * @param start - start of the interpolation
+    * @param end - end of the interpolation
+    * @param t - fraction of the line that has been draw 
+    */
     float lerpHelper(int start, int end, float t) {
         return start * (1.0 - t) + end * t;
     }
