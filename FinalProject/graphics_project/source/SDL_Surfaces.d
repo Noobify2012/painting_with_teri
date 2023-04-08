@@ -8,7 +8,8 @@ import bindbc.sdl;
 import loader = bindbc.loader.sharedlib;
 
 /**
-Surface class creates an SDL surface on which to draw and includes drawing methods
+Name: Surface
+Description: Surface class creates an SDL surface on which to draw and includes drawing methods
 */
 
 class Surface{
@@ -23,10 +24,11 @@ class Surface{
     SDL_Surface* imgSurface;
 
     /**
-    Surface Constructor:
-    In: 
+    Name: Surface Constructor
+    Description: constructs surface of given size and color
+    Params: 
         flags: SLD flags,
-        width: surface width, height: surface height, depth: surface depth
+        width, height, depth: surface width, height, and depth, 
         Rmask, Gmask, Bmask, Amask: red, green, blue, and alpha mask for pixels
     */
     this(uint flags, int width, int height, int depth,
@@ -51,19 +53,23 @@ class Surface{
     }
 
     /**
-    Returns created surface
+    Name: GetSurface
+    Description: gets the surface created
+    Returns: created surface
     */
     SDL_Surface* getSurface() {
         return imgSurface;
     }
 
     /**
-    In:    
+    Name: UpdateSurfacePixel
+    Description: Changes color of selected pixel
+    Params:    
         xPos: x-coordinate of pixel, yPos: y-coordinate of pixel
         blueVal: rgb blue value, greenVal: rgb green value, redVal: rgb red value
     Changes pixel color at xPos, yPos
     */
-    void UpdateSurfacePixel(int xPos, int yPos, ubyte blueVal, ubyte greenVal, ubyte redVal){
+    void updateSurfacePixel(int xPos, int yPos, ubyte blueVal, ubyte greenVal, ubyte redVal){
         /// When we modify pixels, we need to lock the surface first
         SDL_LockSurface(imgSurface);
         /// Make sure to unlock the surface when we are done.
@@ -80,8 +86,11 @@ class Surface{
 
     /// Int array for fetching the colors of a pixel
     int[3] colors;
+
     /**
-    Method for getting the RGB values of the pixel passed in
+    Name: PixelAt
+    Description: Method for getting the RGB values of the pixel passed in
+    Returns: array of rgb values for given pixel
     */
     int[] PixelAt(int xPos, int yPos){
         ubyte* pixelArray = cast(ubyte*)imgSurface.pixels;
@@ -95,8 +104,13 @@ class Surface{
     }
 
     /**
-
-
+    Name: Lerp
+    Description: Draws the pixels along the line between point1 and point2 TODO: distinguish from drawLerp
+    Params:
+        x1, y1, x2, y2: x and y coordinates of start and end points
+        brushSize: size of the paintbrush
+        redVal, greenVal, blueVal: rgb values of line 
+        
     Reference: https://www.redblobgames.com/grids/line-drawing.html
     */
     void lerp(int x1, int y1, int x2, int y2, int brushSize, ubyte redVal, ubyte greenVal, ubyte blueVal) {
@@ -111,22 +125,44 @@ class Surface{
         }
     }
 
+    /**
+    Name: GetNumPoints
+    Description: gets distance between point1 and point2 in number of pixels
+    Params:
+        x1, y1, x2, y2: x and y coords of point1 and point2
+    Returns: tuple of distance between x values and y values
+    */
     int getNumPoints(int x1, int y1, int x2, int y2) {
         return max(abs(x2 - x1), abs(y2 - y1));
     }
 
-    /// Draws a 
-    void drawLerpPoint(int x1, int y1, int x2, int y2, float t, int brushSize, ubyte red, ubyte green, ubyte blue) {
+    /**
+    Name: DrawLerpPoint
+    Description: Draws a continuous line between points 1 and 2
+    Params: 
+        x1, y1, x2, y2: x and y coordinates of start and end points
+        brushSize: size of the paintbrush
+        t: TODO what is this?
+        redVal, greenVal, blueVal: rgb values of line 
+    */
+    void drawLerpPoint(int x1, int y1, int x2, int y2, float t, int brushSize, ubyte redVal, ubyte greenVal, ubyte blueVal) {
         int x = cast(int) round(lerpHelper(x1, x2, t));
         int y = cast(int) round(lerpHelper(y1, y2, t));
         for(int w=-brushSize; w < brushSize; w++){
             for(int h=-brushSize; h < brushSize; h++){
-                UpdateSurfacePixel(x + w, y + h, red, green, blue);
+                UpdateSurfacePixel(x + w, y + h, redVal, greenVal, blueVal);
             }
         }
     }
 
-    /// Creates a brush TODO: verify
+    /**
+    Name: LerpHelper
+    Description: Creates a brush TODO: confirm
+    Params:
+        start, end: start and end points
+        t: width TODO: confirm
+    Returns: brush TODO: confirm
+    */
     float lerpHelper(int start, int end, float t) {
         return start * (1.0 - t) + end * t;
     }
@@ -227,3 +263,23 @@ class Surface{
 }
 
 
+/**
+Test: Checks for the surface to be initialized to black, change the pixel color of 1,1 to blue, verify its blue,
+change it to red, ensure that the color of 1,1 is now red
+
+@("Change a pixel test")
+unittest{
+    SDLInit app = new SDLInit();
+    Surface s = new Surface(0,640,480,32,0,0,0,0);
+    s.lerp(1, 1, 3, 1, 1, 255, 128, 32);
+    /// Parse values of new data struct
+    assert(	s.PixelAt(2,1)[0] == 255 &&
+    s.PixelAt(2,1)[1] == 128 &&
+    s.PixelAt(2,1)[2] == 32, "error rgb value at x,y is wrong!");
+    /// Change the color of the pixel and make sure the change takes
+    s.lerp(1, 1, 3, 3, 1, 32, 128, 255);
+    /// Parse values of new data struct
+    assert(	s.PixelAt(2,2)[0] == 32 &&
+    s.PixelAt(2,2)[1] == 128 &&
+    s.PixelAt(2,2)[2] == 255, "error rgb value at x,y is wrong!");
+}*/

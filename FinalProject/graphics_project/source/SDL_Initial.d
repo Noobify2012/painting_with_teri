@@ -6,12 +6,16 @@ import bindbc.sdl;
 import loader = bindbc.loader.sharedlib;
 
 /**
-Loads and initializes SDL libraries.
+Name: SDLInit
+Description: Class loads and initializes SDL libraries.
 */
 class SDLInit{
+    /**
+    SDLInit Constructor
+    Load the SDL libraries from bindbc-sdl
+    on the appropriate operating system
+     */
     this(){
-        /// Load the SDL libraries from bindbc-sdl
-        /// on the appropriate operating system
         version(Windows){
             writeln("Searching for SDL on Windows");
             ret = loadSDL("SDL2.dll");
@@ -46,9 +50,12 @@ class SDLInit{
         }
     }
 
-    /// At the module level, when we terminate, we make sure to
-    /// terminate SDL, which is initialized at the start of the application.
-    // shared static
+    /**
+    SDLInit Destructor
+    At the module level, when we terminate, we make sure to
+    terminate SDL, which is initialized at the start of the application.
+    shared static
+    */
     ~this(){
         /// Quit the SDL Application
         SDL_Quit();

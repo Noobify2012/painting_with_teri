@@ -26,8 +26,9 @@ import drawing_utilities;
 
 
 /**
-Main application class. 
-Creates SDL screen and performs appropriate paint actions when prompted.
+Name: SDLApp
+Description: Main application class. 
+    Creates SDL screen and performs appropriate paint actions when prompted.
 */
 class SDLApp{
 
@@ -85,6 +86,7 @@ class SDLApp{
         while(runApplication){
             SDL_Event e;
             
+            // TODO: figure out why Matt deleted this
             /** 
             Handle events
             Events are pushed into an 'event queue' internally in SDL, and then
