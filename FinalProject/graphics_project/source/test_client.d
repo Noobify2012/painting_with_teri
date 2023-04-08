@@ -18,28 +18,53 @@ import Packet : Packet;
 //TODO: break out method to recieve color changes from user
 //TODO: method to recieve color changes from server
 //
-// void main(){
-// 	writeln("Starting client...attempt to create socket");
-//     // Create a socket for connecting to a server
-//     auto socket = new Socket(AddressFamily.INET, SocketType.STREAM);
-//         // auto r = getAddress("8.8.8.8" , 53);
-//         //  const char[] address = r[0].toAddrString().dup;
-//         //  ushort port = to!ushort(r[0].toPortString());
-// 	// Socket needs an 'endpoint', so we determine where we
-// 	// are going to connect to.
-// 	// NOTE: It's possible the port number is in use if you are not
-// 	//       able to connect. Try another one.
 
-//     //TODO: add try catch to handle if the connection is refused. 
+/**Name: Initialize
+Description: Method to create a socket connection to the server
+Inputs: none
+Returns: A socket that is connected to the server
+Notes: Catches the exception if the client failes to connect, loops infinitly if a connection can't be made.
+*/
+Socket initialize() {
+	writeln("Starting client...attempt to create socket");
+    // Create a socket for connecting to a server
+    auto socket = new Socket(AddressFamily.INET, SocketType.STREAM);
+    bool connected = false;
+        // auto r = getAddress("8.8.8.8" , 53);
+        //  const char[] address = r[0].toAddrString().dup;
+        //  ushort port = to!ushort(r[0].toPortString());
+	// Socket needs an 'endpoint', so we determine where we
+	// are going to connect to.
+	// NOTE: It's possible the port number is in use if you are not
+	//       able to connect. Try another one.
 
-//     string serverAddress = getServerAddress();
-//     ushort serverPort = getServerPort();
-//     socket.connect(new InternetAddress(serverAddress.dup, serverPort));
-//     // writeln(socket.hostName);
-//     //  writeln("My IP address is  : ", socket.localAddress);
-//     //  writeln("the remote address is: ", socket.remoteAddress);
-// 	scope(exit) socket.close();
-// 	writeln("Connected");
+    //TODO: add try catch to handle if the connection is refused. 
+    while (!connected) {
+        //get an address to connect to from the user
+        string serverAddress = getServerAddress();
+        //get a port to connect to from the user
+        ushort serverPort = getServerPort();
+        writeln("attempting to connect to : " ~ to!string(serverAddress) ~ " on port: " ~to!string(serverPort));
+        socket.connect(new InternetAddress(serverAddress.dup, serverPort));
+        connected = true;
+
+        // try {
+        //     socket.connect(new InternetAddress(serverAddress.dup, serverPort));
+        //     connected = true;
+        // } 
+        // catch (SocketException e) 
+        // {
+        //     writeln("Failed to connect, please check the address and port and try again.");
+        // }
+    }
+    
+    // writeln(socket.hostName);
+    //  writeln("My IP address is  : ", socket.localAddress);
+    //  writeln("the remote address is: ", socket.remoteAddress);
+	// scope(exit) socket.close();
+	writeln("Connected");
+    return socket;
+}
 
 //     // Buffer of data to send out
 //     byte[Packet.sizeof] buffer;
@@ -107,12 +132,69 @@ import Packet : Packet;
 //     }
 // }
 
-void recieveFromServer() {
+byte[Packet.sizeof] sendConnectionHandshake(Socket socket) {
+    byte[Packet.sizeof] buffer;
+    auto received = socket.receive(buffer);
+
+    writeln("On Connect: ", buffer[0 .. received]);
+	write(">");
+    return buffer;
+}
+
+void sendToServer(Packet packet, Socket socket) {
+    socket.send(packet.GetPacketAsBytes());
+}
+
+Packet recieveFromServer(Socket socket, byte[Packet.sizeof] buffer) {
+    auto fromServer = buffer[0 .. socket.receive(buffer)];
+		writeln("sizeof fromServer:",fromServer.length);
+		// writeln("sizeof Packet    :", Packet.sizeof);
+		writeln("buffer length    :", buffer.length);
+		writeln("fromServer (raw bytes): ",fromServer);
+		writeln();
+
+
+		// Format the packet. Note, I am doing this in a very
+		// verbosoe manner so you can see each step.
+		Packet formattedPacket;
+		byte[16] field0        = fromServer[0 .. 16].dup;
+		formattedPacket.user = cast(char[])(field0);
+        writeln("Server echos back user: ", formattedPacket.user);
+
+		// Get some of the fields
+		byte[4] field1 = fromServer[16 .. 20].dup;
+		byte[4] field2 = fromServer[20 .. 24].dup;
+        byte[4] field3 = fromServer[24 .. 28].dup;
+		byte[4] field4 = fromServer[28 .. 32].dup;
+        byte[4] field5 = fromServer[32 .. 36].dup;
+		int f1 = *cast(int*)&field1;
+		int f2 = *cast(int*)&field2;
+        byte f3 = *cast(byte*)&field3;
+        byte f4 = *cast(byte*)&field4;
+        byte f5 = *cast(byte*)&field5;
+		formattedPacket.x = f1;
+		formattedPacket.y = f2;
+        formattedPacket.r = f3;
+        formattedPacket.g = f4;
+        formattedPacket.b = f5;
+
+		writeln("what is field1(x): ",formattedPacket.x);
+		writeln("what is field2(y): ",formattedPacket.y);
+        writeln("what is field3(r): ",formattedPacket.r);
+		writeln("what is field4(g): ",formattedPacket.g);
+        writeln("what is field5(b): ",formattedPacket.b);
+		// NOTE: You may want to explore std.bitmanip, if you
+		//       have different endian machines.
+//		int value = peek!(int,Endian.littleEndian)(field1);
+
+		write(">");
+
+        return formattedPacket;
 
 }
 
 
-void getChangeForServer(int xPos, int yPos, ubyte blueVal, ubyte greenVal, ubyte redVal) {
+Packet getChangeForServer(int xPos, int yPos, ubyte blueVal, ubyte greenVal, ubyte redVal) {
     Packet data;
 		// The 'with' statement allows us to access an object
 		// (i.e. member variables and member functions)
@@ -128,8 +210,9 @@ void getChangeForServer(int xPos, int yPos, ubyte blueVal, ubyte greenVal, ubyte
 			b = blueVal;
 			message = "update from user: " ~ 1 ~ " test\0";
 		}
-		// Send the packet of information breaks, can't send socket from SDLApp
-        // socket.send(data.GetPacketAsBytes());
+	// Send the packet of information breaks, can't send socket from SDLApp
+    // socket.send(data.GetPacketAsBytes());
+    return data;
 }
 
 string getServerAddress() {
@@ -148,7 +231,8 @@ string getServerAddress() {
         string ip_regex = "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$";
         if (auto m = std.regex.matchFirst(user_input, ip_regex)) {
             good_addr = true;
-        } else if(user_input == ""){
+            user_addr = user_input;
+        } else if(user_input == "") {
             good_addr = true;
         } else {
             writeln("Invalid IP address recieved");
