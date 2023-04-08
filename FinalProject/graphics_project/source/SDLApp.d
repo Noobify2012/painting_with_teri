@@ -18,21 +18,14 @@ import Deque : Deque;
 // import server;
 
 
-import shapes;
-import drawing_utilities;
-
 // For printing the key pressed info
 // void PrintKeyInfo( SDL_KeyboardEvent *key );
 
 
-/**
-Name: SDLApp
-Description: Main application class. 
-    Creates SDL screen and performs appropriate paint actions when prompted.
-*/
+
 class SDLApp{
 
-    /// Global variable for sdl;
+    /// global variable for sdl;
     const SDLSupport ret;
 
 
@@ -81,19 +74,16 @@ class SDLApp{
 
         // SDL_EnableUNICODE( 1 );
 
-        // Main application loop that will run until a quit event has occurred.
-        // This is the 'main graphics loop'
+        /// Main application loop that will run until a quit event has occurred.
+        /// This is the 'main graphics loop'
         while(runApplication){
             SDL_Event e;
             
-            // TODO: figure out why Matt deleted this
-            /** 
-            Handle events
-            Events are pushed into an 'event queue' internally in SDL, and then
-            handled one at a time within this loop for as many events have
-            been pushed into the internal SDL queue. Thus, we poll until there
-            are '0' events or a NULL event is returned.
-            */
+            /// Handle events
+            /// Events are pushed into an 'event queue' internally in SDL, and then
+            /// handled one at a time within this loop for as many events have
+            /// been pushed into the internal SDL queue. Thus, we poll until there
+            /// are '0' events or a NULL event is returned.
             while(SDL_PollEvent(&e) !=0){
 
                 if(e.type == SDL_QUIT){
@@ -179,7 +169,6 @@ class SDLApp{
 
 
                 } else if(e.type == SDL_KEYUP) {
-                    /// Change brush size
                     printf("key released: ");
                     //, to!string(e.key.keysym.sym));
                     if (e.key.keysym.sym == SDLK_b) {
@@ -190,7 +179,6 @@ class SDLApp{
                         }
                         writeln("Changing to brush size: " , to!string(brush));
                     } else if (e.key.keysym.sym == SDLK_c) {
-                        /// Change brush color (rotate through preset colors at each press)
                         if (color < 3) {
                             color++;
                         } else {
