@@ -14,7 +14,7 @@ import SDL_Initial :SDLInit;
 // include <SDL2/SDL.h>
 import test_client;
 import Packet : Packet;
-import Deque;
+import Deque : Deque;
 // import server;
 
 
@@ -64,10 +64,11 @@ class SDLApp{
         int prevY = -9999;
 
         //intialize deque for storing traffic to send
-        // auto traffic = new Deque!(Packet);
+        auto traffic = new Deque!(Packet);
         Socket socket;
         byte[Packet.sizeof] buffer;
         bool tear_down = false;
+        // Deque traffic = new Deque!Packet;
         
 
 
@@ -140,7 +141,8 @@ class SDLApp{
                                 Packet packet;
                                 packet = test_client.getChangeForServer(xPos+w,yPos+h, red, green, blue);
                                 // traffic = test_client.addToSend(traffic, packet);
-                                test_client.sendToServer(packet, socket);
+                                traffic.push_front(packet);
+                                // test_client.sendToServer(packet, socket);
                             }
                         }
                     }
@@ -210,18 +212,23 @@ class SDLApp{
             }
             //if we have turned networking on, the client not the server
             if (networked == true) {
-                while(!tear_down) {
+                // while(!tear_down) {
                     //check if there is traffic to send, if so send it, else listen
-                    // if(Deque.size > 0) {
-                    //     test_client.sendToServer(traffic.pop_back, socket);
-                    // }else {
+                    // writeln("size of traffic: " ~ to!string(traffic.size));
+                    if(traffic.size > 0) {
+                        test_client.sendToServer(traffic.pop_back, socket);
+                        writeln("traffic sent");
+                    }
+                    //else {
                         //listen
                         // Packet inbound;
                         Packet inbound = test_client.recieveFromServer(socket, buffer);
+                        writeln("traffic recieved");
                         //if traffic recieved update surface.
                         imgSurface.UpdateSurfacePixel(inbound.x, inbound.y, inbound.r, inbound.g, inbound.b);
+                        writeln("updated surface pixel");
                     // }
-                }
+                // }
 
             }
 

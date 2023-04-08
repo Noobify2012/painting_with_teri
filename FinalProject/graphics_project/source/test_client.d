@@ -162,11 +162,11 @@ Packet recieveFromServer(Socket socket, byte[Packet.sizeof] buffer) {
         writeln("Server echos back user: ", formattedPacket.user);
 
 		// Get some of the fields
-		byte[4] field1        = fromServer[16 .. 20].dup;
-		byte[4] field2        = fromServer[20 .. 24].dup;
-        byte[4] field3        = fromServer[24 .. 28].dup;
-		byte[4] field4        = fromServer[28 .. 32].dup;
-        byte[4] field5        = fromServer[32 .. 36].dup;
+		byte[4] field1 = fromServer[16 .. 20].dup;
+		byte[4] field2 = fromServer[20 .. 24].dup;
+        byte[4] field3 = fromServer[24 .. 28].dup;
+		byte[4] field4 = fromServer[28 .. 32].dup;
+        byte[4] field5 = fromServer[32 .. 36].dup;
 		int f1 = *cast(int*)&field1;
 		int f2 = *cast(int*)&field2;
         byte f3 = *cast(byte*)&field3;
@@ -232,7 +232,7 @@ string getServerAddress() {
         if (auto m = std.regex.matchFirst(user_input, ip_regex)) {
             good_addr = true;
             user_addr = user_input;
-        } else if(user_input == ""){
+        } else if(user_input == "") {
             good_addr = true;
         } else {
             writeln("Invalid IP address recieved");
