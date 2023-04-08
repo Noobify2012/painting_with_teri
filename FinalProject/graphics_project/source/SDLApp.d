@@ -15,6 +15,9 @@ import SDL_Initial :SDLInit;
 import test_client;
 import Packet : Packet;
 import Deque : Deque;
+
+import shapes;
+import drawing_utilities;
 // import server;
 
 
@@ -62,6 +65,8 @@ class SDLApp{
 
         int prevX = -9999;
         int prevY = -9999;
+
+        DrawingUtility du = new DrawingUtility();
 
         /// Intialize deque for storing traffic to send
         auto traffic = new Deque!(Packet);
@@ -172,6 +177,7 @@ class SDLApp{
                     printf("key released: ");
                     //, to!string(e.key.keysym.sym));
                     if (e.key.keysym.sym == SDLK_b) {
+                        /// Change brush size
                         if (brush < 3) {
                             brush++;
                         } else {
@@ -179,6 +185,7 @@ class SDLApp{
                         }
                         writeln("Changing to brush size: " , to!string(brush));
                     } else if (e.key.keysym.sym == SDLK_c) {
+                        /// Change color
                         if (color < 3) {
                             color++;
                         } else {
