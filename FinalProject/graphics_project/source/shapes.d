@@ -11,6 +11,11 @@ import SDL_Initial :SDLInit;
 
 import drawing_utilities;
 
+/**
+Name: Shape
+Description: Shape class outlines and fills shape based on user input.
+  User will indicate which shape to draw and click to set the shape boundaries.
+*/
 class Shape {
 
   this() {
@@ -21,6 +26,14 @@ class Shape {
 
   }
   
+  /**
+  Name: DrawShape
+  Description: Calculates shape coordinates/area, draws and fills shape.
+  Params: 
+    surf: SDL surface to draw on
+    brushSize: how many pixels the brush will cover
+    r, g, b: rgb values of shape
+  */
   void drawShape(Surface* surf, int brushSize, ubyte r, ubyte g, ubyte b) {
 
     // !!!!!
@@ -41,7 +54,7 @@ class Shape {
             shapeIsDrawn = true;
 
         } else if (e.key.keysym.sym == SDLK_r) {
-          writeln("Drawing rectangle");
+          writeln("Drawing rectangle. Click two points for corners.");
 
           int numPoints = 0;
           int numPointsNeeded = 2;
@@ -126,13 +139,15 @@ class Shape {
           shapeIsDrawn = true;
 
         } else if (e.key.keysym.sym == SDLK_c) {
-          writeln("Drawing circle");
+          /// Draw Circle
+          writeln("Drawing circle. Click two points to fit circle into.");
 
           int numPoints = 0;
           int numPointsNeeded = 2;
 
           Tuple!(int, int) p1, p2, midpoint;
 
+          /// Get points from click to set border
           while (numPoints < numPointsNeeded) {
             SDL_Event f;
             while (SDL_PollEvent(&f) != 0) {
@@ -150,15 +165,16 @@ class Shape {
             }
           }
 
+          /// Calculate radius and midpoint
           int radius = cast(int) sqrt(cast(float) ((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]))) / 2;
           midpoint = tuple(cast(int) ((p1[0] + p2[0]) / 2), cast(int) ((p1[1] + p2[1]) / 2));
-
+          /// Set border
           int top, bottom, left, right;
           top = max(0, midpoint[1] - radius);
           bottom = min(480, midpoint[1] + radius);
           left = max(0, midpoint[0] - radius);
           right = min(640, midpoint[0] + radius);
-
+          /// Fill in circle
           for (int i = top; i <= bottom; ++i) {
             for (int j = left; j <= right; ++j) {
               if ((j - midpoint[0]) * (j - midpoint[0]) + (i - midpoint[1]) * (i - midpoint[1]) <= radius * radius) {
@@ -170,7 +186,8 @@ class Shape {
           shapeIsDrawn = true;
 
         } else if (e.key.keysym.sym == SDLK_t) {
-          writeln("Drawing triangle");
+          /// Draw Triangle
+          writeln("Drawing triangle. Click three corners.");
 
           int numPoints = 0;
           int numPointsNeeded = 3;
@@ -203,7 +220,10 @@ class Shape {
           // (a, b), (c, d)
           // y - b = (d - b)/(c - a) * (x - a)
 
-          int top = min(p1[1], p2[1], p3[1]), bottom = max(p1[1], p2[1], p3[1]), left = min(p1[0], p1[0], p2[0]), right = max(p1[0], p2[0], p3[0]);
+          int top = min(p1[1], p2[1], p3[1]), 
+            bottom = max(p1[1], p2[1], p3[1]),
+            left = min(p1[0], p1[0], p2[0]), 
+            right = max(p1[0], p2[0], p3[0]);
 
           surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
           surf.lerp(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
