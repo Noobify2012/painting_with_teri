@@ -198,7 +198,7 @@ class Deque(T) : Container!(T) {
 /**
 Testing: push_front, size, pop_front all with only 1 operation
 Status: Passed
-*/
+
 unittest{
     auto myDeque = new Deque!(int);
     myDeque.push_front(1);
@@ -214,7 +214,7 @@ unittest{
 /**
 Testing: push_back, size, pop_back all with only 1 operation
 Status: Passed
-*/
+
 unittest{
     auto myDeque = new Deque!(int);
     myDeque.push_back(1);
@@ -230,7 +230,7 @@ unittest{
 /**
 Testing: push_front x 2, size, pop_front x2 all with only 1 operation
 Status: Passed
-*/
+
 unittest{
     auto myDeque = new Deque!(int);
     myDeque.push_front(1);
@@ -251,7 +251,7 @@ unittest{
 /**
 Testing: push_back, size, pop_front
 Status: Passed
-*/
+
 unittest{
     auto myDeque = new Deque!(int);
     myDeque.push_back(1);
@@ -268,7 +268,7 @@ unittest{
 /**
 Testing: push_front x2, size, pop_back x2
 Status: Passed
-*/
+
 unittest{
     auto myDeque = new Deque!(int);
     myDeque.push_front(1);
@@ -290,7 +290,7 @@ unittest{
 /**
 Testing: push_back, push_back, size, pop_back
 Status: Passed
-*/
+
 unittest{
     auto myDeque = new Deque!(int);
     myDeque.push_back(1);
@@ -307,7 +307,7 @@ unittest{
 /**
 Testing: push_front, get front
 Status: Passed
-*/
+
 unittest{
     auto myDeque = new Deque!(int);
     myDeque.push_front(1);
@@ -319,7 +319,7 @@ unittest{
 /**
 Testing: push_back, get back
 Status: Passed
-*/
+
 unittest{
     auto myDeque = new Deque!(int);
     myDeque.push_back(1);
@@ -331,7 +331,7 @@ unittest{
 /**
 Testing: push_back, push_back, get at index 0 and get at index 1
 Status: Passed
-*/
+
 unittest{
     auto myDeque = new Deque!(int);
     myDeque.push_back(1);
@@ -345,7 +345,7 @@ unittest{
 /**
 Testing: push_back x 6, check size
 Status: Passed
-*/
+
 unittest{
     auto myDeque = new Deque!(int);
     myDeque.push_back(1);
@@ -364,7 +364,7 @@ unittest{
 /**
 Testing: check all assertian errors
 Status: Passed
-*/
+
 unittest{
     auto myDeque = new Deque!(int);
     assertThrown!AssertError(myDeque.pop_back());
@@ -375,5 +375,5 @@ unittest{
     writeln("END of eleventh test\n");
 }
 
-
+*/
 

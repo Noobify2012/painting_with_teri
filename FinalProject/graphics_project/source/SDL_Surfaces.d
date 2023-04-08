@@ -3,9 +3,12 @@ import std.string;
 import std.math;
 import std.algorithm;
 
+import SDL_Initial :SDLInit;
+
 /// Load the SDL2 library
 import bindbc.sdl;
 import loader = bindbc.loader.sharedlib;
+
 
 /**
 Name: Surface
@@ -266,7 +269,7 @@ class Surface{
 /**
 Test: Checks for the surface to be initialized to black, change the pixel color of 1,1 to blue, verify its blue,
 change it to red, ensure that the color of 1,1 is now red
-
+*/
 @("Change a pixel test")
 unittest{
     SDLInit app = new SDLInit();
@@ -282,4 +285,4 @@ unittest{
     assert(	s.PixelAt(2,2)[0] == 32 &&
     s.PixelAt(2,2)[1] == 128 &&
     s.PixelAt(2,2)[2] == 255, "error rgb value at x,y is wrong!");
-}*/
+}
