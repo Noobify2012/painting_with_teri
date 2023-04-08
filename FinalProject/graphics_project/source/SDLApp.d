@@ -143,6 +143,7 @@ class SDLApp{
                                 blue = 0;
                                 // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 0, 0, 0);
                             }
+                            /// Send change from user to deque
                             imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
                             if(networked == true) {
                                 Packet packet;
@@ -161,7 +162,7 @@ class SDLApp{
                     prevX = xPos;
                     prevY = yPos;
                     /// If keyboard is pressed check for change event
-                } else if(e.type == SDL_KEYDOWN) { /// TODO: What is happening here? 
+                } else if(e.type == SDL_KEYDOWN) { // Listener for button down - not in use yet
                     // writeln()
                     // PrintKeyInfo( &e.key );
                     // printf( ", Name: %s", SDL_GetKeyName( key.keysym.sym ) );
@@ -250,18 +251,19 @@ class SDLApp{
             //if we have turned networking on, the client not the server
             if (networked == true) {
                 // while(!tear_down) {
-                    //check if there is traffic to send, if so send it, else listen
+                    /// Check if there is traffic to send, if so send it, else listen
                     // writeln("size of traffic: " ~ to!string(traffic.size));
                     if(traffic.size > 0) {
+                        /// Send action to server
                         test_client.sendToServer(traffic.pop_back, socket);
                         writeln("traffic sent");
                     }
                     //else {
-                        //listen
+                        /// Listen
                         // Packet inbound;
                         Packet inbound = test_client.recieveFromServer(socket, buffer);
                         writeln("traffic recieved");
-                        //if traffic recieved update surface.
+                        /// If traffic recieved update surface.
                         imgSurface.UpdateSurfacePixel(inbound.x, inbound.y, inbound.r, inbound.g, inbound.b);
                         writeln("updated surface pixel");
                     // }

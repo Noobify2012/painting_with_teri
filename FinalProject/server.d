@@ -12,7 +12,7 @@ import test_addr;
 Set up second terminal to run server.
 */
 void main(){
-
+    
 	Address serverAddr = test_addr.find();
 	writeln(serverAddr);
 	string[] dumb = to!string(serverAddr).split(":");
