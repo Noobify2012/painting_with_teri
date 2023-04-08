@@ -85,11 +85,13 @@ class SDLApp{
         while(runApplication){
             SDL_Event e;
             
-            // Handle events
-            // Events are pushed into an 'event queue' internally in SDL, and then
-            // handled one at a time within this loop for as many events have
-            // been pushed into the internal SDL queue. Thus, we poll until there
-            // are '0' events or a NULL event is returned.
+            /** 
+            Handle events
+            Events are pushed into an 'event queue' internally in SDL, and then
+            handled one at a time within this loop for as many events have
+            been pushed into the internal SDL queue. Thus, we poll until there
+            are '0' events or a NULL event is returned.
+            */
             while(SDL_PollEvent(&e) !=0){
 
                 if(e.type == SDL_QUIT){
@@ -102,10 +104,10 @@ class SDLApp{
                     prevX = -9999;
                     prevY = -9999;
                 } else if(e.type == SDL_MOUSEMOTION && drawing){
-                    // retrieve the position
+                    /// Get position of the mouse when drawing
                     int xPos = e.button.x;
                     int yPos = e.button.y;
-                    // Loop through and update specific pixels
+                    /// Loop through and update specific pixels
                     // NOTE: No bounds checking performed --
                     //       think about how you might fix this :)
                     if (brush == 1) {
@@ -207,7 +209,7 @@ class SDLApp{
 
                     } else if (e.key.keysym.sym == SDLK_n) {
                         if (networked == false) {
-                            // Set up the socket and connection to server
+                            /// Set up the socket and connection to server
                             socket = test_client.initialize();
                             /// Perform initial handshake and test connect string
                             buffer = test_client.sendConnectionHandshake(socket);
