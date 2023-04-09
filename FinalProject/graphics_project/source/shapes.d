@@ -14,6 +14,7 @@ import Shape2 : Shape2;
 import Rectangle : Rectangle;
 import Circle : Circle;
 import Line : Line;
+import Triangle : Triangle;
 
 class Shape {
 
@@ -186,29 +187,29 @@ class Shape {
         } else if (e.key.keysym.sym == SDLK_t) {
           writeln("Drawing triangle");
 
-          int numPoints = 0;
-          int numPointsNeeded = 3;
+          // int numPoints = 0;
+          // int numPointsNeeded = 3;
 
-          Tuple!(int, int) p1, p2, p3;
+          // Tuple!(int, int) p1, p2, p3;
 
-          while (numPoints < numPointsNeeded) {
-            SDL_Event f;
-            while (SDL_PollEvent(&f) != 0) {
-              if (f.type == SDL_QUIT) {
-                shapeIsDrawn = true;
-                break;
-              } else if (f.type == SDL_MOUSEBUTTONDOWN) {
-                if (numPoints == 0) {
-                  p1 = tuple(f.button.x, f.button.y);
-                } else if (numPoints == 1) {
-                  p2 = tuple(f.button.x, f.button.y);
-                } else {
-                  p3 = tuple(f.button.x, f.button.y);
-                }
-                ++numPoints;
-              }
-            }
-          }
+          // while (numPoints < numPointsNeeded) {
+          //   SDL_Event f;
+          //   while (SDL_PollEvent(&f) != 0) {
+          //     if (f.type == SDL_QUIT) {
+          //       shapeIsDrawn = true;
+          //       break;
+          //     } else if (f.type == SDL_MOUSEBUTTONDOWN) {
+          //       if (numPoints == 0) {
+          //         p1 = tuple(f.button.x, f.button.y);
+          //       } else if (numPoints == 1) {
+          //         p2 = tuple(f.button.x, f.button.y);
+          //       } else {
+          //         p3 = tuple(f.button.x, f.button.y);
+          //       }
+          //       ++numPoints;
+          //     }
+          //   }
+          // }
 
           // if (fabs(cast(float) (p2[0] - p1[0]))) {
           //   continue;
@@ -217,16 +218,18 @@ class Shape {
           // (a, b), (c, d)
           // y - b = (d - b)/(c - a) * (x - a)
 
-          int top = min(p1[1], p2[1], p3[1]), bottom = max(p1[1], p2[1], p3[1]), left = min(p1[0], p1[0], p2[0]), right = max(p1[0], p2[0], p3[0]);
+          // int top = min(p1[1], p2[1], p3[1]), bottom = max(p1[1], p2[1], p3[1]), left = min(p1[0], p1[0], p2[0]), right = max(p1[0], p2[0], p3[0]);
 
-          surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
-          surf.lerp(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
-          surf.lerp(p1[0], p1[1], p3[0], p3[1], brushSize, r, g, b);
+          // surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
+          // surf.lerp(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
+          // surf.lerp(p1[0], p1[1], p3[0], p3[1], brushSize, r, g, b);
 
-          Tuple!(int, int) centroid = tuple((p1[0] + p2[0] + p3[0]) / 3, (p1[1] + p2[1] + p3[1]) / 3);
+          // Tuple!(int, int) centroid = tuple((p1[0] + p2[0] + p3[0]) / 3, (p1[1] + p2[1] + p3[1]) / 3);
 
-          surf.lerp(centroid[0], centroid[1], centroid[0], centroid[1], brushSize, r, g, b);
+          // surf.lerp(centroid[0], centroid[1], centroid[0], centroid[1], brushSize, r, g, b);
 
+          sh = new Triangle(surf);
+          sh.draw(brushSize, r, g, b);
           shapeIsDrawn = true;
         }
       }
