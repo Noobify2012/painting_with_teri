@@ -7,10 +7,10 @@ import loader = bindbc.loader.sharedlib;
 import SDL_Surfaces :Surface;
 import SDL_Initial :SDLInit;
 
-import Shape2 : Shape2;
+import Shape : Shape;
 import SDL_Surfaces;
 
-class Circle : Shape2 {
+class Circle : Shape {
 
     Surface* surf;
 

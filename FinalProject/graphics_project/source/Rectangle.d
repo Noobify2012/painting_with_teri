@@ -6,10 +6,10 @@ import loader = bindbc.loader.sharedlib;
 import SDL_Surfaces :Surface;
 import SDL_Initial :SDLInit;
 
-import Shape2 : Shape2;
+import Shape : Shape;
 import SDL_Surfaces;
 
-class Rectangle : Shape2 {
+class Rectangle : Shape {
 
     Surface* surf;
 
