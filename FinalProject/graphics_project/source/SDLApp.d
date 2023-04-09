@@ -15,6 +15,7 @@ import SDL_Initial :SDLInit;
 import test_client;
 import Packet : Packet;
 import Deque : Deque;
+import test_addr;
 // import server;
 
 
@@ -65,9 +66,11 @@ class SDLApp{
 
         //intialize deque for storing traffic to send
         auto traffic = new Deque!(Packet);
-        Socket socket;
+        Socket sendSocket;
         byte[Packet.sizeof] buffer;
         bool tear_down = false;
+        
+        Socket recieveSocket;
         // Deque traffic = new Deque!Packet;
         
 
@@ -142,7 +145,7 @@ class SDLApp{
                                 packet = test_client.getChangeForServer(xPos+w,yPos+h, red, green, blue);
                                 // traffic = test_client.addToSend(traffic, packet);
                                 traffic.push_front(packet);
-                                // test_client.sendToServer(packet, socket);
+                                // test_client.sendToServer(packet, sendSocket);
                             }
                         }
                     }
@@ -196,9 +199,12 @@ class SDLApp{
                     } else if (e.key.keysym.sym == SDLK_n) {
                         if (networked == false) {
                             //set up the socket and connection to server
-                            socket = test_client.initialize();
+                            sendSocket = test_client.initialize();
                             //perform initial handshake and test connect string
-                            buffer = test_client.sendConnectionHandshake(socket);
+                            auto address = test_addr.find();
+                            auto port = test_addr.findPort();
+                            // recieveSocket =
+                            buffer = test_client.sendConnectionHandshake(sendSocket);
                             networked = true;
                         } else {
                             networked = false;
@@ -216,17 +222,18 @@ class SDLApp{
                     //check if there is traffic to send, if so send it, else listen
                     // writeln("size of traffic: " ~ to!string(traffic.size));
                     if(traffic.size > 0) {
-                        test_client.sendToServer(traffic.pop_back, socket);
+                        test_client.sendToServer(traffic.pop_back, sendSocket);
                         writeln("traffic sent");
-                    }
-                    //else {
-                        //listen
-                        // Packet inbound;
-                        Packet inbound = test_client.recieveFromServer(socket, buffer);
+                        Packet inbound = test_client.recieveFromServer(sendSocket, buffer);
                         writeln("traffic recieved");
                         //if traffic recieved update surface.
                         imgSurface.UpdateSurfacePixel(inbound.x, inbound.y, inbound.r, inbound.g, inbound.b);
                         writeln("updated surface pixel");
+                    }
+                    // else {
+                    //     //listen
+                    //     // Packet inbound;
+                        
                     // }
                 // }
 

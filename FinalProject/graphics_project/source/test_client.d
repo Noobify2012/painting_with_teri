@@ -132,6 +132,12 @@ Socket initialize() {
 //     }
 // }
 
+// Socket listenerInit (Socket listener) {
+//     Address listenAddr = test_addr.find();
+// 	string[] listen = to!string(listenAddr).split(":");
+// }
+
+
 byte[Packet.sizeof] sendConnectionHandshake(Socket socket) {
     byte[Packet.sizeof] buffer;
     auto received = socket.receive(buffer);
@@ -167,6 +173,8 @@ Packet recieveFromServer(Socket socket, byte[Packet.sizeof] buffer) {
         byte[4] field3 = fromServer[24 .. 28].dup;
 		byte[4] field4 = fromServer[28 .. 32].dup;
         byte[4] field5 = fromServer[32 .. 36].dup;
+        // byte[64] messageField = fromServer[36 .. 100].dup;
+        // byte[4] field6 = fromServer[100 .. 104].dup;
 		int f1 = *cast(int*)&field1;
 		int f2 = *cast(int*)&field2;
         byte f3 = *cast(byte*)&field3;
