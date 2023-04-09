@@ -12,6 +12,7 @@ import SDL_Initial :SDLInit;
 import drawing_utilities;
 import Shape2 : Shape2;
 import Rectangle : Rectangle;
+import Circle : Circle;
 
 class Shape {
 
@@ -38,6 +39,7 @@ class Shape {
     // are '0' events or a NULL event is returned.
     bool shapeIsDrawn = false;
     while (!shapeIsDrawn) {
+      Shape2 sh;
       while(SDL_PollEvent(&e) !=0){
         if(e.type == SDL_QUIT){
             shapeIsDrawn = true;
@@ -92,8 +94,8 @@ class Shape {
           //   }
           // }
 
-          Shape2 rec = new Rectangle(surf);
-          rec.draw(brushSize, r, g, b);
+          sh = new Rectangle(surf);
+          sh.draw(brushSize, r, g, b);
 
           shapeIsDrawn = true;
 
@@ -133,44 +135,47 @@ class Shape {
         } else if (e.key.keysym.sym == SDLK_c) {
           writeln("Drawing circle");
 
-          int numPoints = 0;
-          int numPointsNeeded = 2;
+          // int numPoints = 0;
+          // int numPointsNeeded = 2;
 
-          Tuple!(int, int) p1, p2, midpoint;
+          // Tuple!(int, int) p1, p2, midpoint;
 
-          while (numPoints < numPointsNeeded) {
-            SDL_Event f;
-            while (SDL_PollEvent(&f) != 0) {
-              if (f.type == SDL_QUIT) {
-                shapeIsDrawn = true;
-                break;
-              } else if (f.type == SDL_MOUSEBUTTONDOWN) {
-                if (numPoints == 0) {
-                  p1 = tuple(f.button.x, f.button.y);
-                } else {
-                  p2 = tuple(f.button.x, f.button.y);
-                }
-                ++numPoints;
-              }
-            }
-          }
+          // while (numPoints < numPointsNeeded) {
+          //   SDL_Event f;
+          //   while (SDL_PollEvent(&f) != 0) {
+          //     if (f.type == SDL_QUIT) {
+          //       shapeIsDrawn = true;
+          //       break;
+          //     } else if (f.type == SDL_MOUSEBUTTONDOWN) {
+          //       if (numPoints == 0) {
+          //         p1 = tuple(f.button.x, f.button.y);
+          //       } else {
+          //         p2 = tuple(f.button.x, f.button.y);
+          //       }
+          //       ++numPoints;
+          //     }
+          //   }
+          // }
 
-          int radius = cast(int) sqrt(cast(float) ((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]))) / 2;
-          midpoint = tuple(cast(int) ((p1[0] + p2[0]) / 2), cast(int) ((p1[1] + p2[1]) / 2));
+          // int radius = cast(int) sqrt(cast(float) ((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]))) / 2;
+          // midpoint = tuple(cast(int) ((p1[0] + p2[0]) / 2), cast(int) ((p1[1] + p2[1]) / 2));
 
-          int top, bottom, left, right;
-          top = max(0, midpoint[1] - radius);
-          bottom = min(480, midpoint[1] + radius);
-          left = max(0, midpoint[0] - radius);
-          right = min(640, midpoint[0] + radius);
+          // int top, bottom, left, right;
+          // top = max(0, midpoint[1] - radius);
+          // bottom = min(480, midpoint[1] + radius);
+          // left = max(0, midpoint[0] - radius);
+          // right = min(640, midpoint[0] + radius);
 
-          for (int i = top; i <= bottom; ++i) {
-            for (int j = left; j <= right; ++j) {
-              if ((j - midpoint[0]) * (j - midpoint[0]) + (i - midpoint[1]) * (i - midpoint[1]) <= radius * radius) {
-                surf.UpdateSurfacePixel(j, i, r, g, b);
-              }
-            }
-          }
+          // for (int i = top; i <= bottom; ++i) {
+          //   for (int j = left; j <= right; ++j) {
+          //     if ((j - midpoint[0]) * (j - midpoint[0]) + (i - midpoint[1]) * (i - midpoint[1]) <= radius * radius) {
+          //       surf.UpdateSurfacePixel(j, i, r, g, b);
+          //     }
+          //   }
+          // }
+
+          sh = new Circle(surf);
+          sh.draw(brushSize, r, g, b);
 
           shapeIsDrawn = true;
 

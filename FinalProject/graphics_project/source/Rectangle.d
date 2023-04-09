@@ -32,7 +32,7 @@ class Rectangle : Shape2 {
     * g - green color value in range [0, 255]
     * b - blue colover value in range [0, 255]
     */
-    void fillRectangle(int left, int right, int top, int bottom, int r, int g, int b) {
+    void fillRectangle(int left, int right, int top, int bottom, ubyte r, ubyte g, ubyte b) {
 
         for (int i = left; i <= right; ++i) {
             for (int j = top; j <= bottom; ++j) {
