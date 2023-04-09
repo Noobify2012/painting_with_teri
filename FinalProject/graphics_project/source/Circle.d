@@ -20,6 +20,16 @@ class Circle : Shape2 {
 
     ~this() {}
 
+    /**
+    * Helper for 'draw' function that fills circle based on user-chosen points.
+    *
+    * Params:
+    * midpoint - midpoint of the line formed by connecting user's points
+    * radius - half the length of the line formed by connecting user's points
+    * r - red color value in range [0, 255]
+    * g - green color value in range [0, 255]
+    * b - blue colover value in range [0, 255]
+    */
     void fillCircle(Tuple!(int, int) midpoint, int radius, ubyte r, ubyte g, ubyte b) {
 
         int top, bottom, left, right;
@@ -37,6 +47,23 @@ class Circle : Shape2 {
             }
     }
 
+    /**
+    * Draws this Circle based on the user's clicks. Exactly two mouse
+    * clicks are required to draw a Circle. The user's clicks represent
+    * the diameter of the Circle, regardless of the orientation the line is
+    * drawn at.
+    *
+    * Example
+    * --------------------
+    * Shape cir = new Circle();
+    * cir.draw();   // Draw filled circle upon two mouse clicks
+    *
+    *  Params:
+    *  brushSize - the width and height of each drawn point
+    *  r - red value in range [0, 255]
+    *  g - green value in range [0, 255]
+    *  b - blue value in range [0, 255]
+    */
     override void draw(int brushSize, ubyte r, ubyte g, ubyte b) {
 
         // The two points required represent the circle's diameter
