@@ -13,6 +13,7 @@ import drawing_utilities;
 import Shape2 : Shape2;
 import Rectangle : Rectangle;
 import Circle : Circle;
+import Line : Line;
 
 class Shape {
 
@@ -102,32 +103,35 @@ class Shape {
         } else if (e.key.keysym.sym == SDLK_l) {
           writeln("Drawing line");
 
-          int numPoints = 0;
-          int numPointsNeeded = 2;
+          // int numPoints = 0;
+          // int numPointsNeeded = 2;
 
-          Tuple!(int, int) p1, p2;
+          // Tuple!(int, int) p1, p2;
 
-          while (numPoints < numPointsNeeded) {
-            SDL_Event f;
-            while (SDL_PollEvent(&f) != 0) {
-              if (f.type == SDL_QUIT) {
-                shapeIsDrawn = true;
-                break;
-              } else if (f.type == SDL_MOUSEBUTTONDOWN) {
-                if (numPoints == 0) {
-                  p1 = tuple(f.button.x, f.button.y);
-                } else {
-                  p2 = tuple(f.button.x, f.button.y);
-                }
-                ++numPoints;
-              }
-            }
-          }
+          // while (numPoints < numPointsNeeded) {
+          //   SDL_Event f;
+          //   while (SDL_PollEvent(&f) != 0) {
+          //     if (f.type == SDL_QUIT) {
+          //       shapeIsDrawn = true;
+          //       break;
+          //     } else if (f.type == SDL_MOUSEBUTTONDOWN) {
+          //       if (numPoints == 0) {
+          //         p1 = tuple(f.button.x, f.button.y);
+          //       } else {
+          //         p2 = tuple(f.button.x, f.button.y);
+          //       }
+          //       ++numPoints;
+          //     }
+          //   }
+          // }
 
-          int left = min(p1[0], p2[0]), right = max(p1[0], p2[0]);
-          int top = min(p1[1], p2[1]), bottom = max(p1[1], p2[1]);
+          // int left = min(p1[0], p2[0]), right = max(p1[0], p2[0]);
+          // int top = min(p1[1], p2[1]), bottom = max(p1[1], p2[1]);
 
-          surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
+          // surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
+
+          sh = new Line(surf);
+          sh.draw(brushSize, r, g, b);
 
           writeln("Line has been drawn");
           shapeIsDrawn = true;
