@@ -10,6 +10,8 @@ import SDL_Surfaces :Surface;
 import SDL_Initial :SDLInit;
 
 import drawing_utilities;
+import Shape2 : Shape2;
+import Rectangle : Rectangle;
 
 class Shape {
 
@@ -43,52 +45,55 @@ class Shape {
         } else if (e.key.keysym.sym == SDLK_r) {
           writeln("Drawing rectangle");
 
-          int numPoints = 0;
-          int numPointsNeeded = 2;
+          // int numPoints = 0;
+          // int numPointsNeeded = 2;
 
-          Tuple!(int, int) p1, p2, p3, p4;
+          // Tuple!(int, int) p1, p2, p3, p4;
 
-          while (numPoints < numPointsNeeded) {
-            SDL_Event f;
-            while (SDL_PollEvent(&f) != 0) {
-              if (f.type == SDL_QUIT) {
-                shapeIsDrawn = true;
-                break;
-              } else if (f.type == SDL_MOUSEBUTTONDOWN) {
-                if (numPoints == 0) {
-                  p1 = tuple(f.button.x, f.button.y);
-                  surf.lerp(p1[0], p1[1], p1[0], p1[1], brushSize, r, g, b);
-                } else {
-                  p3 = tuple(f.button.x, f.button.y);
-                  surf.UpdateSurfacePixel(p3[0], p3[1], r, g, b);
-                }
-                ++numPoints;
-              }
-            }
-          }
+          // while (numPoints < numPointsNeeded) {
+          //   SDL_Event f;
+          //   while (SDL_PollEvent(&f) != 0) {
+          //     if (f.type == SDL_QUIT) {
+          //       shapeIsDrawn = true;
+          //       break;
+          //     } else if (f.type == SDL_MOUSEBUTTONDOWN) {
+          //       if (numPoints == 0) {
+          //         p1 = tuple(f.button.x, f.button.y);
+          //         surf.lerp(p1[0], p1[1], p1[0], p1[1], brushSize, r, g, b);
+          //       } else {
+          //         p3 = tuple(f.button.x, f.button.y);
+          //         surf.UpdateSurfacePixel(p3[0], p3[1], r, g, b);
+          //       }
+          //       ++numPoints;
+          //     }
+          //   }
+          // }
 
-          p2 = tuple(p3[0], p1[1]);
-          p4 = tuple(p1[0], p3[1]);
+          // p2 = tuple(p3[0], p1[1]);
+          // p4 = tuple(p1[0], p3[1]);
 
-          surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
-          surf.lerp(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
-          surf.lerp(p3[0], p3[1], p4[0], p4[1], brushSize, r, g, b);
-          surf.lerp(p4[0], p4[1], p1[0], p1[1], brushSize, r, g, b);
+          // surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
+          // surf.lerp(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
+          // surf.lerp(p3[0], p3[1], p4[0], p4[1], brushSize, r, g, b);
+          // surf.lerp(p4[0], p4[1], p1[0], p1[1], brushSize, r, g, b);
 
-          int midX = (p1[0] + p3[0]) / 2;
-          int midY = (p1[1] + p3[1]) / 2;
+          // int midX = (p1[0] + p3[0]) / 2;
+          // int midY = (p1[1] + p3[1]) / 2;
 
-          int minX = min(p1[0], p3[0]);
-          int maxX = max(p1[0], p3[0]);
+          // int minX = min(p1[0], p3[0]);
+          // int maxX = max(p1[0], p3[0]);
 
-          int minY = min(p1[1], p3[1]);
-          int maxY = max(p1[1], p3[1]);
+          // int minY = min(p1[1], p3[1]);
+          // int maxY = max(p1[1], p3[1]);
 
-          for (int i = minX; i <= maxX; ++i) {
-            for (int j = minY; j <= maxY; ++j) {
-              surf.UpdateSurfacePixel(i, j, r, g, b);
-            }
-          }
+          // for (int i = minX; i <= maxX; ++i) {
+          //   for (int j = minY; j <= maxY; ++j) {
+          //     surf.UpdateSurfacePixel(i, j, r, g, b);
+          //   }
+          // }
+
+          Shape2 rec = new Rectangle(surf);
+          rec.draw(brushSize, r, g, b);
 
           shapeIsDrawn = true;
 
