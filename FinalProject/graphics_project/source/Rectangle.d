@@ -21,7 +21,16 @@ class Rectangle : Shape2 {
     ~this() {}
 
     /**
-    * Helper for 'draw' function that fills rectangle based on user-chosen points. 
+    * Helper for 'draw' function that fills rectangle based on user-chosen points.
+    *
+    * Params:
+    * left - the left bound of the rectangle; no points to the left of this will be filled
+    * right - the right bound of the rectangle; no points to the right of this will be filled
+    * top - the upper bound of the rectangle; no points physically above it will be filled
+    * bottom - the lower of the of the rectangle; no points physically below it will be filled
+    * r - red color value in range [0, 255]
+    * g - green color value in range [0, 255]
+    * b - blue colover value in range [0, 255]
     */
     void fillRectangle(int left, int right, int top, int bottom, int r, int g, int b) {
 
