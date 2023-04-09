@@ -22,6 +22,15 @@ class Triangle : Shape2 {
 
     ~this() {}
 
+    bool isLine(Tuple!(int, int) p1, Tuple!(int, int) p2, Tuple!(int, int) p3, int brushSize, ubyte r, ubyte g, ubyte b) {
+
+        bool isSamePoints = (p1[0] == p2[0] && p1[1] == p2[1]) || (p2[0] == p3[0] && p2[1] == p3[1]) || (p1[0] == p3[0] && p1[1] == p3[1]);
+
+        bool isAligned = (p1[0] == p2[0] && p1[0] == p3[0]) || (p1[1] == p2[1] && p1[1] == p3[1]);
+
+        return isSamePoints || isAligned;
+    }
+
     void fillTriangle(Tuple!(int, int) p1, Tuple!(int, int) p2, Tuple!(int, int) p3, int brushSize, ubyte r, ubyte g, ubyte b) {
 
         int top = min(p1[1], p2[1], p3[1]), bottom = max(p1[1], p2[1], p3[1]), 
@@ -40,9 +49,12 @@ class Triangle : Shape2 {
             }
         }
         
-        // surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
-        // surf.lerp(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
-        // surf.lerp(p1[0], p1[1], p3[0], p3[1], brushSize, r, g, b);
+        if (isLine(p1, p2, p3, brushSize, r, g, b)) {
+
+            surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
+            surf.lerp(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
+            surf.lerp(p1[0], p1[1], p3[0], p3[1], brushSize, r, g, b);
+        }
     }
 
     override void draw(int brushSize, ubyte r, ubyte g, ubyte b) {
