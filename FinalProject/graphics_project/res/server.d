@@ -3,6 +3,7 @@ import std.socket;
 import std.stdio;
 import std.conv;
 import std.array;
+import core.thread.osthread;
 
 import Packet : Packet;
 import test_addr;
@@ -72,7 +73,7 @@ void main(){
         readSet.reset();
 		// Add the server
         readSet.add(listener);
-        foreach(client ; connectedClientsList){
+        foreach(client ; connectedClientsList) {
             readSet.add(client);
         }
 //         // Handle each clients message
@@ -100,11 +101,13 @@ void main(){
 // 					p.x = f1;
 // 					p.y = f2;
         // Handle each clients message
+		
         if(Socket.select(readSet, null, null)){
             foreach(client; connectedClientsList){
 				// Check to ensure that the client
 				// is in the readSet before receving
 				// a message from the client.
+				new Thread ({
                 if(readSet.isSet(client)){
 					// Server effectively is blocked
 					// until a message is received here.
@@ -141,7 +144,9 @@ void main(){
                     // client.send(p.GetPacketAsBytes());
 					// writeln("readset is set for client");
                 }
+				}).start();
             }
+			
 			// The listener is ready to read
 			// Client wants to connect so we accept here.
 			if(readSet.isSet(listener)){
@@ -158,6 +163,7 @@ void main(){
 
 			}
     	}
+		
 	}
 }
 
