@@ -43,7 +43,7 @@ class Surface{
     }
 
 
-    void UpdateSurfacePixel(int xPos, int yPos, ubyte blueVal, ubyte greenVal, ubyte redVal){
+    void UpdateSurfacePixel(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyte blueVal){
         // When we modify pixels, we need to lock the surface first
         SDL_LockSurface(imgSurface);
         // Make sure to unlock the surface when we are done.

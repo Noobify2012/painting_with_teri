@@ -115,23 +115,23 @@ class SDLApp{
 
                     for(int w=-brushSize; w < brushSize; w++){
                         for(int h=-brushSize; h < brushSize; h++){
-                            //blue
+                            //blue - flip the red and blue vals
                             if (color == 1 && !erasing) {
-                                red = 255;
-                                green = 128;
-                                blue = 32;
+                                red = 0;
+                                green = 0;
+                                blue = 255;
                                 //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
                             } else if (color == 2 && !erasing) {
                                 //green
-                                red = 32;
+                                red = 0;
                                 green = 255;
-                                blue = 128;
+                                blue = 0;
                                 //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 32, 255, 128);
                             } else if (color == 3 && !erasing) {
                                 //red
-                                red = 128;
-                                green = 32;
-                                blue = 255;
+                                red = 255;
+                                green = 0;
+                                blue = 0;
                                 //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h,  128, 32, 255);
                             } else if (erasing) {
                                 red = 0;
@@ -139,10 +139,12 @@ class SDLApp{
                                 blue = 0;
                                 //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 0, 0, 0);
                             }
-                            imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
+                            // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
                             if(networked == true) {
                                 Packet packet;
                                 packet = test_client.getChangeForServer(xPos+w,yPos+h, red, green, blue);
+                                // writeln("Input values x: " ~to!string(xPos+w) ~ " y: " ~ to!string(yPos+h) ~ " r: " ~to!string(red) ~ " g: " ~ to!string(green) ~ " b: " ~ to!string(blue));
+                                // writeln("Packet values x: " ~to!string(packet.x) ~ " y: " ~ to!string(packet.y) ~ " r: " ~to!string(packet.r) ~ " g: " ~ to!string(packet.g) ~ " b: " ~ to!string(packet.b));
                                 // traffic = test_client.addToSend(traffic, packet);
                                 traffic.push_front(packet);
                                 // test_client.sendToServer(packet, sendSocket);
@@ -150,7 +152,7 @@ class SDLApp{
                         }
                     }
                     if (prevX > -9999) {
-                        imgSurface.linearInterpolation(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                         imgSurface.linearInterpolation(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
                     }
                     prevX = xPos;
                     prevY = yPos;
