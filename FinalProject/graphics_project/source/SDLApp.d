@@ -15,10 +15,9 @@ import SDL_Initial :SDLInit;
 import test_client;
 import Packet : Packet;
 import Deque : Deque;
-
+import test_addr;
 import shape_listener;
 import drawing_utilities;
-// import server;
 
 
 // For printing the key pressed info
@@ -70,9 +69,11 @@ class SDLApp{
 
         /// Intialize deque for storing traffic to send
         auto traffic = new Deque!(Packet);
-        Socket socket;
+        Socket sendSocket;
         byte[Packet.sizeof] buffer;
         bool tear_down = false;
+        
+        Socket recieveSocket;
         // Deque traffic = new Deque!Packet;
         
 
@@ -120,21 +121,21 @@ class SDLApp{
                         for(int h=-brushSize; h < brushSize; h++){
                             /// Set brush color to blue
                             if (color == 1 && !erasing) {
-                                red = 255;
-                                green = 128;
-                                blue = 32;
-                                // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
+                                red = 0;
+                                green = 0;
+                                blue = 255;
+                                //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
                             } else if (color == 2 && !erasing) {
                                 /// Set brush color to green
                                 red = 32;
                                 green = 255;
-                                blue = 128;
-                                // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 32, 255, 128);
+                                blue = 0;
+                                //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 32, 255, 128);
                             } else if (color == 3 && !erasing) {
-                                /// Set brush color to red
-                                red = 128;
-                                green = 32;
-                                blue = 255;
+                                // Set brush color to red
+                                red = 255;
+                                green = 0;
+                                blue = 0;
                                 // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h,  128, 32, 255);
                             } else if (erasing) {
                                 /// Erase: set color to black
@@ -144,20 +145,21 @@ class SDLApp{
                                 // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 0, 0, 0);
                             }
                             /// Send change from user to deque
-                            imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
+                            // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
                             if(networked == true) {
                                 Packet packet;
                                 packet = test_client.getChangeForServer(xPos+w,yPos+h, red, green, blue);
+                                // writeln("Input values x: " ~to!string(xPos+w) ~ " y: " ~ to!string(yPos+h) ~ " r: " ~to!string(red) ~ " g: " ~ to!string(green) ~ " b: " ~ to!string(blue));
+                                // writeln("Packet values x: " ~to!string(packet.x) ~ " y: " ~ to!string(packet.y) ~ " r: " ~to!string(packet.r) ~ " g: " ~ to!string(packet.g) ~ " b: " ~ to!string(packet.b));
                                 // traffic = test_client.addToSend(traffic, packet);
                                 traffic.push_front(packet);
-                                // test_client.sendToServer(packet, socket);
+                                // test_client.sendToServer(packet, sendSocket);
                             }
                         }
                     }
                     /// This is where we draw the line!
                     if (prevX > -9999) {
-                        // imgSurface.linearInterpolation(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
-                        imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                         imgSurface.linearInterpolation(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
                     }
                     prevX = xPos;
                     prevY = yPos;
@@ -208,9 +210,12 @@ class SDLApp{
                     } else if (e.key.keysym.sym == SDLK_n) {
                         if (networked == false) {
                             /// Set up the socket and connection to server
-                            socket = test_client.initialize();
+                            sendSocket = test_client.initialize();
                             /// Perform initial handshake and test connect string
-                            buffer = test_client.sendConnectionHandshake(socket);
+                            auto address = test_addr.find();
+                            auto port = test_addr.findPort();
+                            // recieveSocket =
+                            buffer = test_client.sendConnectionHandshake(sendSocket);
                             networked = true;
                         } else {
                             networked = false;
@@ -259,13 +264,18 @@ class SDLApp{
                         writeln("traffic sent");
                     }
                     //else {
-                        /// Listen
+                        // Listen
                         // Packet inbound;
                         Packet inbound = test_client.recieveFromServer(socket, buffer);
                         writeln("traffic recieved");
                         /// If traffic recieved update surface.
                         imgSurface.UpdateSurfacePixel(inbound.x, inbound.y, inbound.r, inbound.g, inbound.b);
                         writeln("updated surface pixel");
+                    }
+                    // else {
+                    //     //listen
+                    //     // Packet inbound;
+                        
                     // }
                 // }
 

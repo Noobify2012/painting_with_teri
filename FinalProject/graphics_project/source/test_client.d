@@ -132,6 +132,12 @@ Socket initialize() {
 //     }
 // }
 
+// Socket listenerInit (Socket listener) {
+//     Address listenAddr = test_addr.find();
+// 	string[] listen = to!string(listenAddr).split(":");
+// }
+
+
 byte[Packet.sizeof] sendConnectionHandshake(Socket socket) {
     byte[Packet.sizeof] buffer;
     auto received = socket.receive(buffer);
@@ -167,6 +173,8 @@ Packet recieveFromServer(Socket socket, byte[Packet.sizeof] buffer) {
         byte[4] field3 = fromServer[24 .. 28].dup;
 		byte[4] field4 = fromServer[28 .. 32].dup;
         byte[4] field5 = fromServer[32 .. 36].dup;
+        // byte[64] messageField = fromServer[36 .. 100].dup;
+        // byte[4] field6 = fromServer[100 .. 104].dup;
 		int f1 = *cast(int*)&field1;
 		int f2 = *cast(int*)&field2;
         byte f3 = *cast(byte*)&field3;
@@ -194,22 +202,44 @@ Packet recieveFromServer(Socket socket, byte[Packet.sizeof] buffer) {
 }
 
 
-Packet getChangeForServer(int xPos, int yPos, ubyte blueVal, ubyte greenVal, ubyte redVal) {
+Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyte blueVal) {
     Packet data;
 		// The 'with' statement allows us to access an object
 		// (i.e. member variables and member functions)
 		// in a slightly more convenient way
-		with (data){
+        // writeln("Input for get change x: " ~to!string(xPos) ~ " y: " ~ to!string(yPos) ~ " r: " ~to!string(redVal) ~ " g: " ~ to!string(greenVal) ~ " b: " ~ to!string(blueVal));
+        // writeln("Inside Packet values x: " ~to!string(data.x) ~ " y: " ~ to!string(data.y) ~ " r: " ~to!string(data.r) ~ " g: " ~ to!string(data.g) ~ " b: " ~ to!string(data.b));
+        
+        byte red = cast(byte) redVal;
+        int redInt = to!int(red);
+        byte block = cast(byte) 256;
+
+        if (redInt >=128){
+            red = cast(byte) redInt;
+            // red = red + block;
+        } else { 
+            red = cast(byte) redInt;
+        }
+        
+        
+        writeln("red = " ~ to!string(red));
+        writeln("redVal = " ~ to!string(redVal));
+        writeln("redInt = " ~ to!string(redInt));
+
+		with (data) {
 			user = "clientName\0";
 			// Just some 'dummy' data for now
 			// that the 'client' will continuously send
 			x = xPos;
 			y = yPos;
-			r = redVal;
-			g = greenVal;
-			b = blueVal;
+			r = *cast(byte*)&redVal;
+			g = *cast(byte*)&greenVal;
+			b = *cast(byte*)&blueVal;
 			message = "update from user: " ~ 1 ~ " test\0";
+            // writeln("Inside Packet values x: " ~to!string(data.x) ~ " y: " ~ to!string(data.y) ~ " r: " ~to!string(data.r) ~ " g: " ~ to!string(data.g) ~ " b: " ~ to!string(data.b));
 		}
+        // writeln("value of data: " ~ to!string(data));
+
 	// Send the packet of information breaks, can't send socket from SDLApp
     // socket.send(data.GetPacketAsBytes());
     return data;
