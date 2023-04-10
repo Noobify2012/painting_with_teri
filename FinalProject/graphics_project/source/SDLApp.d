@@ -4,6 +4,8 @@ import std.string;
 import std.process;
 import std.conv;
 import std.socket;
+import std.parallelism;
+import core.thread.osthread;
 
 /// Load the SDL2 library
 import bindbc.sdl;
@@ -127,7 +129,7 @@ class SDLApp{
                                 //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
                             } else if (color == 2 && !erasing) {
                                 /// Set brush color to green
-                                red = 32;
+                                red = 0;
                                 green = 255;
                                 blue = 0;
                                 //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 32, 255, 128);
@@ -259,6 +261,11 @@ class SDLApp{
                 // while(!tear_down) {
                     /// Check if there is traffic to send, if so send it, else listen
                     // writeln("size of traffic: " ~ to!string(traffic.size));
+                    new Thread ({
+                        Packet inbound = test_client.recieveFromServer(sendSocket, buffer);
+                        // writeln("traffic recieved down here");
+                        received.push_front(inbound);
+                    }).start();
                     if(traffic.size > 0) {
                         /// Send action to server
 
@@ -267,11 +274,8 @@ class SDLApp{
                         Packet inbound = test_client.recieveFromServer(sendSocket, buffer);
                         // writeln("traffic recieved up here");
                         received.push_front(inbound);
-                    } else {
-                        Packet inbound = test_client.recieveFromServer(sendSocket, buffer);
-                        // writeln("traffic recieved down here");
-                        received.push_front(inbound);
                     }
+                        
                     //else {
                         // Listen
                         // Packet inbound;
