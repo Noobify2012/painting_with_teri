@@ -16,7 +16,7 @@ import test_client;
 import Packet : Packet;
 import Deque : Deque;
 
-import shapes;
+import shape_listener;
 import drawing_utilities;
 // import server;
 
@@ -240,7 +240,7 @@ class SDLApp{
                     } else if (e.key.keysym.sym == SDLK_s) {
                         /// This is where we draw the shape when prompted!
                         writeln("Drawing shape");
-                        Shape sh = new Shape();
+                        ShapeListener sh = new ShapeListener();
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
                     }
                     // } else if (e.key.keysym.sym == SDLK_h) {
