@@ -253,6 +253,7 @@ class SDLApp{
                     // }
                 }
             }
+            auto received = new Deque!(Packet);
             //if we have turned networking on, the client not the server
             if (networked == true) {
                 // while(!tear_down) {
@@ -262,9 +263,14 @@ class SDLApp{
                         /// Send action to server
 
                         test_client.sendToServer(traffic.pop_back, sendSocket);
-                        writeln("traffic sent");
+                        // writeln("traffic sent");
                         Packet inbound = test_client.recieveFromServer(sendSocket, buffer);
-                        writeln("traffic recieved");
+                        // writeln("traffic recieved up here");
+                        received.push_front(inbound);
+                    } else {
+                        Packet inbound = test_client.recieveFromServer(sendSocket, buffer);
+                        // writeln("traffic recieved down here");
+                        received.push_front(inbound);
                     }
                     //else {
                         // Listen
@@ -283,6 +289,11 @@ class SDLApp{
                 // }
 
             }
+            while (received.size() > 0) {
+                //draw the packets
+                writeln("do i get here?");
+                drawInbound(received, imgSurface);
+            }
 
             /// Blit the surace (i.e. update the window with another surfaces pixels
             ///                       by copying those pixels onto the window).
@@ -298,6 +309,19 @@ class SDLApp{
         SDL_DestroyWindow(window);
 
     }
+}
+
+void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
+    int prevX = -9999;
+    int prevY = -9999;
+    while(traffic.size() > 0) {
+        auto curr = traffic.pop_back();
+        writeln("and now here");
+        //TODO: Fix order
+        imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
+        // imgSurface.lerp(prevX, prevY,curr.x, curr.y, 1, curr.r, curr.g, curr.b);
+    }
+
 }
 
 // void runClient(Deque traffic, Socket socket, Bool tear_down) {

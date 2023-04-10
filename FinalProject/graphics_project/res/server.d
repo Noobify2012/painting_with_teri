@@ -7,6 +7,8 @@ import std.array;
 import Packet : Packet;
 import test_addr;
 
+import Deque: Deque;
+
 
 
 void main(){
@@ -14,6 +16,8 @@ void main(){
 	Address serverAddr = test_addr.find();
 	// writeln(serverAddr);
 	string[] dumb = to!string(serverAddr).split(":");
+
+	auto reflect = new Deque!(Packet);
 	
 	// string servAddr = "";
 	// bool colonPassed = false;
@@ -41,8 +45,6 @@ void main(){
 	writeln("Server Port: " ~ to!string(port));
 	// NOTE: It's possible the port number is in use if you are not able
 	//  	 to connect. Try another one.
->>>>>>>>> Temporary merge branch 2:FinalProject/graphics_project/res/server.d
-
     listener.bind(new InternetAddress(host,port));
     // Allow 4 connections to be queued up
     listener.listen(4);
@@ -73,8 +75,6 @@ void main(){
         foreach(client ; connectedClientsList){
             readSet.add(client);
         }
-        
-<<<<<<<<< Temporary merge branch 1:FinalProject/graphics_project/source/server.d
 //         // Handle each clients message
 //         if(Socket.select(readSet, null, null)){
 //             foreach(client; connectedClientsList){
@@ -99,7 +99,6 @@ void main(){
 // 					int f2 = *cast(int*)&field2;
 // 					p.x = f1;
 // 					p.y = f2;
-=========
         // Handle each clients message
         if(Socket.select(readSet, null, null)){
             foreach(client; connectedClientsList){
@@ -134,12 +133,13 @@ void main(){
 					p.r = f3;
 					p.g = f4;
 					p.b = f5;
-					writeln("server sets packet values of x: " ~to!string(p.x) ~ " y: " ~ to!string(p.y) ~ " r: " ~to!string(p.r) ~ " g: " ~ to!string(p.g) ~ " b: " ~ to!string(p.b));
->>>>>>>>> Temporary merge branch 2:FinalProject/graphics_project/res/server.d
+					// writeln("server sets packet values of x: " ~to!string(p.x) ~ " y: " ~ to!string(p.y) ~ " r: " ~to!string(p.r) ~ " g: " ~ to!string(p.g) ~ " b: " ~ to!string(p.b));
 					
 					// Send raw bytes from packet,
-                    client.send(p.GetPacketAsBytes());
-					writeln("readset is set for client");
+					reflect.push_front(p);
+					reflectPacket(connectedClientsList, reflect, client);
+                    // client.send(p.GetPacketAsBytes());
+					// writeln("readset is set for client");
                 }
             }
 			// The listener is ready to read
@@ -164,3 +164,13 @@ void main(){
 //TODO: Method for sending packets to every other client
 // get packet from user
 // loop through all other users and send packet(think broadcast)
+
+void reflectPacket(Socket[] connectedClientsList, Deque!(Packet) packets, Socket socket){
+	while(packets.size() > 0) {
+		auto packet = packets.pop_back;
+		foreach(client; connectedClientsList) {
+			// writeln("Sending Packet to: " ~ to!string(client));
+			client.send(packet.GetPacketAsBytes);
+		}
+	}
+}

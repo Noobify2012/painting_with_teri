@@ -186,11 +186,11 @@ Packet recieveFromServer(Socket socket, byte[Packet.sizeof] buffer) {
         formattedPacket.g = f4;
         formattedPacket.b = f5;
 
-		writeln("what is field1(x): ",formattedPacket.x);
-		writeln("what is field2(y): ",formattedPacket.y);
-        writeln("what is field3(r): ",formattedPacket.r);
-		writeln("what is field4(g): ",formattedPacket.g);
-        writeln("what is field5(b): ",formattedPacket.b);
+		// writeln("what is field1(x): ",formattedPacket.x);
+		// writeln("what is field2(y): ",formattedPacket.y);
+        // writeln("what is field3(r): ",formattedPacket.r);
+		// writeln("what is field4(g): ",formattedPacket.g);
+        // writeln("what is field5(b): ",formattedPacket.b);
 		// NOTE: You may want to explore std.bitmanip, if you
 		//       have different endian machines.
 //		int value = peek!(int,Endian.littleEndian)(field1);
@@ -222,9 +222,9 @@ Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyt
         }
         
         
-        writeln("red = " ~ to!string(red));
-        writeln("redVal = " ~ to!string(redVal));
-        writeln("redInt = " ~ to!string(redInt));
+        // writeln("red = " ~ to!string(red));
+        // writeln("redVal = " ~ to!string(redVal));
+        // writeln("redInt = " ~ to!string(redInt));
 
 		with (data) {
 			user = "clientName\0";
