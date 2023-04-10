@@ -19,6 +19,9 @@ import test_addr;
 // import server;
 
 
+import shape_listener;
+import drawing_utilities;
+
 //For printing the key pressed info
 //void PrintKeyInfo( SDL_KeyboardEvent *key );
 
@@ -40,7 +43,6 @@ class SDLApp{
         SDL_WINDOW_SHOWN);
         // Load the bitmap surface
         Surface imgSurface = new Surface(0,640,480,32,0,0,0,0);
-
 
         // Flag for determing if we are running the main application loop
         bool runApplication = true;
@@ -74,6 +76,7 @@ class SDLApp{
         // Deque traffic = new Deque!Packet;
         
 
+        DrawingUtility du = new DrawingUtility();
 
         //SDL_EnableUNICODE( 1 );
 
@@ -152,7 +155,8 @@ class SDLApp{
                         }
                     }
                     if (prevX > -9999) {
-                         imgSurface.linearInterpolation(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                        // imgSurface.linearInterpolation(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                        imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
                     }
                     prevX = xPos;
                     prevY = yPos;
@@ -212,6 +216,30 @@ class SDLApp{
                             networked = false;
                             tear_down = true;
                         }
+                        
+                    } else if (e.key.keysym.sym == SDLK_f) {
+                        writeln("Starting fill");
+                        bool isFilled = false;
+
+                        while (!isFilled) {
+                        SDL_Event fill;
+                            while (SDL_PollEvent(&fill)) {
+                                if(fill.type == SDL_QUIT){
+                                    runApplication= false;
+                                    break;
+                                } else if (fill.type == SDL_MOUSEBUTTONUP) {
+                                    int fillStartX = fill.button.x, fillStartY = fill.button.y;
+                                    du.dfs(fillStartX, fillStartY, &imgSurface, red, green, blue);
+                                    isFilled = true;
+                                }
+                            }
+                        }
+                        writeln("Fill ended");
+
+                    } else if (e.key.keysym.sym == SDLK_s) {
+                        writeln("Drawing shape");
+                        ShapeListener sh = new ShapeListener();
+                        sh.drawShape(&imgSurface, brushSize, red, green, blue);
                     }
                     // } else if (e.key.keysym.sym == SDLK_h) {
                     //     server.run();

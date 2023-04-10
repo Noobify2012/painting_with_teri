@@ -160,12 +160,12 @@ Packet recieveFromServer(Socket socket, byte[Packet.sizeof] buffer) {
 		writeln();
 
 
-		// Format the packet. Note, I am doing this in a very
-		// verbosoe manner so you can see each step.
-		Packet formattedPacket;
-		byte[16] field0        = fromServer[0 .. 16].dup;
-		formattedPacket.user = cast(char[])(field0);
-        writeln("Server echos back user: ", formattedPacket.user);
+// 		// Format the packet. Note, I am doing this in a very
+// 		// verbosoe manner so you can see each step.
+// 		Packet formattedPacket;
+// 		byte[16] field0        = fromServer[0 .. 16].dup;
+// 		formattedPacket.user = cast(char[])(field0);
+//         writeln("Server echos back user: ", formattedPacket.user);
 
 		// Get some of the fields
 		byte[4] field1 = fromServer[16 .. 20].dup;
