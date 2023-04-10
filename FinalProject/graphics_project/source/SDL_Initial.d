@@ -59,7 +59,7 @@ class SDLInit{
     ~this(){
         /// Quit the SDL Application
         SDL_Quit();
-        writeln("Ending application--This has been a Teri Chadbourne Expierence!");
+        writeln("Ending application--This has been a Teri Chadbourne Experience!");
     }
 
     /// global variable for sdl;
