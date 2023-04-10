@@ -12,9 +12,9 @@ import test_addr;
 void main(){
 
 	Address serverAddr = test_addr.find();
-	writeln(serverAddr);
+	// writeln(serverAddr);
 	string[] dumb = to!string(serverAddr).split(":");
-	writeln(dumb[0]);
+	
 	// string servAddr = "";
 	// bool colonPassed = false;
 	// string foo = to!string(serverAddr);	
@@ -36,7 +36,9 @@ void main(){
 
 	// Set the hostname and port for the socket
     string host = dumb[0];
-    ushort port = 50002;
+    ushort port = test_addr.findPort();
+	writeln("Server Address: " ~ to!string(dumb[0]));
+	writeln("Server Port: " ~ to!string(port));
 	// NOTE: It's possible the port number is in use if you are not able
 	//  	 to connect. Try another one.
 
@@ -84,6 +86,7 @@ void main(){
 					// we send that message from the 
 					// server to the client
                     auto got = client.receive(buffer);
+					// writeln("value of ")
 					
 					// Setup a packet to echo back
 					// to the client
@@ -104,6 +107,7 @@ void main(){
 					p.r = f3;
 					p.g = f4;
 					p.b = f5;
+					writeln("server sets packet values of x: " ~to!string(p.x) ~ " y: " ~ to!string(p.y) ~ " r: " ~to!string(p.r) ~ " g: " ~ to!string(p.g) ~ " b: " ~ to!string(p.b));
 					
 					// Send raw bytes from packet,
                     client.send(p.GetPacketAsBytes());
