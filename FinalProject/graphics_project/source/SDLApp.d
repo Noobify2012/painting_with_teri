@@ -159,7 +159,7 @@ class SDLApp{
                     }
                     /// This is where we draw the line!
                     if (prevX > -9999) {
-                         imgSurface.linearInterpolation(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                         imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
                     }
                     prevX = xPos;
                     prevY = yPos;
@@ -260,18 +260,21 @@ class SDLApp{
                     // writeln("size of traffic: " ~ to!string(traffic.size));
                     if(traffic.size > 0) {
                         /// Send action to server
-                        test_client.sendToServer(traffic.pop_back, socket);
+
+                        test_client.sendToServer(traffic.pop_back, sendSocket);
                         writeln("traffic sent");
+                        Packet inbound = test_client.recieveFromServer(sendSocket, buffer);
+                        writeln("traffic recieved");
                     }
                     //else {
                         // Listen
                         // Packet inbound;
-                        Packet inbound = test_client.recieveFromServer(socket, buffer);
-                        writeln("traffic recieved");
+                        // Packet inbound = test_client.recieveFromServer(socket, buffer);
+                        // writeln("traffic recieved");
                         /// If traffic recieved update surface.
-                        imgSurface.UpdateSurfacePixel(inbound.x, inbound.y, inbound.r, inbound.g, inbound.b);
-                        writeln("updated surface pixel");
-                    }
+                        // imgSurface.UpdateSurfacePixel(inbound.x, inbound.y, inbound.r, inbound.g, inbound.b);
+                        // writeln("updated surface pixel");
+                    //}
                     // else {
                     //     //listen
                     //     // Packet inbound;
