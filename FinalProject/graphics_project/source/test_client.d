@@ -6,7 +6,7 @@ import std.string;
 import std.regex;
 import std.container.array;
  
- // Packet
+ /// Packet
 import Packet : Packet;
 //method for recieving coloring to change
 //method to connect to server
@@ -19,7 +19,8 @@ import Packet : Packet;
 //TODO: method to recieve color changes from server
 //
 
-/**Name: Initialize
+/**
+Name: Initialize
 Description: Method to create a socket connection to the server
 Inputs: none
 Returns: A socket that is connected to the server
@@ -33,14 +34,13 @@ Socket initialize() {
         // auto r = getAddress("8.8.8.8" , 53);
         //  const char[] address = r[0].toAddrString().dup;
         //  ushort port = to!ushort(r[0].toPortString());
-	// Socket needs an 'endpoint', so we determine where we
-	// are going to connect to.
-	// NOTE: It's possible the port number is in use if you are not
-	//       able to connect. Try another one.
+	/// Socket needs an 'endpoint', so we determine where we are going to connect to.
+	/// NOTE: It's possible the port number is in use if you are not
+	///       able to connect. Try another one.
 
-    //TODO: add try catch to handle if the connection is refused. 
+    // TODO: add try catch to handle if the connection is refused. 
     while (!connected) {
-        //get an address to connect to from the user
+        /// get an address to connect to from the user
         string serverAddress = getServerAddress();
         //get a port to connect to from the user
         ushort serverPort = getServerPort();
@@ -160,12 +160,12 @@ Packet recieveFromServer(Socket socket, byte[Packet.sizeof] buffer) {
 		writeln();
 
 
-// 		// Format the packet. Note, I am doing this in a very
-// 		// verbosoe manner so you can see each step.
-// 		Packet formattedPacket;
-// 		byte[16] field0        = fromServer[0 .. 16].dup;
-// 		formattedPacket.user = cast(char[])(field0);
-//         writeln("Server echos back user: ", formattedPacket.user);
+		// Format the packet. Note, I am doing this in a very
+		// verbosoe manner so you can see each step.
+		Packet formattedPacket;
+		byte[16] field0        = fromServer[0 .. 16].dup;
+		formattedPacket.user = cast(char[])(field0);
+        writeln("Server echos back user: ", formattedPacket.user);
 
 		// Get some of the fields
 		byte[4] field1 = fromServer[16 .. 20].dup;
