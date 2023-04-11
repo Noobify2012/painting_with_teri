@@ -271,7 +271,7 @@ class SDLApp{
 
                         test_client.sendToServer(traffic.pop_back, sendSocket);
                         // writeln("traffic sent");
-                        Packet inbound = test_client.recieveFromServer(sendSocket, buffer);
+                        Packet inbound = mClient.receiveDataFromServer(sendSocket, buffer);
                         // writeln("traffic recieved up here");
                         received.push_front(inbound);
                     }
