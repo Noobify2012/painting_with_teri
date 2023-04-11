@@ -3,17 +3,53 @@
 // Start server first: rdmd server.d
 import std.socket;
 import std.stdio;
+import std.conv;
+import std.array;
 import core.thread.osthread;
+
+import Packet : Packet;
+import test_addr;
+
+import Deque: Deque;
 
 /// The purpose of the TCPServer is to accept
 /// multiple client connections. 
 /// Every client that connects will have its own thread
 /// for the server to broadcast information to each client.
 class TCPServer{
-				/// Constructor
-				/// By default I have choosen localhost and a port that is likely to
-				/// be free.
-				this(string host = "localhost", ushort port=50001, ushort maxConnectionsBacklog=4){
+				/// Instantiate vars;
+				/// The listening socket is responsible for handling new client connections.
+				Socket 		mListeningSocket;
+				/// Stores the clients that are currently connected to the server.
+				Socket[] 	mClientsConnectedToServer;
+
+				/// Stores all of the data on the server. Ideally, we'll 
+				/// use this to broadcast out to clients connected.
+				byte[Packet.sizeof][] mServerData;
+				/// Keeps track of the last message that was broadcast out to each client.
+				uint[] 			mCurrentMessageToSend;
+				auto reflect = new Deque!(Packet);  // I think this is supposed to replace mServerData
+
+
+				/// Get server public address
+				Address serverAddr = test_addr.find();
+				string[] dumb = to!string(serverAddr).split(":");
+				/// Set the hostname and port for the socket
+				string theHost = dumb[0];
+				ushort thePort = test_addr.findPort();
+				// writeln("Server Address: " ~ to!string(dumb[0]));
+				// writeln("Server Port: " ~ to!string(port));
+				
+
+				/**
+				* Name: ServerConstructor
+				* Description: Connects listening socket
+				* Params:
+					* @param: host = host address
+					* @param: port = socket address
+					* @param: maxConnectionsBacklog = number of clients who can connect
+				*/
+				this(string host = theHost, ushort port = thePort, ushort maxConnectionsBacklog=4){
 					writeln("Starting server...");
 					writeln("Server must be started before clients may join");
 					// Note: AddressFamily.INET tells us we are using IPv4 Internet protocol
@@ -41,6 +77,8 @@ class TCPServer{
 				/// to start running the server
 				void run(){
 					bool serverIsRunning=true;
+					writeln("Awaiting client connections");
+
 					while(serverIsRunning){
 						// The servers job now is to just accept connections
 						writeln("Waiting to accept more connections");
@@ -97,14 +135,32 @@ class TCPServer{
 							break;
 						}
 
-						// Message buffer will be 80 bytes 
-						char[80] buffer;
+						// Message buffer will size of packet
+    					byte[Packet.sizeof] buffer;
 						// Server is now waiting to handle data from specific client
 						// We'll block the server awaiting to receive a message. 	
 						auto got = clientSocket.receive(buffer);					
-						writeln("Received some data (bytes): ",got);
-						// TODO: Note, you might want to verify 'got'
-						//       is infact 80 bytes
+						// writeln("Received some data (bytes): ",got);
+					
+						// Setup a packet to echo back
+						// to the client
+						Packet p;
+						p.user 	= "connecting...";
+						byte[4] field1 = buffer[16 .. 20].dup;
+						byte[4] field2 = buffer[20 .. 24].dup;
+						byte[4] field3 = buffer[24 .. 28].dup;
+						byte[4] field4 = buffer[28 .. 32].dup;
+						byte[4] field5 = buffer[32 .. 36].dup;
+						int f1 = *cast(int*)&field1;
+						int f2 = *cast(int*)&field2;
+						byte f3 = *cast(byte*)&field3;
+						byte f4 = *cast(byte*)&field4;
+						byte f5 = *cast(byte*)&field5;
+						p.x = f1;
+						p.y = f2;
+						p.r = f3;
+						p.g = f4;
+						p.b = f5;
 
 						// Store data that we receive in our server.
 						// We append the buffer to the end of our server
@@ -129,8 +185,8 @@ class TCPServer{
 						// Send whatever the latest data was to all the 
 						// clients.
 						while(mCurrentMessageToSend[idx] <= mServerData.length-1){
-							char[80] msg = mServerData[mCurrentMessageToSend[idx]];
-							serverToClient.send(msg[0 .. 80]);	
+							byte[Packet.sizeof] msg = mServerData[mCurrentMessageToSend[idx]];
+							serverToClient.send(msg);	
 							// Important to increment the message only after sending
 							// the previous message to as many clients as exist.
 							mCurrentMessageToSend[idx]++;
@@ -138,16 +194,6 @@ class TCPServer{
 					}
 				}
 
-				/// The listening socket is responsible for handling new client connections.
-				Socket 		mListeningSocket;
-				/// Stores the clients that are currently connected to the server.
-				Socket[] 	mClientsConnectedToServer;
-
-				/// Stores all of the data on the server. Ideally, we'll 
-				/// use this to broadcast out to clients connected.
-				char[80][] mServerData;
-				/// Keeps track of the last message that was broadcast out to each client.
-				uint[] 			mCurrentMessageToSend;
 }
 
 // Entry point to Server
