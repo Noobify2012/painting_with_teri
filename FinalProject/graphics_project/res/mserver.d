@@ -28,9 +28,9 @@ class TCPServer{
 				byte[Packet.sizeof][] mServerData;
 				/// Keeps track of the last message that was broadcast out to each client.
 				uint[] 			mCurrentMessageToSend;
-				auto reflect = new Deque!(Packet);  // I think this is supposed to replace mServerData
+				// auto reflect = new Deque!(Packet);  // I think this is supposed to replace mServerData
 
-
+				/**
 				/// Get server public address
 				Address serverAddr = test_addr.find();
 				string[] dumb = to!string(serverAddr).split(":");
@@ -38,7 +38,7 @@ class TCPServer{
 				string theHost = dumb[0];
 				ushort thePort = test_addr.findPort();
 				// writeln("Server Address: " ~ to!string(dumb[0]));
-				// writeln("Server Port: " ~ to!string(port));
+				// writeln("Server Port: " ~ to!string(port));*/
 				
 
 				/**
@@ -49,8 +49,10 @@ class TCPServer{
 					* @param: port = socket address
 					* @param: maxConnectionsBacklog = number of clients who can connect
 				*/
-				this(string host = theHost, ushort port = thePort, ushort maxConnectionsBacklog=4){
+				this(string host = to!string(test_addr.find()).split(":")[0], ushort port = test_addr.findPort(), ushort maxConnectionsBacklog=4){
 					writeln("Starting server...");
+					writeln("Server Address: "~ host);
+					writeln("Server Port: "~ to!string(port));
 					writeln("Server must be started before clients may join");
 					// Note: AddressFamily.INET tells us we are using IPv4 Internet protocol
 					// Note: SOCK_STREAM (SocketType.STREAM) creates a TCP Socket
