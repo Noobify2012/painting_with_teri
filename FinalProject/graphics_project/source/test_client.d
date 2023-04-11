@@ -79,7 +79,7 @@ Socket initialize() {
 
 //     //TODO: while not sending data we should be listening and updating
 
-//     foreach(line; stdin.byLine){
+//     foreach(line; stdin.byLine){  = mClient line 61, do the same obfuscation that we do in SDL_App 26
 //         // sendChangeToServer(8,5,49,50,51);
 //         // Packet data;
 // 		// // The 'with' statement allows us to access an object

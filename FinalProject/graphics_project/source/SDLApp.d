@@ -20,6 +20,7 @@ import Deque : Deque;
 import test_addr;
 import shape_listener;
 import drawing_utilities;
+import mClient;
 
 
 // For printing the key pressed info
@@ -150,7 +151,7 @@ class SDLApp{
                             // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
                             if(networked == true) {
                                 Packet packet;
-                                packet = test_client.getChangeForServer(xPos+w,yPos+h, red, green, blue);
+                                packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue);
                                 // writeln("Input values x: " ~to!string(xPos+w) ~ " y: " ~ to!string(yPos+h) ~ " r: " ~to!string(red) ~ " g: " ~ to!string(green) ~ " b: " ~ to!string(blue));
                                 // writeln("Packet values x: " ~to!string(packet.x) ~ " y: " ~ to!string(packet.y) ~ " r: " ~to!string(packet.r) ~ " g: " ~ to!string(packet.g) ~ " b: " ~ to!string(packet.b));
                                 // traffic = test_client.addToSend(traffic, packet);
@@ -261,11 +262,10 @@ class SDLApp{
                 // while(!tear_down) {
                     /// Check if there is traffic to send, if so send it, else listen
                     // writeln("size of traffic: " ~ to!string(traffic.size));
-                    new Thread ({
-                        Packet inbound = test_client.recieveFromServer(sendSocket, buffer);
+                    Packet inbound = mClient.receiveDataFromServer(sendSocket, buffer);
                         // writeln("traffic recieved down here");
-                        received.push_front(inbound);
-                    }).start();
+                    received.push_front(inbound);
+                    
                     if(traffic.size > 0) {
                         /// Send action to server
 
