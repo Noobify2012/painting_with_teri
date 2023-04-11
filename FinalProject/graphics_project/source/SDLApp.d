@@ -32,6 +32,7 @@ class SDLApp{
 
     /// global variable for sdl;
     const SDLSupport ret;
+    TCPClient client;
 
 
     void MainApplicationLoop(){
@@ -213,12 +214,15 @@ class SDLApp{
                     } else if (e.key.keysym.sym == SDLK_n) {
                         if (networked == false) {
                             /// Set up the socket and connection to server
-                            sendSocket = test_client.initialize();
-                            /// Perform initial handshake and test connect string
-                            auto address = test_addr.find();
-                            auto port = test_addr.findPort();
-                            // recieveSocket =
-                            buffer = test_client.sendConnectionHandshake(sendSocket);
+                            // sendSocket = test_client.initialize();
+                            // /// Perform initial handshake and test connect string
+                            // auto address = test_addr.find();
+                            // auto port = test_addr.findPort();
+                            // // recieveSocket =
+                            // buffer = test_client.sendConnectionHandshake(sendSocket);  // FIX ALL THIS
+
+
+                            client = new TCPClient();
                             networked = true;
                         } else {
                             networked = false;
@@ -256,25 +260,41 @@ class SDLApp{
                     // }
                 }
             }
+
             auto received = new Deque!(Packet);
             //if we have turned networking on, the client not the server
             if (networked == true) {
                 // while(!tear_down) {
                     /// Check if there is traffic to send, if so send it, else listen
                     // writeln("size of traffic: " ~ to!string(traffic.size));
-                    Packet inbound = mClient.receiveDataFromServer(sendSocket, buffer);
-                        // writeln("traffic recieved down here");
-                    received.push_front(inbound);
-                    
-                    if(traffic.size > 0) {
-                        /// Send action to server
+                    // Packet inbound = client.receiveDataFromServer();
+                    //     // writeln("traffic recieved down here");
+                    // received.push_front(inbound);
 
-                        test_client.sendToServer(traffic.pop_back, sendSocket);
-                        // writeln("traffic sent");
-                        Packet inbound = mClient.receiveDataFromServer(sendSocket, buffer);
-                        // writeln("traffic recieved up here");
-                        received.push_front(inbound);
-                    }
+            		// Spin up the new thread that will just take in data from the server
+                new Thread({
+                            Packet inbound = client.receiveDataFromServer();
+                            received.push_front(inbound);
+
+                        }).start();
+
+                if (traffic.size > 0) {
+
+                    writeln(">");
+                    client.sendDataToServer(traffic.pop_back);
+
+                    // received.push_front(client.run(traffic.pop_back));  // FIX
+
+                    
+                    // if(traffic.size > 0) {
+                    //     /// Send action to server
+
+                    //     received.push_front(client.run(traffic.pop_back));  // FIX
+                    //     // writeln("traffic sent");
+                    //     // Packet inbound = client.receiveDataFromServer();
+                    //     // writeln("traffic recieved up here");
+                    //     // received.push_front(inbound);
+                    // }
                         
                     //else {
                         // Listen
@@ -292,12 +312,12 @@ class SDLApp{
                     // }
                 // }
 
-            }
-            while (received.size() > 0) {
-                //draw the packets
-                writeln("do i get here?");
-                drawInbound(received, imgSurface);
-            }
+                }
+                while (received.size() > 0) {
+                    //draw the packets
+                    writeln("do i get here?");
+                    drawInbound(received, imgSurface);
+                }
 
             /// Blit the surace (i.e. update the window with another surfaces pixels
             ///                       by copying those pixels onto the window).
@@ -307,11 +327,12 @@ class SDLApp{
             /// Delay for 16 milliseconds
             /// Otherwise the program refreshes too quickly
             SDL_Delay(16);
+            }
         }
-
         /// Destroy our window
         SDL_DestroyWindow(window);
 
+            
     }
 }
 

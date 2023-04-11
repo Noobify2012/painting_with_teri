@@ -20,6 +20,8 @@ import Packet : Packet;
 class TCPClient{
 	/// The client socket connected to a server
 	Socket mSocket;
+    Packet inbound;
+
 
 	/**
     Name: TCPClient Constructor
@@ -64,7 +66,7 @@ class TCPClient{
 	// 
 	// In order to make life a little easier, I will also spin up a new thread that constantly
 	// receives data from the server.
-	void run(){
+	Packet run(Packet packet){
 		writeln("Preparing to run client");
 		writeln("(me)",mSocket.localAddress(),"<---->",mSocket.remoteAddress(),"(server)");
 		// Buffer of data to send out
@@ -72,15 +74,15 @@ class TCPClient{
 
 		bool clientRunning=true;
 		
-        Packet packet;
 		// Spin up the new thread that will just take in data from the server
 		new Thread({
-					packet = receiveDataFromServer();
+					inbound = receiveDataFromServer();
 				}).start();
+        
 	
 		writeln(">");
 		while(clientRunning){
-		    mSocket.send(packet.GetPacketAsBytes());
+		    sendDataToServer(packet);
 
             // foreach(line; stdin.byLine){
 			// 	write(">");
@@ -89,8 +91,13 @@ class TCPClient{
 			// }
 				// Now we'll immedietely block and await data from the server
 		}
+        return inbound;
 
 	}
+
+    void sendDataToServer(Packet packet){
+        mSocket.send(packet.GetPacketAsBytes);
+    }
 
 
 	/// Purpose of this function is to receive data from the server as it is broadcast out.
@@ -247,7 +254,7 @@ ushort getServerPort() {
 }
 
 // Entry point to client
-void main(){
-	TCPClient client = new TCPClient();
-	client.run();
-}
+// void main(){
+// 	TCPClient client = new TCPClient();
+// 	client.run();
+// }
