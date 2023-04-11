@@ -274,6 +274,7 @@ class SDLApp{
             		// Spin up the new thread that will just take in data from the server
                 new Thread({
                             Packet inbound = client.receiveDataFromServer();
+                            imgSurface.UpdateSurfacePixel(inbound.x, inbound.y, inbound.r, inbound.g, inbound.b);
                             received.push_front(inbound);
 
                         }).start();
