@@ -101,6 +101,7 @@ class SDLApp{
                 }
                 else if(e.type == SDL_MOUSEBUTTONDOWN){
                     drawing=true;
+                    
                 }else if(e.type == SDL_MOUSEBUTTONUP){
                     drawing=false;
                     prevX = -9999;
@@ -109,6 +110,7 @@ class SDLApp{
                     /// Get position of the mouse when drawing
                     int xPos = e.button.x;
                     int yPos = e.button.y;
+                    // writeln("what is x and y? : "~ to!string(xPos) ~ " " ~ to!string(yPos));
                     /// Loop through and update specific pixels
                     // NOTE: No bounds checking performed --
                     //       think about how you might fix this :)
@@ -149,7 +151,7 @@ class SDLApp{
                                 // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 0, 0, 0);
                             }
                             /// Send change from user to deque
-                            // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
+                            imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
                             if(networked == true) {
                                 Packet packet;
                                 packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue);
@@ -164,6 +166,7 @@ class SDLApp{
                     /// This is where we draw the line!
                     if (prevX > -9999) {
                          imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                        //  writeln("are we hitting lerp?");
                     }
                     prevX = xPos;
                     prevY = yPos;
@@ -283,6 +286,7 @@ class SDLApp{
 
                     writeln(">");
                     client.sendDataToServer(traffic.pop_back);
+                    writeln("are we sending to server?");
 
                     // received.push_front(client.run(traffic.pop_back));  // FIX
 
@@ -319,6 +323,7 @@ class SDLApp{
                     writeln("do i get here?");
                     drawInbound(received, imgSurface);
                 }
+            }
 
             /// Blit the surace (i.e. update the window with another surfaces pixels
             ///                       by copying those pixels onto the window).
@@ -328,7 +333,7 @@ class SDLApp{
             /// Delay for 16 milliseconds
             /// Otherwise the program refreshes too quickly
             SDL_Delay(16);
-            }
+            
         }
         /// Destroy our window
         SDL_DestroyWindow(window);
