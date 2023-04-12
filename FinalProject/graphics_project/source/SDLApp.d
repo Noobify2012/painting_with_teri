@@ -277,7 +277,6 @@ class SDLApp{
             		// Spin up the new thread that will just take in data from the server
                 new Thread({
                             Packet inbound = client.receiveDataFromServer();
-                            imgSurface.UpdateSurfacePixel(inbound.x, inbound.y, inbound.r, inbound.g, inbound.b);
                             received.push_front(inbound);
 
                         }).start();
@@ -324,7 +323,6 @@ class SDLApp{
                     drawInbound(received, imgSurface);
                 }
             }
-
             /// Blit the surace (i.e. update the window with another surfaces pixels
             ///                       by copying those pixels onto the window).
             SDL_BlitSurface(imgSurface.getSurface(),null,SDL_GetWindowSurface(window),null);
@@ -333,7 +331,6 @@ class SDLApp{
             /// Delay for 16 milliseconds
             /// Otherwise the program refreshes too quickly
             SDL_Delay(16);
-            
         }
         /// Destroy our window
         SDL_DestroyWindow(window);
