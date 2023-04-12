@@ -5,6 +5,7 @@ import std.math;
 import std.string;
 import std.regex;
 import std.container.array;
+
  
  /// Packet
 import Packet : Packet;
@@ -78,7 +79,7 @@ Socket initialize() {
 
 //     //TODO: while not sending data we should be listening and updating
 
-//     foreach(line; stdin.byLine){
+//     foreach(line; stdin.byLine){  = mClient line 61, do the same obfuscation that we do in SDL_App 26
 //         // sendChangeToServer(8,5,49,50,51);
 //         // Packet data;
 // 		// // The 'with' statement allows us to access an object
@@ -186,11 +187,11 @@ Packet recieveFromServer(Socket socket, byte[Packet.sizeof] buffer) {
         formattedPacket.g = f4;
         formattedPacket.b = f5;
 
-		writeln("what is field1(x): ",formattedPacket.x);
-		writeln("what is field2(y): ",formattedPacket.y);
-        writeln("what is field3(r): ",formattedPacket.r);
-		writeln("what is field4(g): ",formattedPacket.g);
-        writeln("what is field5(b): ",formattedPacket.b);
+		// writeln("what is field1(x): ",formattedPacket.x);
+		// writeln("what is field2(y): ",formattedPacket.y);
+        // writeln("what is field3(r): ",formattedPacket.r);
+		// writeln("what is field4(g): ",formattedPacket.g);
+        // writeln("what is field5(b): ",formattedPacket.b);
 		// NOTE: You may want to explore std.bitmanip, if you
 		//       have different endian machines.
 //		int value = peek!(int,Endian.littleEndian)(field1);
@@ -222,9 +223,9 @@ Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyt
         }
         
         
-        writeln("red = " ~ to!string(red));
-        writeln("redVal = " ~ to!string(redVal));
-        writeln("redInt = " ~ to!string(redInt));
+        // writeln("red = " ~ to!string(red));
+        // writeln("redVal = " ~ to!string(redVal));
+        // writeln("redInt = " ~ to!string(redInt));
 
 		with (data) {
 			user = "clientName\0";

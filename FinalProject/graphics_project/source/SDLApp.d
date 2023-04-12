@@ -4,6 +4,8 @@ import std.string;
 import std.process;
 import std.conv;
 import std.socket;
+import std.parallelism;
+import core.thread.osthread;
 
 /// Load the SDL2 library
 import bindbc.sdl;
@@ -18,6 +20,7 @@ import Deque : Deque;
 import test_addr;
 import shape_listener;
 import drawing_utilities;
+import mClient;
 
 
 // For printing the key pressed info
@@ -29,6 +32,7 @@ class SDLApp{
 
     /// global variable for sdl;
     const SDLSupport ret;
+    TCPClient client;
 
 
     void MainApplicationLoop(){
@@ -127,7 +131,7 @@ class SDLApp{
                                 //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
                             } else if (color == 2 && !erasing) {
                                 /// Set brush color to green
-                                red = 32;
+                                red = 0;
                                 green = 255;
                                 blue = 0;
                                 //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 32, 255, 128);
@@ -148,7 +152,7 @@ class SDLApp{
                             // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
                             if(networked == true) {
                                 Packet packet;
-                                packet = test_client.getChangeForServer(xPos+w,yPos+h, red, green, blue);
+                                packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue);
                                 // writeln("Input values x: " ~to!string(xPos+w) ~ " y: " ~ to!string(yPos+h) ~ " r: " ~to!string(red) ~ " g: " ~ to!string(green) ~ " b: " ~ to!string(blue));
                                 // writeln("Packet values x: " ~to!string(packet.x) ~ " y: " ~ to!string(packet.y) ~ " r: " ~to!string(packet.r) ~ " g: " ~ to!string(packet.g) ~ " b: " ~ to!string(packet.b));
                                 // traffic = test_client.addToSend(traffic, packet);
@@ -210,12 +214,15 @@ class SDLApp{
                     } else if (e.key.keysym.sym == SDLK_n) {
                         if (networked == false) {
                             /// Set up the socket and connection to server
-                            sendSocket = test_client.initialize();
-                            /// Perform initial handshake and test connect string
-                            auto address = test_addr.find();
-                            auto port = test_addr.findPort();
-                            // recieveSocket =
-                            buffer = test_client.sendConnectionHandshake(sendSocket);
+                            // sendSocket = test_client.initialize();
+                            // /// Perform initial handshake and test connect string
+                            // auto address = test_addr.find();
+                            // auto port = test_addr.findPort();
+                            // // recieveSocket =
+                            // buffer = test_client.sendConnectionHandshake(sendSocket);  // FIX ALL THIS
+
+
+                            client = new TCPClient();
                             networked = true;
                         } else {
                             networked = false;
@@ -253,19 +260,43 @@ class SDLApp{
                     // }
                 }
             }
+
+            auto received = new Deque!(Packet);
             //if we have turned networking on, the client not the server
             if (networked == true) {
                 // while(!tear_down) {
                     /// Check if there is traffic to send, if so send it, else listen
                     // writeln("size of traffic: " ~ to!string(traffic.size));
-                    if(traffic.size > 0) {
-                        /// Send action to server
+                    // Packet inbound = client.receiveDataFromServer();
+                    //     // writeln("traffic recieved down here");
+                    // received.push_front(inbound);
 
-                        test_client.sendToServer(traffic.pop_back, sendSocket);
-                        writeln("traffic sent");
-                        Packet inbound = test_client.recieveFromServer(sendSocket, buffer);
-                        writeln("traffic recieved");
-                    }
+            		// Spin up the new thread that will just take in data from the server
+                new Thread({
+                            Packet inbound = client.receiveDataFromServer();
+                            imgSurface.UpdateSurfacePixel(inbound.x, inbound.y, inbound.r, inbound.g, inbound.b);
+                            received.push_front(inbound);
+
+                        }).start();
+
+                if (traffic.size > 0) {
+
+                    writeln(">");
+                    client.sendDataToServer(traffic.pop_back);
+
+                    // received.push_front(client.run(traffic.pop_back));  // FIX
+
+                    
+                    // if(traffic.size > 0) {
+                    //     /// Send action to server
+
+                    //     received.push_front(client.run(traffic.pop_back));  // FIX
+                    //     // writeln("traffic sent");
+                    //     // Packet inbound = client.receiveDataFromServer();
+                    //     // writeln("traffic recieved up here");
+                    //     // received.push_front(inbound);
+                    // }
+                        
                     //else {
                         // Listen
                         // Packet inbound;
@@ -282,7 +313,12 @@ class SDLApp{
                     // }
                 // }
 
-            }
+                }
+                while (received.size() > 0) {
+                    //draw the packets
+                    writeln("do i get here?");
+                    drawInbound(received, imgSurface);
+                }
 
             /// Blit the surace (i.e. update the window with another surfaces pixels
             ///                       by copying those pixels onto the window).
@@ -292,12 +328,26 @@ class SDLApp{
             /// Delay for 16 milliseconds
             /// Otherwise the program refreshes too quickly
             SDL_Delay(16);
+            }
         }
-
         /// Destroy our window
         SDL_DestroyWindow(window);
 
+            
     }
+}
+
+void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
+    int prevX = -9999;
+    int prevY = -9999;
+    while(traffic.size() > 0) {
+        auto curr = traffic.pop_back();
+        writeln("and now here");
+        //TODO: Fix order
+        imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
+        // imgSurface.lerp(prevX, prevY,curr.x, curr.y, 1, curr.r, curr.g, curr.b);
+    }
+
 }
 
 // void runClient(Deque traffic, Socket socket, Bool tear_down) {
