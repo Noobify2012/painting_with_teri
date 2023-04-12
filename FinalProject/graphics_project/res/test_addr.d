@@ -3,28 +3,23 @@ import std.stdio;
 import std.conv;
 import std.random;
  
-/// Packet
+ // Packet
 import Packet : Packet;
 // import my/test_addr.d;
 
-/**
-Name: Find
-Description: Finds client socket and returns local address.
-Returns: local address of client
-*/
 Address find(){
     // test_addr.main();
      writeln("Starting client...attempt to create socket");
-     /// Create a socket for connecting to a server
+     // Create a socket for connecting to a server
      auto socket = new Socket(AddressFamily.INET, SocketType.STREAM);
-     /// CITATION: https://forum.dlang.org/post/hlougompegdwwviahdek@forum.dlang.org
+     //CITATION: https://forum.dlang.org/post/hlougompegdwwviahdek@forum.dlang.org
      auto r = getAddress("8.8.8.8" , 53);
      const char[] address = r[0].toAddrString().dup;
      ushort port = to!ushort(r[0].toPortString());
-     /// Socket needs an 'endpoint', so we determine where we
-     /// are going to connect to.
-     /// NOTE: It's possible the port number is in use if you are not
-     ///       able to connect. Try another one.
+     // Socket needs an 'endpoint', so we determine where we
+     // are going to connect to.
+     // NOTE: It's possible the port number is in use if you are not
+     //       able to connect. Try another one.
      socket.connect(new InternetAddress(address, port));
     //  writeln(socket.hostName);
     //  writeln("My IP address is  : ", socket.localAddress);
@@ -47,7 +42,7 @@ ushort findPort() {
     auto rnd = Random(69);
     while(!ready) {
         auto ports = uniform(min, max, rnd);
-        // writeln("checking :" ~ to!string(ports));
+        writeln("checking :" ~ to!string(ports));
         auto socket = new Socket(AddressFamily.INET, SocketType.STREAM);
         auto address = find();
         // socket.bind(new InternetAddress(address.toAddrString.dup, to!ushort(ports)));

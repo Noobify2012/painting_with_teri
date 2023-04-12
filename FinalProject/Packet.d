@@ -28,21 +28,15 @@ struct Packet{
     byte r;
     byte g;
     byte b;
-    char[64] message; // for debugging
-	// ushort port;
-
-	/// Purpose of this function is to pack a bunch of
-    /// bytes into an array for 'serialization' or otherwise
-	/// ability to send back and forth across a server, or for
-	/// otherwise saving to disk.	
+    char[64] message; /// for debugging
 
 	/** 
-	* Name: GetPacketAsBytes
-	* Description: Purpose of this function is to pack a bunch of
-	*	bytes into an array for 'serialization' or otherwise
-	*	ability to send back and forth across a server, or for
-	*	otherwise saving to disk.	
-	* Returns: Payload, packet with bytes of color data for each pixel TODO: confirm
+	Name: GetPacketAsBytes
+	Description: Purpose of this function is to pack a bunch of
+		bytes into an array for 'serialization' or otherwise
+		ability to send back and forth across a server, or for
+		otherwise saving to disk.	
+	Returns: Payload, packet with bytes of color data for each pixel TODO: confirm
 	*/
     char[Packet.sizeof] GetPacketAsBytes(){
 		user = "test user\0";
@@ -53,20 +47,13 @@ struct Packet{
 		memmove(&payload,&user,user.sizeof);
 		/// Populate the color with some bytes
 		import std.stdio;
-		// writeln("x is:",x);
-		// writeln("y is:",y);
-		// writeln("r is:",r);
-		// writeln("g is:",g);
-		// writeln("b is:",b);
+		writeln("x is:",x);
+		writeln("y is:",y);
 		memmove(&payload[16],&x,x.sizeof);
 		memmove(&payload[20],&y,y.sizeof);
-		memmove(&payload[24],&r,r.sizeof);
-		memmove(&payload[28],&g,g.sizeof);
-		memmove(&payload[32],&b,b.sizeof);
 
         return payload;
-
-	}
+    }
 
 	
 }

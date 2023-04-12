@@ -13,7 +13,7 @@ void main(){
 	// are going to connect to.
 	// NOTE: It's possible the port number is in use if you are not
 	//       able to connect. Try another one.
-    socket.connect(new InternetAddress("localhost", 50002));
+    socket.connect(new InternetAddress("10.29.223.141", 50002));
 	scope(exit) socket.close();
 	writeln("Connected");
 

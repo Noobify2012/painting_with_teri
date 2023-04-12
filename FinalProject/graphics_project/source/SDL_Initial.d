@@ -1,14 +1,21 @@
 import std.stdio;
 import std.string;
 
-// Load the SDL2 library
+/// Load the SDL2 library
 import bindbc.sdl;
 import loader = bindbc.loader.sharedlib;
 
+/**
+Name: SDLInit
+Description: Class loads and initializes SDL libraries.
+*/
 class SDLInit{
+    /**
+    SDLInit Constructor
+    Load the SDL libraries from bindbc-sdl
+    on the appropriate operating system
+     */
     this(){
-        // Load the SDL libraries from bindbc-sdl
-        // on the appropriate operating system
         version(Windows){
             writeln("Searching for SDL on Windows");
             ret = loadSDL("SDL2.dll");
@@ -22,7 +29,7 @@ class SDLInit{
             ret = loadSDL();
         }
 
-        // Error if SDL cannot be loaded
+        /// Error if SDL cannot be loaded
         if(ret != sdlSupport){
             writeln("error loading SDL library");
 
@@ -37,20 +44,24 @@ class SDLInit{
             writeln("Eror badLibrary, missing symbols, perhaps an older or very new version of SDL is causing the problem?");
         }
 
-        // Initialize SDL
+        /// Initialize SDL
         if(SDL_Init(SDL_INIT_EVERYTHING) !=0){
             writeln("SDL_Init: ", fromStringz(SDL_GetError()));
         }
     }
-    /// At the module level, when we terminate, we make sure to
-    /// terminate SDL, which is initialized at the start of the application.
-    //shared static
+
+    /**
+    SDLInit Destructor
+    At the module level, when we terminate, we make sure to
+    terminate SDL, which is initialized at the start of the application.
+    shared static
+    */
     ~this(){
-        // Quit the SDL Application
+        /// Quit the SDL Application
         SDL_Quit();
         writeln("Ending application--This has been a Teri Chadbourne Expierence!");
     }
 
-    // global variable for sdl;
+    /// global variable for sdl;
     const SDLSupport ret;
 }
