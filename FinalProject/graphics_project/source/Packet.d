@@ -53,11 +53,11 @@ struct Packet{
 		memmove(&payload,&user,user.sizeof);
 		/// Populate the color with some bytes
 		import std.stdio;
-		writeln("x is:",x);
-		writeln("y is:",y);
-		writeln("r is:",r);
-		writeln("g is:",g);
-		writeln("b is:",b);
+		// writeln("x is:",x);
+		// writeln("y is:",y);
+		// writeln("r is:",r);
+		// writeln("g is:",g);
+		// writeln("b is:",b);
 		memmove(&payload[16],&x,x.sizeof);
 		memmove(&payload[20],&y,y.sizeof);
 		memmove(&payload[24],&r,r.sizeof);
