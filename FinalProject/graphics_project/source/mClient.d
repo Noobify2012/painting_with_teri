@@ -158,6 +158,7 @@ Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyt
         // writeln("Input for get change x: " ~to!string(xPos) ~ " y: " ~ to!string(yPos) ~ " r: " ~to!string(redVal) ~ " g: " ~ to!string(greenVal) ~ " b: " ~ to!string(blueVal));
         // writeln("Inside Packet values x: " ~to!string(data.x) ~ " y: " ~ to!string(data.y) ~ " r: " ~to!string(data.r) ~ " g: " ~ to!string(data.g) ~ " b: " ~ to!string(data.b));
         
+        //*******what is going on here?*******
         byte red = cast(byte) redVal;
         int redInt = to!int(red);
         byte block = cast(byte) 256;

@@ -158,7 +158,9 @@ class SDLApp{
                                 // writeln("Input values x: " ~to!string(xPos+w) ~ " y: " ~ to!string(yPos+h) ~ " r: " ~to!string(red) ~ " g: " ~ to!string(green) ~ " b: " ~ to!string(blue));
                                 // writeln("Packet values x: " ~to!string(packet.x) ~ " y: " ~ to!string(packet.y) ~ " r: " ~to!string(packet.r) ~ " g: " ~ to!string(packet.g) ~ " b: " ~ to!string(packet.b));
                                 // traffic = test_client.addToSend(traffic, packet);
-                                traffic.push_front(packet);
+                                if(packet != traffic.back() {
+                                    traffic.push_front(packet);
+                                }
                                 // test_client.sendToServer(packet, sendSocket);
                             }
                         }
