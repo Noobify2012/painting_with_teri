@@ -158,8 +158,10 @@ class SDLApp{
                                 // writeln("Input values x: " ~to!string(xPos+w) ~ " y: " ~ to!string(yPos+h) ~ " r: " ~to!string(red) ~ " g: " ~ to!string(green) ~ " b: " ~ to!string(blue));
                                 // writeln("Packet values x: " ~to!string(packet.x) ~ " y: " ~ to!string(packet.y) ~ " r: " ~to!string(packet.r) ~ " g: " ~ to!string(packet.g) ~ " b: " ~ to!string(packet.b));
                                 // traffic = test_client.addToSend(traffic, packet);
-                                if(packet != traffic.back() {
-                                    traffic.push_front(packet);
+                                if (traffic.size() > 0 ) {
+                                    if (packet != traffic.back() ) {
+                                        traffic.push_front(packet);
+                                    }
                                 }
                                 // test_client.sendToServer(packet, sendSocket);
                             }
@@ -230,8 +232,8 @@ class SDLApp{
                             client = new TCPClient();
                             networked = true;
                         } else {
-                            networked = false;
                             tear_down = true;
+                            writeln("do the tear down");
                         }
                         
                     } else if (e.key.keysym.sym == SDLK_f) {
@@ -278,12 +280,13 @@ class SDLApp{
 
             		// Spin up the new thread that will just take in data from the server
                 new Thread({
+                        if (!tear_down) {
                             Packet inbound = client.receiveDataFromServer();
                             received.push_front(inbound);
-
+                        } 
                         }).start();
 
-                if (traffic.size > 0) {
+                if (traffic.size > 0 && !tear_down) {
 
                     writeln(">");
                     client.sendDataToServer(traffic.pop_back);
@@ -317,7 +320,14 @@ class SDLApp{
                         
                     // }
                 // }
-
+                } else if (tear_down) {
+                    auto packet = mClient.getChangeForServer(-9999,-9999, 0, 0, 0);
+                    client.sendDataToServer(packet);
+                    client.closeSocket();
+                    writeln("we should have closed the socket.");
+                    tear_down = false;
+                    networked = false;
+                    
                 }
                 while (received.size() > 0) {
                     //draw the packets

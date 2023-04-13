@@ -160,8 +160,8 @@ class TCPServer{
 						byte f3 = *cast(byte*)&field3;
 						byte f4 = *cast(byte*)&field4;
 						byte f5 = *cast(byte*)&field5;
-						byte f6 = *cast(int*)&field6;
-						byte f7 = *cast(int*)&field7;
+						int f6 = *cast(int*)&field6;
+						int f7 = *cast(int*)&field7;
 						p.x = f1;
 						p.y = f2;
 						p.r = f3;
@@ -179,7 +179,14 @@ class TCPServer{
 
 						/// After we receive a single message, we'll just 
 						/// immedietely broadcast out to all clients some data.
-						broadcastToAllClients();
+						if (f1 == -9999 && f2 == -9999) {
+							// clientSocket.shutdown(SocketShutdown.both);
+							clientSocket.close();
+							writeln("socket should have closed");
+						} else {
+							broadcastToAllClients();
+						}
+						
 					}
 									
 				}

@@ -99,6 +99,12 @@ class TCPClient{
         mSocket.send(packet.GetPacketAsBytes);
     }
 
+    void closeSocket() {
+        // mSocket.shutdown(SocketShutdown.both);
+        mSocket.close();
+    }
+
+
 
 	/// Purpose of this function is to receive data from the server as it is broadcast out.
 	Packet receiveDataFromServer(){
