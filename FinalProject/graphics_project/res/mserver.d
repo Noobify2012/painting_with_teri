@@ -153,16 +153,22 @@ class TCPServer{
 						byte[4] field3 = buffer[24 .. 28].dup;
 						byte[4] field4 = buffer[28 .. 32].dup;
 						byte[4] field5 = buffer[32 .. 36].dup;
+						byte[4] field6 = buffer[36 .. 40].dup;
+						byte[4] field7 = buffer[32 .. 36].dup;
 						int f1 = *cast(int*)&field1;
 						int f2 = *cast(int*)&field2;
 						byte f3 = *cast(byte*)&field3;
 						byte f4 = *cast(byte*)&field4;
 						byte f5 = *cast(byte*)&field5;
+						byte f6 = *cast(int*)&field6;
+						byte f7 = *cast(int*)&field7;
 						p.x = f1;
 						p.y = f2;
 						p.r = f3;
 						p.g = f4;
 						p.b = f5;
+						p.s = f6;
+						p.bs = f7;
 
 						// Store data that we receive in our server.
 						// We append the buffer to the end of our server
