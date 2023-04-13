@@ -129,16 +129,17 @@ class SDLApp{
                     int yPos = e.button.y;
 
                     ///**MENU BUTTON SELECTOR: LINES 129 - 152:
-                    //Button one:
+                    //Button one: change brush size 
                     if (yPos < 50 && xPos < h2){
                         writeln("button1");
                         button1pressed = true; 
                         brush = brushSizeChanger(brush);
                     }
-                    //Button two:
+                    //Button two: change brush color 
                     if(yPos < 50 && xPos > h2 && xPos < h2 * 2){
                         writeln("button2");
                         button2pressed = true; 
+                        color = colorChanger(color);
                     }
                     //Button three:
                     if(yPos < 50 && xPos > h2 * 2 + 1 && xPos < h2 * 3){
@@ -248,25 +249,22 @@ class SDLApp{
                     printf("key released: ");
                     //, to!string(e.key.keysym.sym));
                     if (e.key.keysym.sym == SDLK_b || button1pressed == true){
-                        /// Change brush size
-                        // if (brush < 3) {
-                        //     brush++;
-                        // } else {
-                        //     brush=1;
-                        // }
-                        // writeln("Changing to brush size: " , to!string(brush));
-
+                        //For each key press, cycle through the 3 brush sizes. 
                         brush = brushSizeChanger(brush);
 
                     } else if (e.key.keysym.sym == SDLK_c) {
                         /// Change color
-                        if (color < 3) {
-                            color++;
-                        } else {
-                            color=1;
-                        }
-                        writeln("Changing to color : " , to!string(color));
+                        // if (color < 3) {
+                        //     color++;
+                        // } else {
+                        //     color=1;
+                        // }
+                        
+                        //writeln("Changing to color : " , to!string(color));
+                        color = colorChanger(color);
+
                     } else if (e.key.keysym.sym == SDLK_e) {
+                        //Activate Eraser 
                         if (erasing == false) {
                             erasing = true;
                             temp_color = color;
@@ -427,7 +425,16 @@ int brushSizeChanger(int curBrush){
     return curBrush;
 }
 
+int colorChanger(int curColor){
+    if (curColor < 3) {
+        curColor++;
+    } else {
+        curColor=1;
+    }
 
+    writeln("Changing to color : " , to!string(curColor));
+    return curColor; 
+}
 // void runClient(Deque traffic, Socket socket, Bool tear_down) {
 //     //if the client is running, loop
     
