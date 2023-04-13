@@ -133,7 +133,7 @@ class SDLApp{
                     if (yPos < 50 && xPos < h2){
                         writeln("button1");
                         button1pressed = true; 
-                        brushSizeChanger(brushSize);
+                        brush = brushSizeChanger(brush);
                     }
                     //Button two:
                     if(yPos < 50 && xPos > h2 && xPos < h2 * 2){
@@ -256,7 +256,7 @@ class SDLApp{
                         // }
                         // writeln("Changing to brush size: " , to!string(brush));
 
-                        brushSizeChanger(brush);
+                        brush = brushSizeChanger(brush);
 
                     } else if (e.key.keysym.sym == SDLK_c) {
                         /// Change color
@@ -417,14 +417,14 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
 }
 
 int brushSizeChanger(int curBrush){
-    int brush = curBrush;
     if (curBrush < 3) {
-        brush++;
+        curBrush++;
+        writeln(curBrush);
     } else {
-        brush=1;
+        curBrush=1;
     }
-    writeln("Changing to brush size: " , to!string(brush));
-    return brush;
+    writeln("Changing to brush size: " , to!string(curBrush));
+    return curBrush;
 }
 
 
