@@ -86,9 +86,6 @@ class Circle : Shape {
                     if (numPoints == 0) {
                         p1 = tuple(e.button.x, e.button.y);
                     } else {
-                        // if (e.button.y > 50){
-                        //     writeln("Clicked on menu!");
-                        // }
                         p2 = tuple(e.button.x, e.button.y);
                     }
                     ++numPoints;
