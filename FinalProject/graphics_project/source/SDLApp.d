@@ -76,6 +76,7 @@ class SDLApp{
         Socket sendSocket;
         byte[Packet.sizeof] buffer;
         bool tear_down = false;
+        writeln("tear down : " ~ to!string(tear_down));
         
         Socket recieveSocket;
         // Deque traffic = new Deque!Packet;
@@ -102,11 +103,11 @@ class SDLApp{
                 else if(e.type == SDL_MOUSEBUTTONDOWN){
                     drawing=true;
                     
-                }else if(e.type == SDL_MOUSEBUTTONUP){
+                } else if(e.type == SDL_MOUSEBUTTONUP){
                     drawing=false;
                     prevX = -9999;
                     prevY = -9999;
-                } else if(e.type == SDL_MOUSEMOTION && drawing){
+                } else if(e.type == SDL_MOUSEMOTION && drawing) {
                     /// Get position of the mouse when drawing
                     int xPos = e.button.x;
                     int yPos = e.button.y;
