@@ -46,6 +46,8 @@ class SDLApp{
         /// Load the bitmap surface
         Surface imgSurface = new Surface(0,640,480,32,0,0,0,0);
 
+       // drawMenuBars(imgSurface);
+
         /// Initialize variables
         /// Application running flag for determing if we are running the main application loop
         bool runApplication = true;
@@ -57,6 +59,9 @@ class SDLApp{
         bool networked = false;
 
         int brush = 1;
+        
+        bool button1pressed, button2pressed, button3pressed, 
+             button4pressed, button5pressed, button6pressed = false;
 
         int color = 1;
         ubyte red = 255;
@@ -81,15 +86,35 @@ class SDLApp{
         Socket recieveSocket;
         // Deque traffic = new Deque!Packet;
         
+        /// **Tech debt: Create variables for window size so they can be changed proportionally**
+        /// **Tech debt: Move menu creation into its own function**
+        //Draw bottom bar of menu skeleton
+        brushSize = 2;
+        int b1;
+        for(b1 = 1; b1 <= 640; b1++){
+             imgSurface.lerp(b1 - 1, 50, b1, 50, brushSize, red, green, blue);  
+        }
 
+        //Draw divider bars for menu skeleton 
+        int h1;
+        int h2 = 640/6;
+        int h3;
+        //There needs to be 5 dividers, this is h1
+        for (h1 = 1; h1 <= 5; h1++){
+            int divX = h1 * h2;
+            //The dividers each need to be 50 pixels tall. that is h3
+            for (h3 = 0; h3 < 50; h3++){
+                imgSurface.lerp(divX - 1, h3, divX, h3+1, brushSize, red, green, blue);
+            }
+        }
 
+        brushSize = 4;
         // SDL_EnableUNICODE( 1 );
 
         /// Main application loop that will run until a quit event has occurred.
         /// This is the 'main graphics loop'
         while(runApplication){
             SDL_Event e;
-            
             /// Handle events
             /// Events are pushed into an 'event queue' internally in SDL, and then
             /// handled one at a time within this loop for as many events have
@@ -102,8 +127,45 @@ class SDLApp{
                 }
                 else if(e.type == SDL_MOUSEBUTTONDOWN){
                     drawing=true;
-                    
-                } else if(e.type == SDL_MOUSEBUTTONUP){
+                    int xPos = e.button.x;
+                    int yPos = e.button.y;
+
+                    ///**BEGIN MENU BUTTON SELECTOR**
+                    //Button one: change brush size 
+                    if (yPos < 50 && xPos < h2){
+                        writeln("button1");
+                        button1pressed = true; 
+                        brush = brushSizeChanger(brush);
+                    }
+                    //Button two: change brush color 
+                    if(yPos < 50 && xPos > h2 && xPos < h2 * 2){
+                        writeln("button2");
+                        button2pressed = true; 
+                        color = colorChanger(color);
+                    }
+                    //Button three:
+                    if(yPos < 50 && xPos > h2 * 2 + 1 && xPos < h2 * 3){
+                        writeln("button3");
+                        button3pressed = true; 
+                    }
+                    //Button four:
+                    if(yPos < 50 && xPos > h2 * 3 + 1 && xPos < h2 * 4){
+                        writeln("button4");
+                        button4pressed = true; 
+                    }
+                    //Button five:
+                    if(yPos < 50 && xPos > h2 * 4 + 1 && xPos < h2 * 5){
+                        writeln("button5");
+                        button5pressed = true; 
+                    }
+                    //Button six:
+                    if(yPos < 50 && xPos > h2 * 5 + 1 && xPos < h2 * 6){
+                        writeln("button6");
+                        button6pressed = true; 
+                    }
+                    //END MENU BUTTON SELECTOR 
+
+                }else if(e.type == SDL_MOUSEBUTTONUP){
                     drawing=false;
                     prevX = -9999;
                     prevY = -9999;
@@ -111,7 +173,7 @@ class SDLApp{
                     /// Get position of the mouse when drawing
                     int xPos = e.button.x;
                     int yPos = e.button.y;
-                    // writeln("what is x and y? : "~ to!string(xPos) ~ " " ~ to!string(yPos));
+
                     /// Loop through and update specific pixels
                     // NOTE: No bounds checking performed --
                     //       think about how you might fix this :)
@@ -124,6 +186,7 @@ class SDLApp{
                     }
 
                     /// Change brush:
+                    //**Tech Debt: Change color without having to draw first**
                     for(int w=-brushSize; w < brushSize; w++){
                         for(int h=-brushSize; h < brushSize; h++){
                             /// Set brush color to blue
@@ -152,7 +215,9 @@ class SDLApp{
                                 // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 0, 0, 0);
                             }
                             /// Send change from user to deque
-                            imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
+                            if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 52 && prevY > 52)
+                                imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
+
                             if(networked == true) {
                                 Packet packet;
                                 packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue);
@@ -168,46 +233,51 @@ class SDLApp{
                             }
                         }
                     }
+
                     /// This is where we draw the line!
-                    if (prevX > -9999) {
-                         imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                    /// --This is also imposing bounds for drawing lines - the xPos & yPos limitations
+                    /// keep you from overflowing pixels
+                    if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 50 && prevY > 51) {
+                        imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
                         //  writeln("are we hitting lerp?");
                     }
                     prevX = xPos;
                     prevY = yPos;
                     /// If keyboard is pressed check for change event
+
                 } else if(e.type == SDL_KEYDOWN) { // Listener for button down - not in use yet
                     // writeln()
                     // PrintKeyInfo( &e.key );
                     // printf( ", Name: %s", SDL_GetKeyName( key.keysym.sym ) );
-                    if (e.key.keysym.sym == SDLK_b) {
-                        // printf("Changing brush size");
+                    // if (e.key.keysym.sym == SDLK_b) {
+                    //     // printf("Changing brush size");
 
-                    }
+                    // }
                     // printf( cast(string)(e.key.keysym.sym) , " key pressed ");
                     // printf( SDL_GetKeyNamse (e.key.keysym.sym ) , " key pressed ");
-
 
                 } else if(e.type == SDL_KEYUP) {
                     printf("key released: ");
                     //, to!string(e.key.keysym.sym));
-                    if (e.key.keysym.sym == SDLK_b) {
-                        /// Change brush size
-                        if (brush < 3) {
-                            brush++;
-                        } else {
-                            brush=1;
-                        }
-                        writeln("Changing to brush size: " , to!string(brush));
+                    if (e.key.keysym.sym == SDLK_b){
+                        //For each key press, cycle through the 3 brush sizes. 
+                        brush = brushSizeChanger(brush);
+
                     } else if (e.key.keysym.sym == SDLK_c) {
                         /// Change color
-                        if (color < 3) {
-                            color++;
-                        } else {
-                            color=1;
-                        }
-                        writeln("Changing to color : " , to!string(color));
+                        // if (color < 3) {
+                        //     color++;
+                        // } else {
+                        //     color=1;
+                        // }
+                        
+                        //writeln("Changing to color : " , to!string(color));
+                        color = colorChanger(color);
+                        writeln("CHANGE COLOR KEYs PRESSED");
+
+
                     } else if (e.key.keysym.sym == SDLK_e) {
+                        //Activate Eraser 
                         if (erasing == false) {
                             erasing = true;
                             temp_color = color;
@@ -260,6 +330,8 @@ class SDLApp{
                     } else if (e.key.keysym.sym == SDLK_s) {
                         /// This is where we draw the shape when prompted!
                         writeln("Drawing shape");
+                        writeln("Type 'r' for rectangle", "\nType 'c' for circle", 
+                                "\nType 'l' for line", "\nType 'r' for rectangle");
                         ShapeListener sh = new ShapeListener();
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
                     }
@@ -336,6 +408,7 @@ class SDLApp{
                     drawInbound(received, imgSurface);
                 }
             }
+            
             /// Blit the surace (i.e. update the window with another surfaces pixels
             ///                       by copying those pixels onto the window).
             SDL_BlitSurface(imgSurface.getSurface(),null,SDL_GetWindowSurface(window),null);
@@ -347,8 +420,7 @@ class SDLApp{
         }
         /// Destroy our window
         SDL_DestroyWindow(window);
-
-            
+    
     }
 }
 
@@ -365,9 +437,33 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
 
 }
 
+int brushSizeChanger(int curBrush){
+    if (curBrush < 3) {
+        curBrush++;
+        writeln(curBrush);
+    } else {
+        curBrush=1;
+    }
+    writeln("Changing to brush size: " , to!string(curBrush));
+    return curBrush;
+}
+
+int colorChanger(int curColor){
+    if (curColor < 3) {
+        writeln("CHANGE COLOR BUTTON PRESSED");
+        curColor++;
+    } else {
+        curColor=1;
+        writeln("CHANGE COLOR BUTTON PRESSED, BACK TO RED");
+    }
+
+    writeln("Changing to color : " , to!string(curColor));
+    return curColor; 
+}
 // void runClient(Deque traffic, Socket socket, Bool tear_down) {
 //     //if the client is running, loop
     
+
 
 // }
 

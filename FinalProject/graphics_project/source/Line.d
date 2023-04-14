@@ -1,5 +1,6 @@
 import std.algorithm;
 import std.typecons;
+import std.stdio;
 
 import bindbc.sdl;
 import loader = bindbc.loader.sharedlib;
@@ -57,9 +58,16 @@ class Line : Shape {
                 }
             }
 
+        //Check to make sure the line doesn't draw within menu bounds
+        if((p1[1] < 50) || (p2[1] < 50)){
+            writeln("Try again, line to overlap menu");
+        }
+        //Draw the line
+        else {
         int left = min(p1[0], p2[0]), right = max(p1[0], p2[0]);
         int top = min(p1[1], p2[1]), bottom = max(p1[1], p2[1]);
 
         surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
+        }
     }
 }
