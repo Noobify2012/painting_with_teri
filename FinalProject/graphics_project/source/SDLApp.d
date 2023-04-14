@@ -159,6 +159,7 @@ class SDLApp{
                         }
                     }
                     //Button four: Shape Activator 
+                    // Either split this button into 4 buttons or have instructions pop up onto screen 
                     if(yPos < 50 && xPos > h2 * 3 + 1 && xPos < h2 * 4){
                         writeln("button4: Shape Activate");
                         writeln("Drawing shape");
