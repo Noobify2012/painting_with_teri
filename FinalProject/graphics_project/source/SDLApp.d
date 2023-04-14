@@ -228,6 +228,8 @@ class SDLApp{
                                     if (packet != traffic.back() ) {
                                         traffic.push_front(packet);
                                     }
+                                } else {
+                                    traffic.push_front(packet);
                                 }
                                 // test_client.sendToServer(packet, sendSocket);
                             }
