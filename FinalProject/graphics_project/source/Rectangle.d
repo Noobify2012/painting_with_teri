@@ -1,5 +1,6 @@
 import std.algorithm;
 import std.typecons;
+import std.stdio;
 
 import bindbc.sdl;
 import loader = bindbc.loader.sharedlib;
@@ -83,20 +84,26 @@ class Rectangle : Shape {
                 }
             }
         }
+        //Check that rectangle drawing doesn't overlap menu bounds 
+        if((p1[1] < 50) || (p3[1] < 50)){
+            writeln("Try again, rectangle set to overlap menu");
+        }
+        //Draw the rectangle 
+        else {
+            // Declare remaining outstanding points
+            p2 = tuple(p3[0], p1[1]);
+            p4 = tuple(p1[0], p3[1]);
 
-        // Declare remaining outstanding points
-        p2 = tuple(p3[0], p1[1]);
-        p4 = tuple(p1[0], p3[1]);
+            // Find left, right, top and bottom most points to iterate over
+            int minX = min(p1[0], p3[0]);
+            int maxX = max(p1[0], p3[0]);
 
-        // Find left, right, top and bottom most points to iterate over
-        int minX = min(p1[0], p3[0]);
-        int maxX = max(p1[0], p3[0]);
+            int minY = min(p1[1], p3[1]);
+            int maxY = max(p1[1], p3[1]);
 
-        int minY = min(p1[1], p3[1]);
-        int maxY = max(p1[1], p3[1]);
-
-        // Fill rectangle
-        fillRectangle(minX, maxX, minY, maxY, r, g, b);
+            // Fill rectangle
+            fillRectangle(minX, maxX, minY, maxY, r, g, b);
+        }
     }
 
 }
