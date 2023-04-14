@@ -132,32 +132,47 @@ class SDLApp{
                     ///**BEGIN MENU BUTTON SELECTOR**
                     //Button one: change brush size 
                     if (yPos < 50 && xPos < h2){
-                        writeln("button1");
+                        writeln("button1: Change brush size");
                         button1pressed = true; 
                         brush = brushSizeChanger(brush);
                     }
                     //Button two: change brush color 
                     if(yPos < 50 && xPos > h2 && xPos < h2 * 2){
-                        writeln("button2");
+                        writeln("button2: Change Color");
                         button2pressed = true; 
                         color = colorChanger(color);
                     }
                     //Button three:
+                    //**TECH DEBT: pull this out into a separate function. Code is duplicate of key presses 
                     if(yPos < 50 && xPos > h2 * 2 + 1 && xPos < h2 * 3){
-                        writeln("button3");
+                        writeln("button3: Toggle Eraser");
                         button3pressed = true; 
+                        if (erasing == false) {
+                            erasing = true;
+                            temp_color = color;
+                            color = -1;
+                            writeln("eraser active, value of temp_color: ", to!string(temp_color));
+                        } else {
+                            erasing = false;
+                            color = temp_color;
+                            writeln("Changing to color : " , to!string(color));
+                        }
                     }
-                    //Button four:
+                    //Button four: Shape Activator 
                     if(yPos < 50 && xPos > h2 * 3 + 1 && xPos < h2 * 4){
-                        writeln("button4");
-                        button4pressed = true; 
+                        writeln("button4: Shape Activate");
+                        writeln("Drawing shape");
+                        writeln("Type 'r' for rectangle", "\nType 'c' for circle", 
+                                "\nType 'l' for line", "\nType 'r' for rectangle");
+                        ShapeListener sh = new ShapeListener();
+                        sh.drawShape(&imgSurface, brushSize, red, green, blue);
                     }
-                    //Button five:
+                    //Button five: UNDO --- INCOMING: dependency: implement undo/redo
                     if(yPos < 50 && xPos > h2 * 4 + 1 && xPos < h2 * 5){
                         writeln("button5");
                         button5pressed = true; 
                     }
-                    //Button six:
+                    //Button six: REDO --- INCOMING: Dependency: implement undo/redo 
                     if(yPos < 50 && xPos > h2 * 5 + 1 && xPos < h2 * 6){
                         writeln("button6");
                         button6pressed = true; 
