@@ -86,6 +86,7 @@ class SDLApp{
         // Deque traffic = new Deque!Packet;
         
         /// **Tech debt: Create variables for window size so they can be changed proportionally**
+        /// **Tech debt: Move menu creation into its own function**
         //Draw bottom bar of menu skeleton
         brushSize = 2;
         int b1;
@@ -211,7 +212,9 @@ class SDLApp{
                                 // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 0, 0, 0);
                             }
                             /// Send change from user to deque
-                            imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
+                            if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 52 && prevY > 52)
+                                imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
+
                             if(networked == true) {
                                 Packet packet;
                                 packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue);
@@ -231,8 +234,9 @@ class SDLApp{
                     /// This is where we draw the line!
                     /// --This is also imposing bounds for drawing lines - the xPos & yPos limitations
                     /// keep you from overflowing pixels
-                    if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 50 && yPos < 479) {
-                         imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                    if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 50 && prevY > 51) {
+                        writeln(yPos);
+                        imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
                         //  writeln("are we hitting lerp?");
                     }
                     prevX = xPos;
@@ -398,7 +402,7 @@ class SDLApp{
                     drawInbound(received, imgSurface);
                 }
             }
-            }
+            
             /// Blit the surace (i.e. update the window with another surfaces pixels
             ///                       by copying those pixels onto the window).
             SDL_BlitSurface(imgSurface.getSurface(),null,SDL_GetWindowSurface(window),null);
