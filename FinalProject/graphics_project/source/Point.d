@@ -1,29 +1,36 @@
-// import std.stdio;
-// import std.typecons;
+import std.stdio;
+import std.typecons;
 
-// import bindbc.sdl;
-// import loader = bindbc.loader.sharedlib;
-// import SDL_Surfaces :Surface;
-// import SDL_Initial :SDLInit;
+import bindbc.sdl;
+import loader = bindbc.loader.sharedlib;
+import SDL_Surfaces :Surface;
+import SDL_Initial :SDLInit;
 
-// class Point {
+class Point {
 
-//     Tuple!(int, int) pnt;
-//     SDL_Color color;
+    Tuple!(int, int) coordinates;
+    SDL_Color color;
 
-//     this(int x, int y, SDL_Color color) {
+    this(int x, int y, SDL_Color color) {
 
-//         this.pnt = tuple(x, y);
-//         this.color = color;
-//     }
+        this.coordinates = tuple(x, y);
+        this.color = color;
+    }
 
-//     Tuple!(int, int) getPoint() {
+    /**
+    *   Returns the coordinates this point is located at as a 
+    *   tuple of integers.
+    */
+    Tuple!(int, int) getCoordinates() {
 
-//         return pnt;
-//     }
+        return this.coordinates;
+    }
 
-//     SDL_Color getColor() {
+    /**
+    *   Returns the color of this point as an SDL_Color object.
+    */
+    SDL_Color getColor() {
 
-//         return color;
-//     }
-// }
+        return color;
+    }
+}

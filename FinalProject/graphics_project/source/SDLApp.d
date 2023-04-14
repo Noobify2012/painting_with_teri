@@ -102,6 +102,9 @@ class SDLApp{
                 else if(e.type == SDL_MOUSEBUTTONDOWN){
                     drawing=true;
                 }else if(e.type == SDL_MOUSEBUTTONUP){
+                    if (drawing) {
+                        
+                    }
                     drawing=false;
                     prevX = -9999;
                     prevY = -9999;
