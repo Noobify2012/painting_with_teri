@@ -326,6 +326,8 @@ class SDLApp{
                     } else if (e.key.keysym.sym == SDLK_s) {
                         /// This is where we draw the shape when prompted!
                         writeln("Drawing shape");
+                        writeln("Type 'r' for rectangle", "\nType 'c' for circle", 
+                                "\nType 'l' for line", "\nType 'r' for rectangle");
                         ShapeListener sh = new ShapeListener();
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
                     }
