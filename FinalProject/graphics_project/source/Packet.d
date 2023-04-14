@@ -28,6 +28,8 @@ struct Packet{
     byte r;
     byte g;
     byte b;
+	int s;
+	int bs;
     char[64] message; // for debugging
 	// ushort port;
 
@@ -63,6 +65,8 @@ struct Packet{
 		memmove(&payload[24],&r,r.sizeof);
 		memmove(&payload[28],&g,g.sizeof);
 		memmove(&payload[32],&b,b.sizeof);
+		memmove(&payload[36],&b,b.sizeof);
+		memmove(&payload[40],&b,b.sizeof);
 
         return payload;
 

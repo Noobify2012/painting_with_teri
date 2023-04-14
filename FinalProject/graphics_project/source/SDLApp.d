@@ -211,14 +211,18 @@ class SDLApp{
                                 // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 0, 0, 0);
                             }
                             /// Send change from user to deque
-                            // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
+                            imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
                             if(networked == true) {
                                 Packet packet;
                                 packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue);
                                 // writeln("Input values x: " ~to!string(xPos+w) ~ " y: " ~ to!string(yPos+h) ~ " r: " ~to!string(red) ~ " g: " ~ to!string(green) ~ " b: " ~ to!string(blue));
                                 // writeln("Packet values x: " ~to!string(packet.x) ~ " y: " ~ to!string(packet.y) ~ " r: " ~to!string(packet.r) ~ " g: " ~ to!string(packet.g) ~ " b: " ~ to!string(packet.b));
                                 // traffic = test_client.addToSend(traffic, packet);
-                                traffic.push_front(packet);
+                                if (traffic.size() > 0 ) {
+                                    if (packet != traffic.back() ) {
+                                        traffic.push_front(packet);
+                                    }
+                                }
                                 // test_client.sendToServer(packet, sendSocket);
                             }
                         }
@@ -229,6 +233,7 @@ class SDLApp{
                     /// keep you from overflowing pixels
                     if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 50 && yPos < 479) {
                          imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                        //  writeln("are we hitting lerp?");
                     }
                     prevX = xPos;
                     prevY = yPos;
@@ -290,8 +295,8 @@ class SDLApp{
                             client = new TCPClient();
                             networked = true;
                         } else {
-                            networked = false;
                             tear_down = true;
+                            writeln("do the tear down");
                         }
                         
                     } else if (e.key.keysym.sym == SDLK_f) {
@@ -338,16 +343,17 @@ class SDLApp{
 
             		// Spin up the new thread that will just take in data from the server
                 new Thread({
+                        if (!tear_down) {
                             Packet inbound = client.receiveDataFromServer();
-                            imgSurface.UpdateSurfacePixel(inbound.x, inbound.y, inbound.r, inbound.g, inbound.b);
                             received.push_front(inbound);
-
+                        } 
                         }).start();
 
-                if (traffic.size > 0) {
+                if (traffic.size > 0 && !tear_down) {
 
                     writeln(">");
                     client.sendDataToServer(traffic.pop_back);
+                    writeln("are we sending to server?");
 
                     // received.push_front(client.run(traffic.pop_back));  // FIX
 
@@ -377,13 +383,21 @@ class SDLApp{
                         
                     // }
                 // }
-
+                } else if (tear_down) {
+                    auto packet = mClient.getChangeForServer(-9999,-9999, 0, 0, 0);
+                    client.sendDataToServer(packet);
+                    client.closeSocket();
+                    writeln("we should have closed the socket.");
+                    tear_down = false;
+                    networked = false;
+                    
                 }
                 while (received.size() > 0) {
                     //draw the packets
                     writeln("do i get here?");
                     drawInbound(received, imgSurface);
                 }
+            }
             }
             /// Blit the surace (i.e. update the window with another surfaces pixels
             ///                       by copying those pixels onto the window).
@@ -393,7 +407,6 @@ class SDLApp{
             /// Delay for 16 milliseconds
             /// Otherwise the program refreshes too quickly
             SDL_Delay(16);
-            
         }
         /// Destroy our window
         SDL_DestroyWindow(window);
