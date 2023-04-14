@@ -129,7 +129,7 @@ class SDLApp{
                     int xPos = e.button.x;
                     int yPos = e.button.y;
 
-                    ///**MENU BUTTON SELECTOR: LINES 129 - 152:
+                    ///**BEGIN MENU BUTTON SELECTOR**
                     //Button one: change brush size 
                     if (yPos < 50 && xPos < h2){
                         writeln("button1");
@@ -162,6 +162,7 @@ class SDLApp{
                         writeln("button6");
                         button6pressed = true; 
                     }
+                    //END MENU BUTTON SELECTOR 
 
                 }else if(e.type == SDL_MOUSEBUTTONUP){
                     drawing=false;
@@ -184,6 +185,7 @@ class SDLApp{
                     }
 
                     /// Change brush:
+                    //**Tech Debt: Change color without having to draw first**
                     for(int w=-brushSize; w < brushSize; w++){
                         for(int h=-brushSize; h < brushSize; h++){
                             /// Set brush color to blue
