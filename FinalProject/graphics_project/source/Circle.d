@@ -1,6 +1,7 @@
 import std.algorithm;
 import std.typecons;
 import std.math;
+import std.stdio;
 
 import bindbc.sdl;
 import loader = bindbc.loader.sharedlib;
@@ -85,6 +86,9 @@ class Circle : Shape {
                     if (numPoints == 0) {
                         p1 = tuple(e.button.x, e.button.y);
                     } else {
+                        // if (e.button.y > 50){
+                        //     writeln("Clicked on menu!");
+                        // }
                         p2 = tuple(e.button.x, e.button.y);
                     }
                     ++numPoints;
@@ -92,11 +96,17 @@ class Circle : Shape {
             }
         }
 
+        //Stops the shape from drawing if you try to draw within the menu bounds 
+        if((p1[1] < 50) || (p2[1] < 50)){
+            writeln("Try again, circle set to overlap menu");
+        }
+        else{ 
         // Find circle radius and midpoint
         int radius = cast(int) sqrt(cast(float) ((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]))) / 2;
         midpoint = tuple(cast(int) ((p1[0] + p2[0]) / 2), cast(int) ((p1[1] + p2[1]) / 2));
 
         // Fill points in circle
         fillCircle(midpoint, radius, r, g, b);
+        }
     }
 }
