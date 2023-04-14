@@ -248,17 +248,17 @@ class SDLApp{
                     // writeln()
                     // PrintKeyInfo( &e.key );
                     // printf( ", Name: %s", SDL_GetKeyName( key.keysym.sym ) );
-                    if (e.key.keysym.sym == SDLK_b) {
-                        // printf("Changing brush size");
+                    // if (e.key.keysym.sym == SDLK_b) {
+                    //     // printf("Changing brush size");
 
-                    }
+                    // }
                     // printf( cast(string)(e.key.keysym.sym) , " key pressed ");
                     // printf( SDL_GetKeyNamse (e.key.keysym.sym ) , " key pressed ");
 
                 } else if(e.type == SDL_KEYUP) {
                     printf("key released: ");
                     //, to!string(e.key.keysym.sym));
-                    if (e.key.keysym.sym == SDLK_b || button1pressed == true){
+                    if (e.key.keysym.sym == SDLK_b){
                         //For each key press, cycle through the 3 brush sizes. 
                         brush = brushSizeChanger(brush);
 
@@ -272,6 +272,8 @@ class SDLApp{
                         
                         //writeln("Changing to color : " , to!string(color));
                         color = colorChanger(color);
+                        writeln("CHANGE COLOR KEYs PRESSED");
+
 
                     } else if (e.key.keysym.sym == SDLK_e) {
                         //Activate Eraser 
@@ -447,9 +449,11 @@ int brushSizeChanger(int curBrush){
 
 int colorChanger(int curColor){
     if (curColor < 3) {
+        writeln("CHANGE COLOR BUTTON PRESSED");
         curColor++;
     } else {
         curColor=1;
+        writeln("CHANGE COLOR BUTTON PRESSED, BACK TO RED");
     }
 
     writeln("Changing to color : " , to!string(curColor));
