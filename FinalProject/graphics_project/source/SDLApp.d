@@ -235,7 +235,6 @@ class SDLApp{
                     /// --This is also imposing bounds for drawing lines - the xPos & yPos limitations
                     /// keep you from overflowing pixels
                     if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 50 && prevY > 51) {
-                        writeln(yPos);
                         imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
                         //  writeln("are we hitting lerp?");
                     }
