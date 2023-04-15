@@ -116,6 +116,7 @@ class SDLApp{
         for (bs = 1; bs <= 5; bs++){
             for(bs1 = 0; bs1 <= bs * 2; bs1++){
             imgSurface.lerp(bsStart, 8 + 2 * bs, bsStart, 40 - 2 * bs, bs * 2, red, green, blue);
+            writeln(bsStart);
             }
             bsStart += bs * 4 + 6;
         }
@@ -161,7 +162,27 @@ class SDLApp{
                     if (yPos < 50 && xPos < h2){
                         writeln("button1: Change brush size");
                         //button1pressed = true; 
-                        brush = brushSizeChanger(brush);
+                        //brush = brushSizeChanger(brush);
+                        if (xPos > 10 && xPos < 18){
+                            writeln("Brush Size 2");
+                            brush = 2;
+                        } 
+                        else if (xPos > 20 && xPos < 29){
+                            writeln("Brush Size 4");
+                            brush = 4;
+                        }
+                        else if (xPos > 30 && xPos < 45){
+                            writeln("Brush Size 6");
+                            brush = 6;
+                        }
+                        else if (xPos > 50 && xPos < 65){
+                            writeln("Brush Size 8");
+                            brush = 8;
+                        }
+                        else if (xPos > 69 && xPos < 89){
+                            writeln("Brush Size 12");
+                            brush = 12;
+                        }
                     }
                     //Button two: change brush color 
                     //**TECH DEBT: pull this out into a separate function with xpos args**
@@ -244,12 +265,16 @@ class SDLApp{
                     /// Loop through and update specific pixels
                     // NOTE: No bounds checking performed --
                     //       think about how you might fix this :)
-                    if (brush == 1) {
+                    if (brush == 2) {
+                        brushSize = 2;
+                    } else if (brush == 4) {
                         brushSize = 4;
-                    } else if (brush == 2) {
+                    } else if (brush == 6) {
+                        brushSize = 6;
+                    } else if (brush == 8) {
                         brushSize = 8;
-                    } else {
-                        brushSize = 16;
+                    } else if (brush == 12) {
+                        brushSize = 12;
                     }
 
                     /// Change brush:
