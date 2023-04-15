@@ -9,6 +9,8 @@ import core.thread.osthread;
 
 /// Load the SDL2 library
 import bindbc.sdl;
+import bindbc.sdl.image;
+
 import loader = bindbc.loader.sharedlib;
 import SDL_Surfaces :Surface;
 import SDL_Initial :SDLInit;
@@ -34,6 +36,10 @@ class SDLApp{
     const SDLSupport ret;
     TCPClient client;
 
+    ubyte red = 255;
+    ubyte green = 255;
+    ubyte blue = 255;
+
 
     void MainApplicationLoop(){
         /// Create an SDL window
@@ -45,8 +51,6 @@ class SDLApp{
             SDL_WINDOW_SHOWN);
         /// Load the bitmap surface
         Surface imgSurface = new Surface(0,640,480,32,0,0,0,0);
-
-       // drawMenuBars(imgSurface);
 
         /// Initialize variables
         /// Application running flag for determing if we are running the main application loop
@@ -64,9 +68,7 @@ class SDLApp{
              button4pressed, button5pressed, button6pressed = false;
 
         int color = 1;
-        ubyte red = 255;
-        ubyte green = 255;
-        ubyte blue = 255;
+        
         int brushSize = 4;
         bool erasing = false;
         int temp_color = 0;
@@ -108,6 +110,32 @@ class SDLApp{
             }
         }
 
+        //Setting up brush size button display
+        int bs;
+        int bsStart = 15;
+        int bs1;
+        for (bs = 1; bs <= 5; bs++){
+            for(bs1 = 0; bs1 <= bs * 2; bs1++){
+            imgSurface.lerp(bsStart, 8 + 2 * bs, bsStart, 40 - 2 * bs, bs * 2, red, green, blue);
+            writeln(bsStart);
+            }
+            bsStart += bs * 4 + 6;
+        }
+
+
+        //Setting up color button display 
+        int cn;
+        int cn1;
+        int cnStart = 112;
+        for (cn = 1; cn <= 6; cn++){
+            colorValueSetter(cn);
+            for (cn1 = 0; cn1 < 12; cn1++){
+                cnStart++;
+                imgSurface.lerp(cnStart, 8, cnStart, 40, 1, red, green, blue);
+            }
+            cnStart += 4;
+        }
+
         brushSize = 4;
         // SDL_EnableUNICODE( 1 );
 
@@ -133,35 +161,96 @@ class SDLApp{
                     ///**BEGIN MENU BUTTON SELECTOR**
                     //Button one: change brush size 
                     if (yPos < 50 && xPos < h2){
-                        writeln("button1");
-                        button1pressed = true; 
-                        brush = brushSizeChanger(brush);
+                        writeln("button1: Change brush size");
+                        //button1pressed = true; 
+                        //brush = brushSizeChanger(brush);
+                        if (xPos > 10 && xPos < 18){
+                            writeln("Brush Size 2");
+                            brush = 2;
+                        } 
+                        else if (xPos > 20 && xPos < 29){
+                            writeln("Brush Size 4");
+                            brush = 4;
+                        }
+                        else if (xPos > 30 && xPos < 45){
+                            writeln("Brush Size 6");
+                            brush = 6;
+                        }
+                        else if (xPos > 50 && xPos < 65){
+                            writeln("Brush Size 8");
+                            brush = 8;
+                        }
+                        else if (xPos > 69 && xPos < 89){
+                            writeln("Brush Size 12");
+                            brush = 12;
+                        }
                     }
                     //Button two: change brush color 
+                    //**TECH DEBT: pull this out into a separate function with xpos args**
                     if(yPos < 50 && xPos > h2 && xPos < h2 * 2){
-                        writeln("button2");
-                        button2pressed = true; 
-                        color = colorChanger(color);
+                        //writeln("button2: Change Color");
+                        //button2pressed = true; 
+                        //color = colorChanger(color);
+                        if(xPos > 112 && xPos < 124){
+                            writeln("You selected color RED");
+                            color = 1;
+                        }
+                        else if(xPos > 130 && xPos < 142){
+                            writeln("You selected color ORANGE");
+                            color = 2;
+                        }
+                        else if(xPos > 146 && xPos < 158){
+                            writeln("You selected color YELLOW");
+                            color = 3;
+                        }
+                        else if(xPos > 162 && xPos < 174){
+                            writeln("You selected color GREEN");
+                            color = 4;
+                        }
+                        else if(xPos > 178 && xPos < 190){
+                            writeln("You selected color BLUE");
+                            color = 5;
+                        }else if(xPos > 194 && xPos < 206){
+                            writeln("You selected color VIOLET");
+                            color = 6;
+                        }
+                        
                     }
                     //Button three:
+                    //**TECH DEBT: pull this out into a separate function. Code is duplicate of key presses 
                     if(yPos < 50 && xPos > h2 * 2 + 1 && xPos < h2 * 3){
-                        writeln("button3");
-                        button3pressed = true; 
+                        writeln("button3: Toggle Eraser");
+                        //button3pressed = true; 
+                        if (erasing == false) {
+                            erasing = true;
+                            temp_color = color;
+                            color = -1;
+                            writeln("eraser active, value of temp_color: ", to!string(temp_color));
+                        } else {
+                            erasing = false;
+                            color = temp_color;
+                            writeln("Changing to color : " , to!string(color));
+                        }
                     }
-                    //Button four:
+                    //Button four: Shape Activator 
+                    // Either split this button into 4 buttons or have instructions pop up onto screen 
                     if(yPos < 50 && xPos > h2 * 3 + 1 && xPos < h2 * 4){
-                        writeln("button4");
-                        button4pressed = true; 
+                        writeln("button4: Shape Activate");
+                        writeln("Drawing shape");
+                        writeln("Type 'r' for rectangle", "\nType 'c' for circle", 
+                                "\nType 'l' for line", "\nType 'r' for rectangle");
+                        ShapeListener sh = new ShapeListener();
+                        sh.drawShape(&imgSurface, brushSize, red, green, blue);
                     }
-                    //Button five:
+                    //Button five: UNDO --- INCOMING: dependency: implement undo/redo
                     if(yPos < 50 && xPos > h2 * 4 + 1 && xPos < h2 * 5){
                         writeln("button5");
-                        button5pressed = true; 
+                        //button5pressed = true; 
                     }
-                    //Button six:
+                    //Button six: REDO --- INCOMING: Dependency: implement undo/redo 
                     if(yPos < 50 && xPos > h2 * 5 + 1 && xPos < h2 * 6){
                         writeln("button6");
-                        button6pressed = true; 
+                        //button6pressed = true; 
                     }
                     //END MENU BUTTON SELECTOR 
 
@@ -177,36 +266,46 @@ class SDLApp{
                     /// Loop through and update specific pixels
                     // NOTE: No bounds checking performed --
                     //       think about how you might fix this :)
-                    if (brush == 1) {
+                    if (brush == 2) {
+                        brushSize = 2;
+                    } else if (brush == 4) {
                         brushSize = 4;
-                    } else if (brush == 2) {
+                    } else if (brush == 6) {
+                        brushSize = 6;
+                    } else if (brush == 8) {
                         brushSize = 8;
-                    } else {
-                        brushSize = 16;
+                    } else if (brush == 12) {
+                        brushSize = 12;
                     }
 
                     /// Change brush:
                     //**Tech Debt: Change color without having to draw first**
                     for(int w=-brushSize; w < brushSize; w++){
                         for(int h=-brushSize; h < brushSize; h++){
-                            /// Set brush color to blue
                             if (color == 1 && !erasing) {
-                                red = 0;
-                                green = 0;
-                                blue = 255;
-                                //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
-                            } else if (color == 2 && !erasing) {
-                                /// Set brush color to green
-                                red = 0;
-                                green = 255;
-                                blue = 0;
-                                //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 32, 255, 128);
-                            } else if (color == 3 && !erasing) {
                                 // Set brush color to red
-                                red = 255;
-                                green = 0;
-                                blue = 0;
-                                // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h,  128, 32, 255);
+                                colorValueSetter(1);
+
+                            } else if (color == 2 && !erasing) {
+                                /// Set brush color to orange
+                                colorValueSetter(2);
+
+                            }  else if (color == 3 && !erasing) {
+                                /// Set brush color to yellow
+                                colorValueSetter(3);
+                
+                            } else if (color == 4 && !erasing) {
+                                /// Set brush color to green
+                                colorValueSetter(4);
+
+                            } else if (color == 5 && !erasing) {
+                                /// Set brush color to blue
+                                colorValueSetter(5);
+
+                            } else if (color == 6 && !erasing) {
+                                /// Set brush color to violet
+                                colorValueSetter(6);
+
                             } else if (erasing) {
                                 /// Erase: set color to black
                                 red = 0;
@@ -424,6 +523,45 @@ class SDLApp{
         SDL_DestroyWindow(window);
     
     }
+
+    void colorValueSetter(int colorNum) { 
+        if (colorNum == 1) {
+            // Set brush color to red
+            red = 24;
+            green = 20;
+            blue = 195;
+
+        } else if (colorNum == 2) {
+            /// Set brush color to orange
+            red = 14;
+            green = 106;
+            blue = 247;
+
+        }  else if (colorNum == 3) {
+            /// Set brush color to yellow
+            red = 30;
+            green = 190;
+            blue = 234;
+
+        } else if (colorNum == 4) {
+            /// Set brush color to green
+            red = 75;
+            green = 128;
+            blue = 0;
+
+        } else if (colorNum == 5) {
+            /// Set brush color to blue
+            red = 224;
+            green = 125;
+            blue = 19;
+
+        } else if (colorNum == 6) {
+            /// Set brush color to violet
+            red = 181;
+            green = 9;
+            blue = 136;
+        }
+    }
 }
 
 void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
@@ -451,17 +589,23 @@ int brushSizeChanger(int curBrush){
 }
 
 int colorChanger(int curColor){
-    if (curColor < 3) {
+    if (curColor < 6) {
         writeln("CHANGE COLOR BUTTON PRESSED");
         curColor++;
     } else {
         curColor=1;
-        writeln("CHANGE COLOR BUTTON PRESSED, BACK TO RED");
+        writeln("CHANGE COLOR BUTTON PRESSED");
     }
 
-    writeln("Changing to color : " , to!string(curColor));
+    string[6] colorNameArr;
+    colorNameArr = ["Red", "Orange", "Yellow", 
+                              "Green", "Blue", "Violet"];
+    writeln("Changing to color : " , colorNameArr[curColor - 1]);
     return curColor; 
 }
+
+
+
 // void runClient(Deque traffic, Socket socket, Bool tear_down) {
 //     //if the client is running, loop
     
@@ -516,4 +660,3 @@ unittest{
     s.PixelAt(1,1)[1] == 128 &&
     s.PixelAt(1,1)[2] == 255, "error bgr value at x,y is wrong!");
 }
-

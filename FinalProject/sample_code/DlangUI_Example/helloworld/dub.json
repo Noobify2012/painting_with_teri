@@ -1,0 +1,12 @@
+{
+	"authors": [
+		"Zee Sutermeister"
+	],
+	"copyright": "Copyright © 2023, Zee Sutermeister",
+	"dependencies": {
+		"dlangui": "~>0.10.2"
+	},
+	"description": "A minimal D application.",
+	"license": "proprietary",
+	"name": "helloworld"
+}
