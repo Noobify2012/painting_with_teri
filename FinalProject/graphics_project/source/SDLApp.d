@@ -9,6 +9,8 @@ import core.thread.osthread;
 
 /// Load the SDL2 library
 import bindbc.sdl;
+import bindbc.sdl.image;
+
 import loader = bindbc.loader.sharedlib;
 import SDL_Surfaces :Surface;
 import SDL_Initial :SDLInit;
@@ -45,8 +47,6 @@ class SDLApp{
             SDL_WINDOW_SHOWN);
         /// Load the bitmap surface
         Surface imgSurface = new Surface(0,640,480,32,0,0,0,0);
-
-       // drawMenuBars(imgSurface);
 
         /// Initialize variables
         /// Application running flag for determing if we are running the main application loop
@@ -89,6 +89,7 @@ class SDLApp{
         /// **Tech debt: Move menu creation into its own function**
         //Draw bottom bar of menu skeleton
         brushSize = 2;
+        
         int b1;
         for(b1 = 1; b1 <= 640; b1++){
              imgSurface.lerp(b1 - 1, 50, b1, 50, brushSize, red, green, blue);  
@@ -106,6 +107,8 @@ class SDLApp{
                 imgSurface.lerp(divX - 1, h3, divX, h3+1, brushSize, red, green, blue);
             }
         }
+
+
 
         brushSize = 4;
         // SDL_EnableUNICODE( 1 );
@@ -204,24 +207,42 @@ class SDLApp{
                     //**Tech Debt: Change color without having to draw first**
                     for(int w=-brushSize; w < brushSize; w++){
                         for(int h=-brushSize; h < brushSize; h++){
-                            /// Set brush color to blue
                             if (color == 1 && !erasing) {
-                                red = 0;
-                                green = 0;
-                                blue = 255;
-                                //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
-                            } else if (color == 2 && !erasing) {
-                                /// Set brush color to green
-                                red = 0;
-                                green = 255;
-                                blue = 0;
-                                //imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 32, 255, 128);
-                            } else if (color == 3 && !erasing) {
                                 // Set brush color to red
-                                red = 255;
-                                green = 0;
+                                red = 24;
+                                green = 20;
+                                blue = 195;
+
+                            } else if (color == 2 && !erasing) {
+                                /// Set brush color to orange
+                                red = 14;
+                                green = 106;
+                                blue = 247;
+
+                            }  else if (color == 3 && !erasing) {
+                                /// Set brush color to yellow
+                                red = 30;
+                                green = 190;
+                                blue = 234;
+                
+                            } else if (color == 4 && !erasing) {
+                                /// Set brush color to green
+                                red = 75;
+                                green = 128;
                                 blue = 0;
-                                // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h,  128, 32, 255);
+
+                            } else if (color == 5 && !erasing) {
+                                /// Set brush color to blue
+                                red = 224;
+                                green = 125;
+                                blue = 19;
+
+                            } else if (color == 6 && !erasing) {
+                                /// Set brush color to violet
+                                red = 181;
+                                green = 9;
+                                blue = 136;
+
                             } else if (erasing) {
                                 /// Erase: set color to black
                                 red = 0;
@@ -464,15 +485,18 @@ int brushSizeChanger(int curBrush){
 }
 
 int colorChanger(int curColor){
-    if (curColor < 3) {
+    if (curColor < 6) {
         writeln("CHANGE COLOR BUTTON PRESSED");
         curColor++;
     } else {
         curColor=1;
-        writeln("CHANGE COLOR BUTTON PRESSED, BACK TO RED");
+        writeln("CHANGE COLOR BUTTON PRESSED");
     }
 
-    writeln("Changing to color : " , to!string(curColor));
+    string[6] colorNameArr;
+    colorNameArr = ["Red", "Orange", "Yellow", 
+                              "Green", "Blue", "Violet"];
+    writeln("Changing to color : " , colorNameArr[curColor - 1]);
     return curColor; 
 }
 // void runClient(Deque traffic, Socket socket, Bool tear_down) {
@@ -529,4 +553,3 @@ unittest{
     s.PixelAt(1,1)[1] == 128 &&
     s.PixelAt(1,1)[2] == 255, "error bgr value at x,y is wrong!");
 }
-
