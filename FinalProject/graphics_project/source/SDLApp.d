@@ -109,6 +109,18 @@ class SDLApp{
             }
         }
 
+        //Setting up brush size button display
+        int bs;
+        int bsStart = 15;
+        int bs1;
+        for (bs = 1; bs <= 5; bs++){
+            for(bs1 = 0; bs1 <= bs * 2; bs1++){
+            imgSurface.lerp(bsStart, 8 + 2 * bs, bsStart, 40 - 2 * bs, bs * 2, red, green, blue);
+            }
+            bsStart += bs * 4 + 6;
+        }
+
+
         //Setting up color button display 
         int cn;
         int cn1;
@@ -117,7 +129,7 @@ class SDLApp{
             colorValueSetter(cn);
             for (cn1 = 0; cn1 < 12; cn1++){
                 cnStart++;
-                imgSurface.lerp(cnStart, 10, cnStart, 40, 1, red, green, blue);
+                imgSurface.lerp(cnStart, 8, cnStart, 40, 1, red, green, blue);
             }
             cnStart += 4;
         }
@@ -152,6 +164,7 @@ class SDLApp{
                         brush = brushSizeChanger(brush);
                     }
                     //Button two: change brush color 
+                    //**TECH DEBT: pull this out into a separate function with xpos args**
                     if(yPos < 50 && xPos > h2 && xPos < h2 * 2){
                         //writeln("button2: Change Color");
                         //button2pressed = true; 
