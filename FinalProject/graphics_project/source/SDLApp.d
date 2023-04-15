@@ -36,6 +36,10 @@ class SDLApp{
     const SDLSupport ret;
     TCPClient client;
 
+    ubyte red = 255;
+    ubyte green = 255;
+    ubyte blue = 255;
+
 
     void MainApplicationLoop(){
         /// Create an SDL window
@@ -64,9 +68,7 @@ class SDLApp{
              button4pressed, button5pressed, button6pressed = false;
 
         int color = 1;
-        ubyte red = 255;
-        ubyte green = 255;
-        ubyte blue = 255;
+        
         int brushSize = 4;
         bool erasing = false;
         int temp_color = 0;
@@ -89,7 +91,6 @@ class SDLApp{
         /// **Tech debt: Move menu creation into its own function**
         //Draw bottom bar of menu skeleton
         brushSize = 2;
-        
         int b1;
         for(b1 = 1; b1 <= 640; b1++){
              imgSurface.lerp(b1 - 1, 50, b1, 50, brushSize, red, green, blue);  
@@ -108,7 +109,18 @@ class SDLApp{
             }
         }
 
-
+        //Setting up color button display 
+        int cn;
+        int cn1;
+        int cnStart = 112;
+        for (cn = 1; cn <= 6; cn++){
+            colorValueSetter(cn);
+            for (cn1 = 0; cn1 < 12; cn1++){
+                cnStart++;
+                imgSurface.lerp(cnStart, 10, cnStart, 40, 1, red, green, blue);
+            }
+            cnStart += 4;
+        }
 
         brushSize = 4;
         // SDL_EnableUNICODE( 1 );
@@ -136,20 +148,44 @@ class SDLApp{
                     //Button one: change brush size 
                     if (yPos < 50 && xPos < h2){
                         writeln("button1: Change brush size");
-                        button1pressed = true; 
+                        //button1pressed = true; 
                         brush = brushSizeChanger(brush);
                     }
                     //Button two: change brush color 
                     if(yPos < 50 && xPos > h2 && xPos < h2 * 2){
-                        writeln("button2: Change Color");
-                        button2pressed = true; 
-                        color = colorChanger(color);
+                        //writeln("button2: Change Color");
+                        //button2pressed = true; 
+                        //color = colorChanger(color);
+                        if(xPos > 112 && xPos < 124){
+                            writeln("You selected color RED");
+                            color = 1;
+                        }
+                        else if(xPos > 130 && xPos < 142){
+                            writeln("You selected color ORANGE");
+                            color = 2;
+                        }
+                        else if(xPos > 146 && xPos < 158){
+                            writeln("You selected color YELLOW");
+                            color = 3;
+                        }
+                        else if(xPos > 162 && xPos < 174){
+                            writeln("You selected color GREEN");
+                            color = 4;
+                        }
+                        else if(xPos > 178 && xPos < 190){
+                            writeln("You selected color BLUE");
+                            color = 5;
+                        }else if(xPos > 194 && xPos < 206){
+                            writeln("You selected color VIOLET");
+                            color = 6;
+                        }
+                        
                     }
                     //Button three:
                     //**TECH DEBT: pull this out into a separate function. Code is duplicate of key presses 
                     if(yPos < 50 && xPos > h2 * 2 + 1 && xPos < h2 * 3){
                         writeln("button3: Toggle Eraser");
-                        button3pressed = true; 
+                        //button3pressed = true; 
                         if (erasing == false) {
                             erasing = true;
                             temp_color = color;
@@ -174,12 +210,12 @@ class SDLApp{
                     //Button five: UNDO --- INCOMING: dependency: implement undo/redo
                     if(yPos < 50 && xPos > h2 * 4 + 1 && xPos < h2 * 5){
                         writeln("button5");
-                        button5pressed = true; 
+                        //button5pressed = true; 
                     }
                     //Button six: REDO --- INCOMING: Dependency: implement undo/redo 
                     if(yPos < 50 && xPos > h2 * 5 + 1 && xPos < h2 * 6){
                         writeln("button6");
-                        button6pressed = true; 
+                        //button6pressed = true; 
                     }
                     //END MENU BUTTON SELECTOR 
 
@@ -209,39 +245,27 @@ class SDLApp{
                         for(int h=-brushSize; h < brushSize; h++){
                             if (color == 1 && !erasing) {
                                 // Set brush color to red
-                                red = 24;
-                                green = 20;
-                                blue = 195;
+                                colorValueSetter(1);
 
                             } else if (color == 2 && !erasing) {
                                 /// Set brush color to orange
-                                red = 14;
-                                green = 106;
-                                blue = 247;
+                                colorValueSetter(2);
 
                             }  else if (color == 3 && !erasing) {
                                 /// Set brush color to yellow
-                                red = 30;
-                                green = 190;
-                                blue = 234;
+                                colorValueSetter(3);
                 
                             } else if (color == 4 && !erasing) {
                                 /// Set brush color to green
-                                red = 75;
-                                green = 128;
-                                blue = 0;
+                                colorValueSetter(4);
 
                             } else if (color == 5 && !erasing) {
                                 /// Set brush color to blue
-                                red = 224;
-                                green = 125;
-                                blue = 19;
+                                colorValueSetter(5);
 
                             } else if (color == 6 && !erasing) {
                                 /// Set brush color to violet
-                                red = 181;
-                                green = 9;
-                                blue = 136;
+                                colorValueSetter(6);
 
                             } else if (erasing) {
                                 /// Erase: set color to black
@@ -458,6 +482,45 @@ class SDLApp{
         SDL_DestroyWindow(window);
     
     }
+
+    void colorValueSetter(int colorNum) { 
+        if (colorNum == 1) {
+            // Set brush color to red
+            red = 24;
+            green = 20;
+            blue = 195;
+
+        } else if (colorNum == 2) {
+            /// Set brush color to orange
+            red = 14;
+            green = 106;
+            blue = 247;
+
+        }  else if (colorNum == 3) {
+            /// Set brush color to yellow
+            red = 30;
+            green = 190;
+            blue = 234;
+
+        } else if (colorNum == 4) {
+            /// Set brush color to green
+            red = 75;
+            green = 128;
+            blue = 0;
+
+        } else if (colorNum == 5) {
+            /// Set brush color to blue
+            red = 224;
+            green = 125;
+            blue = 19;
+
+        } else if (colorNum == 6) {
+            /// Set brush color to violet
+            red = 181;
+            green = 9;
+            blue = 136;
+        }
+    }
 }
 
 void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
@@ -499,6 +562,9 @@ int colorChanger(int curColor){
     writeln("Changing to color : " , colorNameArr[curColor - 1]);
     return curColor; 
 }
+
+
+
 // void runClient(Deque traffic, Socket socket, Bool tear_down) {
 //     //if the client is running, loop
     
