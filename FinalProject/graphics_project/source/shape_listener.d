@@ -19,9 +19,14 @@ import Triangle : Triangle;
 import ShapeFactory : ShapeFactory;
 
 class ShapeListener {
+  string quadrant; 
 
   this() {
 
+  }
+
+  this(string quad){
+    quadrant = quad;
   }
 
   ~this() {
@@ -46,7 +51,7 @@ class ShapeListener {
         if(e.type == SDL_QUIT){
             shapeIsDrawn = true;
 
-        } else if (e.key.keysym.sym == SDLK_r) {
+        } else if (e.key.keysym.sym == SDLK_r || this.quadrant == "TR") {
           writeln("Drawing rectangle");
 
           // int numPoints = 0;
@@ -101,7 +106,7 @@ class ShapeListener {
 
           shapeIsDrawn = true;
 
-        } else if (e.key.keysym.sym == SDLK_l) {
+        } else if (e.key.keysym.sym == SDLK_l || this.quadrant == "TL") {
           writeln("Drawing line");
 
           // int numPoints = 0;
@@ -137,7 +142,7 @@ class ShapeListener {
           writeln("Line has been drawn");
           shapeIsDrawn = true;
 
-        } else if (e.key.keysym.sym == SDLK_c) {
+        } else if (e.key.keysym.sym == SDLK_c || this.quadrant == "BL") {
           writeln("Drawing circle");
 
           // int numPoints = 0;
@@ -184,7 +189,7 @@ class ShapeListener {
 
           shapeIsDrawn = true;
 
-        } else if (e.key.keysym.sym == SDLK_t) {
+        } else if (e.key.keysym.sym == SDLK_t || this.quadrant == "BR") {
           writeln("Drawing triangle");
 
           // int numPoints = 0;
