@@ -431,11 +431,12 @@ class SDLApp{
                 new Thread({
                         if (!tear_down) {
                             Packet inbound = client.receiveDataFromServer();
+                            writeln("inbound x: " ~ to!string(inbound.x) ~ " inbound y: " ~ to!string(inbound.y));
                             received.push_front(inbound);
                             writeln("Size of Received: " ~to!string(received.size()));
-                            while (received.size() > 0) {
+                            while (received.size() > 5) {
                                 //draw the packets
-                                writeln("do i get here?");
+                                // writeln("do i get here?");
                                 drawInbound(received, imgSurface);
                             }
 
@@ -554,6 +555,7 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
         auto curr = traffic.pop_back();
         writeln("and now here");
         //TODO: Fix order
+        writeln("Prevx : " ~ to!string(prevX) ~ " Prevy : " ~ to!string(prevY) ~  " curr.bs : " ~ to!string(curr.bs) ~  " red : " ~ to!string(curr.r) ~  " green : " ~ to!string(curr.g) ~ " blue : " ~ to!string(curr.b));     
         imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, curr.r, curr.g, curr.b);
         prevX = curr.x;
         prevY = curr.y;
