@@ -118,26 +118,24 @@ class SDLApp{
                     ///**BEGIN MENU BUTTON SELECTOR**
                     //Button one: change brush size 
                     if (yPos < 50 && xPos < h2){
-                        writeln("button1: Change brush size");
-
                         if (xPos > 10 && xPos < 18){
-                            writeln("Brush Size 2");
+                            writeln("You selected: BRUSH SIZE 2");
                             brush = 2;
                         } 
                         else if (xPos > 20 && xPos < 29){
-                            writeln("Brush Size 4");
+                            writeln("You selected: BRUSH SIZE 4");
                             brush = 4;
                         }
                         else if (xPos > 30 && xPos < 45){
-                            writeln("Brush Size 6");
+                            writeln("You selected: BRUSH SIZE 6");
                             brush = 6;
                         }
                         else if (xPos > 50 && xPos < 65){
-                            writeln("Brush Size 8");
+                            writeln("You selected: BRUSH SIZE 8");
                             brush = 8;
                         }
                         else if (xPos > 69 && xPos < 89){
-                            writeln("Brush Size 12");
+                            writeln("You selected: BRUSH SIZE 12");
                             brush = 12;
                         }
                     }
@@ -147,26 +145,26 @@ class SDLApp{
                     if(yPos < 50 && xPos > h2 && xPos < h2 * 2){
                         erasing = false;
                         if(xPos > 112 && xPos < 124){
-                            writeln("You selected color RED");
+                            writeln("You selected: color RED");
                             color = 1;
                         }
                         else if(xPos > 130 && xPos < 142){
-                            writeln("You selected color ORANGE");
+                            writeln("You selected: color ORANGE");
                             color = 2;
                         }
                         else if(xPos > 146 && xPos < 158){
-                            writeln("You selected color YELLOW");
+                            writeln("You selected: color YELLOW");
                             color = 3;
                         }
                         else if(xPos > 162 && xPos < 174){
-                            writeln("You selected color GREEN");
+                            writeln("You selected: color GREEN");
                             color = 4;
                         }
                         else if(xPos > 178 && xPos < 190){
-                            writeln("You selected color BLUE");
+                            writeln("You selected: color BLUE");
                             color = 5;
                         }else if(xPos > 194 && xPos < 206){
-                            writeln("You selected color VIOLET");
+                            writeln("You selected: color VIOLET");
                             color = 6;
                         }
                         
@@ -202,16 +200,15 @@ class SDLApp{
                     //Button three:
                     //**TECH DEBT: pull this out into a separate function. Code is duplicate of key presses 
                     if(yPos < 50 && xPos > h2 * 2 + 1 && xPos < h2 * 3){
-                        writeln("button3: Toggle Eraser");
                         if (erasing == false) {
                             erasing = true;
                             temp_color = color;
                             color = -1;
-                            writeln("eraser active, value of temp_color: ", to!string(temp_color));
+                            writeln("You selected: ERASER ACTIVATE");
                         } else {
                             erasing = false;
                             color = temp_color;
-                            writeln("Changing to color : " , to!string(color));
+                            writeln("You selected: ERASER DEACTIVATE");
                         }
                     }
 
@@ -223,25 +220,25 @@ class SDLApp{
                         //Top Left: Line
                         if(yPos < 24 && xPos < 373){
                             writeln("You selected: Draw LINE");
-                            writeln("Click start and end points");
+                            writeln("LINE: Click start and end points");
                             quadrant = "TL";
                         }
                         //Top Right: Rectangle 
                         else if(yPos < 24 && xPos > 373){
                             writeln("You selected: Draw RECTANGLE");
-                            writeln("Click two corner points");
+                            writeln("RECTANGLE: Click two corner points");
                             quadrant = "TR";
                         }
                         //Bottom Left: Circle 
                         else if(yPos > 24 && xPos < 373){
                             writeln("You selected: Draw CIRCLE");
-                            writeln("Click two points");
+                            writeln("CIRCLE: Click two points");
                             quadrant = "BL";
                         }
                         //Bottom Right: Triangle
                         else if(yPos > 24 && xPos > 373){
                             writeln("You selected: Draw TRIANGLE");
-                            writeln("Click three corner points");
+                            writeln("TRIANGLE: Click three corner points");
                             quadrant = "BR";
                         }
 
