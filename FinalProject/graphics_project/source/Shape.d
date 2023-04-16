@@ -9,7 +9,8 @@ import SDL_Initial :SDLInit;
 abstract class Shape {
 
     abstract void draw(int brushSize, ubyte r, ubyte g, ubyte b);
-    abstract void drawFromPoints(Tuple!(int, int)[] points, ubyte r, ubyte g, ubyte b), int brushSize;
+    abstract void drawFromPoints(Tuple!(int, int)[] points, ubyte r, ubyte g, ubyte b, int brushSize);
+    abstract Tuple!(int, int)[] getPoints();
     // abstract SDL_Color[Tuple!(int, int)] getConstituentPoints();
     // abstract SDL_Color[Tuple!(int, int)] getUnderlyingPoints();
 }

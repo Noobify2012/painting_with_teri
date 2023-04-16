@@ -17,14 +17,28 @@ import Circle : Circle;
 import Line : Line;
 import Triangle : Triangle;
 import ShapeFactory : ShapeFactory;
+import state;
+import Action : Action;
 
 class ShapeListener {
 
-  this() {
+  State *state;
+  int r, g, b;
 
+  this(State *_state) {
+
+    this.state = _state;
   }
 
   ~this() {
+
+  }
+
+  void setRGB(int _r, int _g, int _b) {
+
+    this.r = _r;
+    this.g = _g;
+    this.b = _b;
 
   }
   
@@ -34,14 +48,16 @@ class ShapeListener {
 
     ShapeFactory shapeFactory = new ShapeFactory();
     SDL_Event e;
+
+    string shapeType;
     // Handle events
     // Events are pushed into an 'event queue' internally in SDL, and then
     // handled one at a time within this loop for as many events have
     // been pushed into the internal SDL queue. Thus, we poll until there
     // are '0' events or a NULL event is returned.
     bool shapeIsDrawn = false;
+    Shape sh;
     while (!shapeIsDrawn) {
-      Shape sh;
       while(SDL_PollEvent(&e) !=0){
         if(e.type == SDL_QUIT){
             shapeIsDrawn = true;
@@ -49,6 +65,7 @@ class ShapeListener {
         } else if (e.key.keysym.sym == SDLK_r) {
           writeln("Drawing rectangle");
 
+          shapeType = "rectangle";
           sh = shapeFactory.createShape("rectangle", surf);
           sh.draw(brushSize, r, g, b);
 
@@ -57,6 +74,7 @@ class ShapeListener {
         } else if (e.key.keysym.sym == SDLK_l) {
           writeln("Drawing line");
 
+          shapeType = "line";
           sh = shapeFactory.createShape("line", surf);
           sh.draw(brushSize, r, g, b);
 
@@ -66,6 +84,7 @@ class ShapeListener {
         } else if (e.key.keysym.sym == SDLK_c) {
           writeln("Drawing circle");
 
+          shapeType = "circle";
           sh = shapeFactory.createShape("circle", surf);
           sh.draw(brushSize, r, g, b);
 
@@ -74,11 +93,15 @@ class ShapeListener {
         } else if (e.key.keysym.sym == SDLK_t) {
           writeln("Drawing triangle");
 
+          shapeType = "triangle";
           sh = shapeFactory.createShape("triangle", surf);
           sh.draw(brushSize, r, g, b);
           shapeIsDrawn = true;
         }
       }
     }
+    int[3] color = [r, g, b];
+    Action action = new Action(sh.getPoints(), color, shapeType);
+    this.state.addAction(action);
   }
 }

@@ -103,7 +103,7 @@ class Rectangle : Shape {
         fillRectangle(minX, maxX, minY, maxY, r, g, b);
     }
 
-    override void drawFromPoints(Tuple!(int, int) points, ubyte r, ubyte g, ubyte b, int brushSize) {
+    override void drawFromPoints(Tuple!(int, int)[] points, ubyte r, ubyte g, ubyte b, int brushSize) {
 
         assert(points.length == 2);
 
@@ -118,6 +118,11 @@ class Rectangle : Shape {
 
         // Fill rectangle
         fillRectangle(minX, maxX, minY, maxY, r, g, b);
+    }
+
+    override Tuple!(int, int)[] getPoints() {
+
+        return this.points;
     }
 
 }

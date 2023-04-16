@@ -21,6 +21,8 @@ import test_addr;
 import shape_listener;
 import drawing_utilities;
 import mClient;
+import Action : Action;
+import state;
 
 
 // For printing the key pressed info
@@ -69,7 +71,10 @@ class SDLApp{
         int prevX = -9999;
         int prevY = -9999;
 
+        State state = new State(&imgSurface);
+
         DrawingUtility du = new DrawingUtility();
+        ShapeListener sh = new ShapeListener(&state);
 
         /// Intialize deque for storing traffic to send
         auto traffic = new Deque!(Packet);
@@ -81,7 +86,8 @@ class SDLApp{
         // Deque traffic = new Deque!Packet;
         
 
-
+        Action act;
+        
         // SDL_EnableUNICODE( 1 );
 
         /// Main application loop that will run until a quit event has occurred.
@@ -252,8 +258,12 @@ class SDLApp{
                     } else if (e.key.keysym.sym == SDLK_s) {
                         /// This is where we draw the shape when prompted!
                         writeln("Drawing shape");
-                        ShapeListener sh = new ShapeListener();
+                        sh.setRGB(red, green, blue);
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
+                    } else if (e.key.keysym.sym == SDLK_u) {
+                        state.undo();
+                    } else if (e.key.keysym.sym == SDLK_r) {
+                        state.redo();
                     }
                     // } else if (e.key.keysym.sym == SDLK_h) {
                     //     server.run();
