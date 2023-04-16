@@ -297,7 +297,7 @@ class SDLApp{
                     /// This is where we draw the line!
                     /// --This is also imposing bounds for drawing lines - the xPos & yPos limitations
                     ///   keep you from overflowing pixels
-                    if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 50 && prevY > 51) {
+                    if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 53 && prevY > 54) {
                         imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
                     }
                     prevX = xPos;
@@ -308,7 +308,7 @@ class SDLApp{
                     // Wait for key to be lifted before we do anything. 
                 } else if(e.type == SDL_KEYUP) {
                     writeln("key released: ");
-                    //, to!string(e.key.keysym.sym));
+                    //, to!string(e.key.keysym.sym));th
                     if (e.key.keysym.sym == SDLK_b){
                         /// For each key press, cycle through the 3 brush sizes. 
                         brush = brushSizeChanger(brush);
