@@ -34,8 +34,6 @@ import Circle : Circle;
 // For printing the key pressed info
 // void PrintKeyInfo( SDL_KeyboardEvent *key );
 
-
-
 class SDLApp{
 
     /// global variable for sdl;
@@ -45,7 +43,7 @@ class SDLApp{
     ubyte red = 255;
     ubyte green = 255;
     ubyte blue = 255;
-
+    bool erasing = false;
 
     void MainApplicationLoop(){
         /// Create an SDL window
@@ -73,8 +71,7 @@ class SDLApp{
         int color = 1;
         
         int brushSize = 4;
-        bool erasing = false;
-        int temp_color = 0;
+        
 
         int prevX = -9999;
         int prevY = -9999;
@@ -196,22 +193,12 @@ class SDLApp{
                         red = 0;
                         green = 0;
                         blue = 0;
-                        // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 0, 0, 0);
                     }
                     
                     //Button three:
                     //**TECH DEBT: pull this out into a separate function. Code is duplicate of key presses 
                     if(yPos < 50 && xPos > h2 * 2 + 1 && xPos < h2 * 3){
-                        if (erasing == false) {
-                            erasing = true;
-                            temp_color = color;
-                            color = -1;
-                            writeln("You selected: ERASER ACTIVATE");
-                        } else {
-                            erasing = false;
-                            color = temp_color;
-                            writeln("You selected: ERASER DEACTIVATE");
-                        }
+                        eraserToggle(erasing, color);
                     }
 
                     //Button four: Shape Activator 
@@ -329,21 +316,10 @@ class SDLApp{
                     } else if (e.key.keysym.sym == SDLK_c) {
                         /// Pressing c changes the color 
                         color = colorChanger(color);
-                        writeln("CHANGE COLOR KEY PRESSED");
-
 
                     } else if (e.key.keysym.sym == SDLK_e) {
-                        //Pressing e activates/deactivates the eraser 
-                        if (erasing == false) {
-                            erasing = true;
-                            temp_color = color;
-                            color = -1;
-                            writeln("eraser active, value of temp_color: ", to!string(temp_color));
-                        } else {
-                            erasing = false;
-                            color = temp_color;
-                            writeln("Changing to color : " , to!string(color));
-                        }
+                        writeln("E");
+                        eraserToggle(erasing, color);
 
                     } else if (e.key.keysym.sym == SDLK_n) {
                         ///When you press the n key, you want to join a network 
@@ -365,8 +341,8 @@ class SDLApp{
 
                     } else if (e.key.keysym.sym == SDLK_s) {
                         /// When you press the S key, you activate shape listener 
-                        writeln("Drawing shape");
-                        writeln("Type 'r' for rectangle", "\nType 'c' for circle", 
+                        writeln("S");
+                        writeln("SHAPE MENU: \nType 'r' for rectangle", "\nType 'c' for circle", 
                                 "\nType 'l' for line", "\nType 'r' for rectangle");
                         ShapeListener sh = new ShapeListener();
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
@@ -498,189 +474,203 @@ class SDLApp{
         }
     }
 
-/// Draw the pixels that come through from other users. 
-void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
-    int prevX = -9999;
-    int prevY = -9999;
-    while(traffic.size() > 0) {
-        auto curr = traffic.pop_back();
-        writeln("and now here");
-        //TODO: Fix order
-        imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
-        // imgSurface.lerp(prevX, prevY,curr.x, curr.y, 1, curr.r, curr.g, curr.b);
-    }
-
-}
-
-/// Change the brush size selected. 
-/// Accessed by typing letter "b"
-int brushSizeChanger(int curBrush){
-    if (curBrush < 8) {
-        curBrush += 2;
-        writeln(curBrush);
-    }
-    else if (curBrush == 8){
-        curBrush = 12;
-    } else {
-        curBrush = 2;
-    }
-    writeln("Changing to brush size: " , to!string(curBrush));
-    return curBrush;
-}
-
-/// Change the color selected.
-/// Accessed by typing the letter "c"
-int colorChanger(int curColor){
-    writeln("CHANGE COLOR KEY PRESSED");
-    //Increment color 
-    if (curColor < 6) {
-        curColor++;
-    //Reset to first color when you reach the end
-    } else {
-        curColor=1;   
-    }
-
-    string[6] colorNameArr;
-    colorNameArr = ["Red", "Orange", "Yellow", 
-                    "Green", "Blue", "Violet"];
-    writeln("Changing to color : " , colorNameArr[curColor - 1]);
-    return curColor; 
-}
-
-void createMenu(Surface imgSurface){
- /// **Tech debt: Create variables for window size so they can be changed proportionally**
-    //Draw bars of menu skeleton
-    menuBarSetup(imgSurface);
-    //Setting up brush size button display (Button 1)
-    button1Setup(imgSurface);
-    //Setting up color button display (Button 2)
-    button2Setup(imgSurface);
-    //Setting up eraser button display (Button 3)
-    button3Setup(imgSurface);
-    //Setting up shape button display (Button 4)
-    button4Setup(imgSurface);
-    //Setting up undo button display (Button 5)
-    button5Setup(imgSurface);
-    //Setting up redo button display (Button 6)
-    button6Setup(imgSurface);
-}
-
-/// This creates the white lines that divide the buttons from the rest of the screen and each other
-void menuBarSetup(Surface imgSurface){
-    int b1;
-        for(b1 = 1; b1 <= 640; b1++){
-             imgSurface.lerp(b1 - 1, 50, b1, 50, 2, 255, 255, 255);  
+    /// Draw the pixels that come through from other users. 
+    void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
+        int prevX = -9999;
+        int prevY = -9999;
+        while(traffic.size() > 0) {
+            auto curr = traffic.pop_back();
+            writeln("and now here");
+            //TODO: Fix order
+            imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
+            // imgSurface.lerp(prevX, prevY,curr.x, curr.y, 1, curr.r, curr.g, curr.b);
         }
 
-    //Draw divider bars for menu skeleton 
-    int h1;
-    int h2 = 640/6;
-    int h3;
-    //There needs to be 5 dividers, this is h1
-    for (h1 = 1; h1 <= 5; h1++){
-        int divX = h1 * h2;
-        //The dividers each need to be 50 pixels tall. that is h3
-        for (h3 = 0; h3 < 50; h3++){
-            imgSurface.lerp(divX - 1, h3, divX, h3+1, 2, 255, 255, 255);
+    }
+
+    /// Change the brush size selected. 
+    /// Accessed by typing letter "b"
+    int brushSizeChanger(int curBrush){
+        if (curBrush < 8) {
+            curBrush += 2;
+            writeln(curBrush);
+        }
+        else if (curBrush == 8){
+            curBrush = 12;
+        } else {
+            curBrush = 2;
+        }
+        writeln("Changing to brush size: " , to!string(curBrush));
+        return curBrush;
+    }
+
+    /// Change the color selected.
+    /// Accessed by typing the letter "c"
+    int colorChanger(int curColor){
+        writeln("C");
+        //Increment color 
+        if (curColor < 6) {
+            curColor++;
+        //Reset to first color when you reach the end
+        } else {
+            curColor=1;   
+        }
+
+        string[6] colorNameArr;
+        colorNameArr = ["Red", "Orange", "Yellow", 
+                        "Green", "Blue", "Violet"];
+        writeln("Changing to color : " , colorNameArr[curColor - 1]);
+        return curColor; 
+    }
+
+    void eraserToggle(bool eraseBool, int color){
+        int temp_color = 0;
+        if (eraseBool == false) {
+            erasing = true;
+            temp_color = color;
+            color = -1;
+            writeln("You selected: ERASER ACTIVATE");
+        } else {
+            erasing = false;
+            color = temp_color;
+            writeln("You selected: ERASER DEACTIVATE");
         }
     }
-}
 
-void button1Setup(Surface imgSurface){
-  int bs;
-        int bsStart = 15;
-        int bs1;
-        for (bs = 1; bs <= 5; bs++){
-            for(bs1 = 0; bs1 <= bs * 2; bs1++){
-            imgSurface.lerp(bsStart, 8 + 2 * bs, bsStart, 40 - 2 * bs, bs * 2, 255, 255, 255);
+    void createMenu(Surface imgSurface){
+    /// **Tech debt: Create variables for window size so they can be changed proportionally**
+        //Draw bars of menu skeleton
+        menuBarSetup(imgSurface);
+        //Setting up brush size button display (Button 1)
+        button1Setup(imgSurface);
+        //Setting up color button display (Button 2)
+        button2Setup(imgSurface);
+        //Setting up eraser button display (Button 3)
+        button3Setup(imgSurface);
+        //Setting up shape button display (Button 4)
+        button4Setup(imgSurface);
+        //Setting up undo button display (Button 5)
+        button5Setup(imgSurface);
+        //Setting up redo button display (Button 6)
+        button6Setup(imgSurface);
+    }
+
+    /// This creates the white lines that divide the buttons from the rest of the screen and each other
+    void menuBarSetup(Surface imgSurface){
+        int b1;
+            for(b1 = 1; b1 <= 640; b1++){
+                imgSurface.lerp(b1 - 1, 50, b1, 50, 2, 255, 255, 255);  
             }
-        bsStart += bs * 4 + 6;
+
+        //Draw divider bars for menu skeleton 
+        int h1;
+        int h2 = 640/6;
+        int h3;
+        //There needs to be 5 dividers, this is h1
+        for (h1 = 1; h1 <= 5; h1++){
+            int divX = h1 * h2;
+            //The dividers each need to be 50 pixels tall. that is h3
+            for (h3 = 0; h3 < 50; h3++){
+                imgSurface.lerp(divX - 1, h3, divX, h3+1, 2, 255, 255, 255);
+            }
         }
-}
+    }
 
-void button2Setup(Surface imgSurface){
-    int cn;
-    int cn1;
-    int cnStart = 112;
-    for (cn = 1; cn <= 6; cn++){
-        colorValueSetter(cn);
-        for (cn1 = 0; cn1 < 12; cn1++){
-            cnStart++;
-            imgSurface.lerp(cnStart, 8, cnStart, 40, 1, red, green, blue);
+    void button1Setup(Surface imgSurface){
+    int bs;
+            int bsStart = 15;
+            int bs1;
+            for (bs = 1; bs <= 5; bs++){
+                for(bs1 = 0; bs1 <= bs * 2; bs1++){
+                imgSurface.lerp(bsStart, 8 + 2 * bs, bsStart, 40 - 2 * bs, bs * 2, 255, 255, 255);
+                }
+            bsStart += bs * 4 + 6;
+            }
+    }
+
+    void button2Setup(Surface imgSurface){
+        int cn;
+        int cn1;
+        int cnStart = 112;
+        for (cn = 1; cn <= 6; cn++){
+            colorValueSetter(cn);
+            for (cn1 = 0; cn1 < 12; cn1++){
+                cnStart++;
+                imgSurface.lerp(cnStart, 8, cnStart, 40, 1, red, green, blue);
+            }
+        cnStart += 4;
         }
-    cnStart += 4;
     }
-}
 
-void button3Setup(Surface imgSurface){
-    imgSurface.lerp(240, 40, 290, 40, 2, 224, 125, 19);
-    imgSurface.lerp(230, 20, 275, 8, 1, 255, 255, 255);
-    imgSurface.lerp(230, 20, 240, 40, 1, 255, 255, 255);
-    imgSurface.lerp(275, 8, 285, 28, 1, 255, 255, 255);
-    imgSurface.lerp(243, 17, 253, 37, 1, 255, 255, 255);
-    imgSurface.lerp(240, 40, 285, 28, 1, 255, 255, 255);
-}
-
-void button4Setup(Surface imgSurface){
-        //Horizontal line across button 4 
-    int s1;
-    int sStart = 320;
-    for(s1 = 0; s1 < 106; s1++){
-        imgSurface.lerp(sStart, 24, sStart, 24, 1, 255, 255, 255);
-        sStart ++;
+    void button3Setup(Surface imgSurface){
+        imgSurface.lerp(240, 40, 290, 40, 2, 224, 125, 19);
+        imgSurface.lerp(230, 20, 275, 8, 1, 255, 255, 255);
+        imgSurface.lerp(230, 20, 240, 40, 1, 255, 255, 255);
+        imgSurface.lerp(275, 8, 285, 28, 1, 255, 255, 255);
+        imgSurface.lerp(243, 17, 253, 37, 1, 255, 255, 255);
+        imgSurface.lerp(240, 40, 285, 28, 1, 255, 255, 255);
     }
-    //Vertical line down button 4
-    int s11;
-    for (s11 = 0; s11 < 50; s11++){
-        imgSurface.lerp(372, s11, 372, s11, 1, 255, 255, 255);
-    }
-    //Button 4 Top left: Line 
-    imgSurface.lerp(330, 20, 355, 3, 1, 255, 255, 255);
 
-    //Button 4 Top Right: Rectangle 
-    Rectangle menuRect = new Rectangle(&imgSurface);
-    menuRect.fillRectangle(385, 410, 5, 15, 255, 255, 255);
+    void button4Setup(Surface imgSurface){
+            //Horizontal line across button 4 
+        int s1;
+        int sStart = 320;
+        for(s1 = 0; s1 < 106; s1++){
+            imgSurface.lerp(sStart, 24, sStart, 24, 1, 255, 255, 255);
+            sStart ++;
+        }
+        //Vertical line down button 4
+        int s11;
+        for (s11 = 0; s11 < 50; s11++){
+            imgSurface.lerp(372, s11, 372, s11, 1, 255, 255, 255);
+        }
+        //Button 4 Top left: Line 
+        imgSurface.lerp(330, 20, 355, 3, 1, 255, 255, 255);
 
-    //Button 4 Bottom left: Circle 
-    Circle menuCirc = new Circle(&imgSurface);
-    Tuple!(int, int) circPoint;
-    circPoint= tuple(342, 36);
-    menuCirc.fillCircle(circPoint, 8, 255, 255, 255);
+        //Button 4 Top Right: Rectangle 
+        Rectangle menuRect = new Rectangle(&imgSurface);
+        menuRect.fillRectangle(385, 410, 5, 15, 255, 255, 255);
 
-    //Button 4 Bottom right: Triangle 
-    Triangle menuTri = new Triangle(&imgSurface);
-    Tuple!(int, int) tp1, tp2, tp3;
-    tp1 = tuple(385, 41);
-    tp2 = tuple(395, 31);
-    tp3 = tuple(405, 41);
+        //Button 4 Bottom left: Circle 
+        Circle menuCirc = new Circle(&imgSurface);
+        Tuple!(int, int) circPoint;
+        circPoint= tuple(342, 36);
+        menuCirc.fillCircle(circPoint, 8, 255, 255, 255);
 
-    menuTri.fillTriangle(tp1, tp2, tp3, 1, 255, 255, 255);
-    }
-}
-
-void button5Setup(Surface imgSurface){
-    Rectangle undoRect = new Rectangle(&imgSurface);
-        undoRect.fillRectangle(470, 495, 20, 30, 24, 20, 195);
-
-    Triangle undoTri = new Triangle(&imgSurface);
+        //Button 4 Bottom right: Triangle 
+        Triangle menuTri = new Triangle(&imgSurface);
         Tuple!(int, int) tp1, tp2, tp3;
-        tp1 = tuple(450, 25);
-        tp2 = tuple(470, 12);
-        tp3 = tuple(470, 38);
-        undoTri.fillTriangle(tp1, tp2, tp3, 1, 24, 20, 195);
-}
-void button6Setup(Surface imgSurface){
-    Rectangle undoRect = new Rectangle(&imgSurface);
-        undoRect.fillRectangle(560, 585, 20, 30, 224, 129, 19);
+        tp1 = tuple(385, 41);
+        tp2 = tuple(395, 31);
+        tp3 = tuple(405, 41);
 
-    Triangle undoTri = new Triangle(&imgSurface);
-        Tuple!(int, int) tp1, tp2, tp3;
-        tp1 = tuple(605, 25);
-        tp2 = tuple(585, 12);
-        tp3 = tuple(585, 38);
-        undoTri.fillTriangle(tp1, tp2, tp3, 1, 224, 129, 19);
-}
+        menuTri.fillTriangle(tp1, tp2, tp3, 1, 255, 255, 255);
+        }
 
+
+    void button5Setup(Surface imgSurface){
+        Rectangle undoRect = new Rectangle(&imgSurface);
+            undoRect.fillRectangle(470, 495, 20, 30, 24, 20, 195);
+
+        Triangle undoTri = new Triangle(&imgSurface);
+            Tuple!(int, int) tp1, tp2, tp3;
+            tp1 = tuple(450, 25);
+            tp2 = tuple(470, 12);
+            tp3 = tuple(470, 38);
+            undoTri.fillTriangle(tp1, tp2, tp3, 1, 24, 20, 195);
+    }
+    void button6Setup(Surface imgSurface){
+        Rectangle undoRect = new Rectangle(&imgSurface);
+            undoRect.fillRectangle(560, 585, 20, 30, 224, 129, 19);
+
+        Triangle undoTri = new Triangle(&imgSurface);
+            Tuple!(int, int) tp1, tp2, tp3;
+            tp1 = tuple(605, 25);
+            tp2 = tuple(585, 12);
+            tp3 = tuple(585, 38);
+            undoTri.fillTriangle(tp1, tp2, tp3, 1, 224, 129, 19);
+    }
+}
 /**
 Test: Checks for the surface to be initialized to black RGB values or 0,0,0
 */
@@ -693,6 +683,7 @@ unittest{
     s.PixelAt(1,1)[1] == 0 &&
     s.PixelAt(1,1)[2] == 0, "error bgr value at x,y is wrong!");
 }
+
 
 /**
 Test: Checks for the surface to be initialized to black, change the pixel color of 1,1 to blue
