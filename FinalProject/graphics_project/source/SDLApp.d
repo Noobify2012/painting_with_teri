@@ -138,6 +138,14 @@ class SDLApp{
             cnStart += 4;
         }
 
+        //Setting up eraser button display (Button 3)
+        imgSurface.lerp(240, 40, 290, 40, 2, 224, 125, 19);
+        imgSurface.lerp(230, 20, 275, 8, 2, 255, 255, 255);
+        imgSurface.lerp(230, 20, 240, 40, 2, 255, 255, 255);
+        imgSurface.lerp(275, 8, 285, 28, 2, 255, 255, 255);
+        imgSurface.lerp(243, 17, 253, 37, 2, 255, 255, 255);
+        imgSurface.lerp(240, 40, 285, 28, 2, 255, 255, 255);
+        
         //Setting up shape button display (Button 4)
         //Horizontal line across button 4 
         int s1;
@@ -151,20 +159,20 @@ class SDLApp{
         for (s11 = 0; s11 < 50; s11++){
             imgSurface.lerp(372, s11, 372, s11, 1, 255, 255, 255);
         }
-        //Top left: Line 
+        //Button 4 Top left: Line 
         imgSurface.lerp(330, 20, 355, 3, 1, 255, 255, 255);
 
-        //Top Right: Rectangle 
+        //Button 4 Top Right: Rectangle 
         Rectangle menuRect = new Rectangle(&imgSurface);
         menuRect.fillRectangle(385, 410, 5, 15, 255, 255, 255);
 
-        //Bottom left: Circle 
+        //Button 4 Bottom left: Circle 
         Circle menuCirc = new Circle(&imgSurface);
         Tuple!(int, int) circPoint;
         circPoint= tuple(342, 36);
         menuCirc.fillCircle(circPoint, 8, 255, 255, 255);
 
-        //Bottom right: Triangle 
+        //Button 4 Bottom right: Triangle 
         Triangle menuTri = new Triangle(&imgSurface);
         Tuple!(int, int) tp1, tp2, tp3;
         tp1 = tuple(385, 41);
