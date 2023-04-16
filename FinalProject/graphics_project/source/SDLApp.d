@@ -432,6 +432,13 @@ class SDLApp{
                         if (!tear_down) {
                             Packet inbound = client.receiveDataFromServer();
                             received.push_front(inbound);
+                            writeln("Size of Received: " ~to!string(received.size()));
+                            while (received.size() > 0) {
+                                //draw the packets
+                                writeln("do i get here?");
+                                drawInbound(received, imgSurface);
+                            }
+
                         } 
                         }).start();
 
@@ -547,6 +554,8 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
         writeln("and now here");
         //TODO: Fix order
         imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, curr.r, curr.g, curr.b);
+        prevX = curr.x;
+        prevY = curr.y;
         // imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
         // imgSurface.lerp(prevX, prevY,curr.x, curr.y, 1, curr.r, curr.g, curr.b);
     }
