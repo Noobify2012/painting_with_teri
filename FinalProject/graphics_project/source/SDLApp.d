@@ -188,10 +188,9 @@ class SDLApp{
                     //Button four: Shape Activator 
                     // Splits the 4 quadrants of B4 into shape assignments  
                     if(yPos < 50 && xPos > h2 * 3 + 1 && xPos < h2 * 4){
-                        writeln("button4: Shape Activate");
-                        writeln("Drawing shape");
-                        
+                        writeln("You selected: DRAW SHAPE");
                         string quadrant; 
+                        
                         //Top Left: Line
                         if(yPos < 24 && xPos < 373){
                             quadrant = "TL";
@@ -215,11 +214,11 @@ class SDLApp{
 
                     //Button five: UNDO --- INCOMING: dependency: implement undo/redo
                     if(yPos < 50 && xPos > h2 * 4 + 1 && xPos < h2 * 5){
-                        writeln("button5");
+                        writeln("You selected: UNDO");
                     }
                     //Button six: REDO --- INCOMING: Dependency: implement undo/redo 
                     if(yPos < 50 && xPos > h2 * 5 + 1 && xPos < h2 * 6){
-                        writeln("button6");
+                        writeln("You selected: REDO");
                     }
                     //END MENU BUTTON SELECTOR 
 
@@ -587,6 +586,8 @@ void createMenu(Surface imgSurface){
         button3Setup(imgSurface);
         //Setting up shape button display (Button 4)
         button4Setup(imgSurface);
+        //Setting up undo button display (Button 5)
+        button5Setup(imgSurface);
 }
 
 
@@ -680,6 +681,18 @@ void button4Setup(Surface imgSurface){
 
         menuTri.fillTriangle(tp1, tp2, tp3, 1, 255, 255, 255);
     }
+}
+
+void button5Setup(Surface imgSurface){
+    Rectangle undoRect = new Rectangle(&imgSurface);
+        undoRect.fillRectangle(470, 495, 20, 30, 24, 20, 195);
+
+    Triangle undoTri = new Triangle(&imgSurface);
+        Tuple!(int, int) tp1, tp2, tp3;
+        tp1 = tuple(450, 25);
+        tp2 = tuple(470, 12);
+        tp3 = tuple(470, 38);
+        undoTri.fillTriangle(tp1, tp2, tp3, 1, 24, 20, 195);
 }
 
 /**
