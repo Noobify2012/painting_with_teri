@@ -32,14 +32,11 @@ class State {
 
     void addAction(Action act) {
 
-        int[] initUndoColor = [0, 0, 0];
-        Action undoAction = new Action(act.getPoints(), initUndoColor, act.getActionType());
-        undoStack ~= undoAction;
-        redoStack ~= act;
+        // int[] initUndoColor = [0, 0, 0];
+        // Action undoAction = new Action(act.getPoints(), initUndoColor, act.getActionType());
+        undoStack ~= act;
 
-        ++undoPosition;
-        ++redoPosition;
-        writeln(undoStack, redoStack[redoStack.length - 1].getActionType());
+        redoStack = [];
     }
 
     void undo() {
@@ -51,32 +48,45 @@ class State {
             
             string aType = undone.getActionType();
             Tuple!(int, int)[] pts = undone.getPoints();
-            int[] undoColor = undone.getColor();
 
             if (aType == "circle") {
 
                 Shape circle = new Circle(surf);
-                circle.drawFromPoints(pts, cast(ubyte) undoColor[0], cast(ubyte) undoColor[1], cast(ubyte) undoColor[2], 4);
+                circle.drawFromPoints(pts, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 4);
 
             } else if (aType == "rectangle") {
 
                 Shape rect = new Rectangle(surf);
-                rect.drawFromPoints(pts, cast(ubyte) undoColor[0], cast(ubyte) undoColor[1], cast(ubyte) undoColor[2], 4);
+                rect.drawFromPoints(pts, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 4);
 
             } else if (aType == "triangle") {
 
                 Shape tri = new Triangle(surf);
-                tri.drawFromPoints(pts, cast(ubyte) undoColor[0], cast(ubyte) undoColor[1], cast(ubyte) undoColor[2], 4);
+                tri.drawFromPoints(pts, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 4);
 
             } else if (aType == "line") {
 
                 Shape lin = new Line(surf);
-                lin.drawFromPoints(pts, cast(ubyte) undoColor[0], cast(ubyte) undoColor[1], cast(ubyte) undoColor[2], 4);
+                lin.drawFromPoints(pts, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 4);
                 
+            } else if (aType == "stroke") {
+
+                Shape lin = new Line(surf);
+
+                if (pts.length > 1) {
+
+                    int currentPoint = 1;
+
+                    while (currentPoint < pts.length) {
+                        Tuple!(int, int)[] ptsTuple = [pts[currentPoint], pts[currentPoint - 1]];
+
+                        lin.drawFromPoints(ptsTuple, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 4);
+                        currentPoint++;
+                    }
+                }
             }
 
-            --undoPosition;
-            --redoPosition;
+            redoStack ~= undone;
 
         } else {
             
@@ -89,8 +99,8 @@ class State {
     void redo() {
         if (redoStack.length > 0) {
             
-            Action redone = redoStack[0];
-            redoStack = redoStack[1 .. redoStack.length];
+            Action redone = redoStack[redoStack.length - 1];
+            redoStack = redoStack[0 .. redoStack.length - 1];
             
             string aType = redone.getActionType();
             Tuple!(int, int)[] pts = redone.getPoints();
@@ -116,9 +126,24 @@ class State {
                 Shape lin = new Line(surf);
                 lin.drawFromPoints(pts, cast(ubyte) undoColor[0], cast(ubyte) undoColor[1], cast(ubyte) undoColor[2], 4);
                 
+            } else if (aType == "stroke") {
+
+                Shape lin = new Line(surf);
+
+                if (pts.length > 1) {
+
+                    int currentPoint = 1;
+
+                    while (currentPoint < pts.length) {
+                        Tuple!(int, int)[] ptsTuple = [pts[currentPoint], pts[currentPoint - 1]];
+
+                        lin.drawFromPoints(ptsTuple, cast(ubyte) undoColor[0], cast(ubyte) undoColor[1], cast(ubyte) undoColor[2], 4);
+                        currentPoint++;
+                    }
+                }
             }
 
-            ++undoPosition;
+            undoStack ~= redone;
         } else {
             
             writeln("Redo stack is empty -- No action taken");

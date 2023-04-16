@@ -30,6 +30,11 @@ class Action {
         return this.color;
     }
 
+    void setColor(int[] newColor) {
+
+        this.color = newColor;
+    }
+
     string getActionType() {
 
         return this.actionType;

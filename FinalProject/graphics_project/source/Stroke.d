@@ -1,4 +1,5 @@
 import Point : Point;
+import std.typecons;
 
 class Stroke {
 
