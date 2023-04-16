@@ -13,6 +13,7 @@ import SDL_Surfaces;
 class Circle : Shape {
 
     Surface* surf;
+    Tuple!(int, int)[] points;
 
     this(Surface* surf) {
         this.surf = surf;
@@ -92,11 +93,26 @@ class Circle : Shape {
             }
         }
 
+        points ~= p1;
+        points ~= p2;
+
         // Find circle radius and midpoint
         int radius = cast(int) sqrt(cast(float) ((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]))) / 2;
         midpoint = tuple(cast(int) ((p1[0] + p2[0]) / 2), cast(int) ((p1[1] + p2[1]) / 2));
 
         // Fill points in circle
+        fillCircle(midpoint, radius, r, g, b);
+    }
+
+    override void drawFromPoints(Tuple!(int, int) points, ubyte r, ubyte g, ubyte b, int brushSize) {
+
+        assert(points.length == 2);
+
+        Tuple!(int, int) p1 = points[0], p2 = points[1];
+
+        int radius = cast(int) sqrt(cast(float) ((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]))) / 2;
+        midpoint = tuple(cast(int) ((p1[0] + p2[0]) / 2), cast(int) ((p1[1] + p2[1]) / 2));
+
         fillCircle(midpoint, radius, r, g, b);
     }
 }
