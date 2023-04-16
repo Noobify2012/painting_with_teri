@@ -190,7 +190,7 @@ class SDLApp{
                     if(yPos < 50 && xPos > h2 * 3 + 1 && xPos < h2 * 4){
                         writeln("You selected: DRAW SHAPE");
                         string quadrant; 
-                        
+                    
                         //Top Left: Line
                         if(yPos < 24 && xPos < 373){
                             quadrant = "TL";
@@ -588,6 +588,8 @@ void createMenu(Surface imgSurface){
         button4Setup(imgSurface);
         //Setting up undo button display (Button 5)
         button5Setup(imgSurface);
+        //Setting up redo button display (Button 6)
+        button6Setup(imgSurface);
 }
 
 
@@ -693,6 +695,17 @@ void button5Setup(Surface imgSurface){
         tp2 = tuple(470, 12);
         tp3 = tuple(470, 38);
         undoTri.fillTriangle(tp1, tp2, tp3, 1, 24, 20, 195);
+}
+void button6Setup(Surface imgSurface){
+    Rectangle undoRect = new Rectangle(&imgSurface);
+        undoRect.fillRectangle(560, 585, 20, 30, 224, 129, 19);
+
+    Triangle undoTri = new Triangle(&imgSurface);
+        Tuple!(int, int) tp1, tp2, tp3;
+        tp1 = tuple(605, 25);
+        tp2 = tuple(585, 12);
+        tp3 = tuple(585, 38);
+        undoTri.fillTriangle(tp1, tp2, tp3, 1, 224, 129, 19);
 }
 
 /**
