@@ -130,6 +130,8 @@ class TCPClient{
             byte[4] field3 = fromServer[24 .. 28].dup;
             byte[4] field4 = fromServer[28 .. 32].dup;
             byte[4] field5 = fromServer[32 .. 36].dup;
+            byte[4] field6 = fromServer[36 .. 40].dup;
+            byte[4] field7 = fromServer[40 .. 44].dup;
             // byte[64] messageField = fromServer[36 .. 100].dup;
             // byte[4] field6 = fromServer[100 .. 104].dup;
             int f1 = *cast(int*)&field1;
@@ -137,11 +139,15 @@ class TCPClient{
             byte f3 = *cast(byte*)&field3;
             byte f4 = *cast(byte*)&field4;
             byte f5 = *cast(byte*)&field5;
+            int f6 = *cast(int*)&field6;
+            int f7 = *cast(int*)&field7;
             formattedPacket.x = f1;
             formattedPacket.y = f2;
             formattedPacket.r = f3;
             formattedPacket.g = f4;
             formattedPacket.b = f5;
+            formattedPacket.s = f6;
+            formattedPacket.bs = f7;
             
             write(">");
             return formattedPacket;
@@ -156,7 +162,7 @@ class TCPClient{
 }
 
 
-Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyte blueVal) {
+Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyte blueVal, int shape, int brushSize) {
     Packet data;
 		// The 'with' statement allows us to access an object
 		// (i.e. member variables and member functions)
@@ -190,6 +196,8 @@ Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyt
 			r = *cast(byte*)&redVal;
 			g = *cast(byte*)&greenVal;
 			b = *cast(byte*)&blueVal;
+            s = shape;
+            bs = brushSize;
 			message = "update from user: " ~ 1 ~ " test\0";
             // writeln("Inside Packet values x: " ~to!string(data.x) ~ " y: " ~ to!string(data.y) ~ " r: " ~to!string(data.r) ~ " g: " ~ to!string(data.g) ~ " b: " ~ to!string(data.b));
 		}

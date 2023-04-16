@@ -8,6 +8,7 @@ import std.parallelism;
 import core.thread.osthread;
 import std.math;
 import std.typecons;
+import std.random;
 
 
 
@@ -289,13 +290,17 @@ class SDLApp{
 
                             if(networked == true) {
                                 Packet packet;
-                                packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue);
+                                packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue, 0, brushSize);
+                                auto rnd = Random(69);
                                 // writeln("Input values x: " ~to!string(xPos+w) ~ " y: " ~ to!string(yPos+h) ~ " r: " ~to!string(red) ~ " g: " ~ to!string(green) ~ " b: " ~ to!string(blue));
                                 // writeln("Packet values x: " ~to!string(packet.x) ~ " y: " ~ to!string(packet.y) ~ " r: " ~to!string(packet.r) ~ " g: " ~ to!string(packet.g) ~ " b: " ~ to!string(packet.b));
                                 // traffic = test_client.addToSend(traffic, packet);
                                 if (traffic.size() > 0 ) {
                                     if (packet != traffic.back() ) {
-                                        traffic.push_front(packet);
+                                        auto pack = uniform(0, 9, rnd);
+                                        if (pack == 5) {
+                                            traffic.push_front(packet);
+                                        }
                                     }
                                 } else {
                                     traffic.push_front(packet);
@@ -465,7 +470,7 @@ class SDLApp{
                     // }
                 // }
                 } else if (tear_down) {
-                    auto packet = mClient.getChangeForServer(-9999,-9999, 0, 0, 0);
+                    auto packet = mClient.getChangeForServer(-9999,-9999, 0, 0, 0,0,0);
                     client.sendDataToServer(packet);
                     client.closeSocket();
                     writeln("we should have closed the socket.");
@@ -541,7 +546,8 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
         auto curr = traffic.pop_back();
         writeln("and now here");
         //TODO: Fix order
-        imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
+        imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, curr.r, curr.g, curr.b);
+        // imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
         // imgSurface.lerp(prevX, prevY,curr.x, curr.y, 1, curr.r, curr.g, curr.b);
     }
 
