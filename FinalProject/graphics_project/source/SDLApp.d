@@ -209,8 +209,8 @@ class SDLApp{
                             quadrant = "BR";
                         }
 
-                        ShapeListener sh = new ShapeListener(quadrant);
-                        sh.drawShape(&imgSurface, brushSize, red, green, blue);
+                        ShapeListener sh = new ShapeListener(quadrant, brushSize);
+                        sh.drawShape(&imgSurface, brush, red, green, blue);
                     }
 
                     //Button five: UNDO --- INCOMING: dependency: implement undo/redo
@@ -341,7 +341,7 @@ class SDLApp{
                         
                         //writeln("Changing to color : " , to!string(color));
                         color = colorChanger(color);
-                        writeln("CHANGE COLOR KEYs PRESSED");
+                        writeln("CHANGE COLOR KEY PRESSED");
 
 
                     } else if (e.key.keysym.sym == SDLK_e) {
@@ -681,15 +681,6 @@ void button4Setup(Surface imgSurface){
         menuTri.fillTriangle(tp1, tp2, tp3, 1, 255, 255, 255);
     }
 }
-
-
-
-// void runClient(Deque traffic, Socket socket, Bool tear_down) {
-//     //if the client is running, loop
-    
-
-
-// }
 
 /**
 Test: Checks for the surface to be initialized to black RGB values or 0,0,0

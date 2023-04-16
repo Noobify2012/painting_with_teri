@@ -19,14 +19,16 @@ import Triangle : Triangle;
 import ShapeFactory : ShapeFactory;
 
 class ShapeListener {
-  string quadrant; 
+  string quadrant;
+  int brushSize; 
 
   this() {
 
   }
 
-  this(string quad){
-    quadrant = quad;
+  this(string quad, int brushSize){
+    this.quadrant = quad;
+    this.brushSize = brushSize;
   }
 
   ~this() {
