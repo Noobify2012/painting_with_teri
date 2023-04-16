@@ -24,6 +24,8 @@ import shape_listener;
 import drawing_utilities;
 import mClient;
 
+import Rectangle : Rectangle;
+
 
 // For printing the key pressed info
 // void PrintKeyInfo( SDL_KeyboardEvent *key );
@@ -64,9 +66,6 @@ class SDLApp{
 
         int brush = 1;
         
-        bool button1pressed, button2pressed, button3pressed, 
-             button4pressed, button5pressed, button6pressed = false;
-
         int color = 1;
         
         int brushSize = 4;
@@ -109,20 +108,20 @@ class SDLApp{
             }
         }
 
-        //Setting up brush size button display
+        //Setting up brush size button display (Button 1)
         int bs;
         int bsStart = 15;
         int bs1;
         for (bs = 1; bs <= 5; bs++){
             for(bs1 = 0; bs1 <= bs * 2; bs1++){
             imgSurface.lerp(bsStart, 8 + 2 * bs, bsStart, 40 - 2 * bs, bs * 2, red, green, blue);
-            writeln(bsStart);
+            //writeln(bsStart);
             }
             bsStart += bs * 4 + 6;
         }
 
 
-        //Setting up color button display 
+        //Setting up color button display (Button 2)
         int cn;
         int cn1;
         int cnStart = 112;
@@ -135,7 +134,27 @@ class SDLApp{
             cnStart += 4;
         }
 
-        brushSize = 4;
+        //Setting up shape button display (Button 4)
+        //Horizontal line across button 4 
+        int s1;
+        int sStart = 320;
+        for(s1 = 0; s1 < 106; s1++){
+            imgSurface.lerp(sStart, 24, sStart, 24, 1, 255, 255, 255);
+            sStart ++;
+        }
+        //Vertical line down button 4
+        int s11;
+        for (s11 = 0; s11 < 50; s11++){
+            imgSurface.lerp(372, s11, 372, s11, 1, 255, 255, 255);
+        }
+        //Top left: Line 
+        imgSurface.lerp(325, 20, 360, 3, 1, 255, 255, 255);
+
+        //Top Right: Rectangle 
+        Rectangle menuRect = new Rectangle(&imgSurface);
+        menuRect.fillRectangle(385, 410, 5, 15, 255, 255, 255);
+
+        brush = 2;
         // SDL_EnableUNICODE( 1 );
 
         /// Main application loop that will run until a quit event has occurred.
@@ -161,8 +180,7 @@ class SDLApp{
                     //Button one: change brush size 
                     if (yPos < 50 && xPos < h2){
                         writeln("button1: Change brush size");
-                        //button1pressed = true; 
-                        //brush = brushSizeChanger(brush);
+
                         if (xPos > 10 && xPos < 18){
                             writeln("Brush Size 2");
                             brush = 2;
@@ -187,9 +205,6 @@ class SDLApp{
                     //Button two: change brush color 
                     //**TECH DEBT: pull this out into a separate function with xpos args**
                     if(yPos < 50 && xPos > h2 && xPos < h2 * 2){
-                        //writeln("button2: Change Color");
-                        //button2pressed = true; 
-                        //color = colorChanger(color);
                         if(xPos > 112 && xPos < 124){
                             writeln("You selected color RED");
                             color = 1;
@@ -219,7 +234,6 @@ class SDLApp{
                     //**TECH DEBT: pull this out into a separate function. Code is duplicate of key presses 
                     if(yPos < 50 && xPos > h2 * 2 + 1 && xPos < h2 * 3){
                         writeln("button3: Toggle Eraser");
-                        //button3pressed = true; 
                         if (erasing == false) {
                             erasing = true;
                             temp_color = color;
@@ -232,24 +246,40 @@ class SDLApp{
                         }
                     }
                     //Button four: Shape Activator 
-                    // Either split this button into 4 buttons or have instructions pop up onto screen 
+                    // Splits the 4 quadrants of B4 into shape assignments  
                     if(yPos < 50 && xPos > h2 * 3 + 1 && xPos < h2 * 4){
                         writeln("button4: Shape Activate");
                         writeln("Drawing shape");
-                        writeln("Type 'r' for rectangle", "\nType 'c' for circle", 
-                                "\nType 'l' for line", "\nType 'r' for rectangle");
-                        ShapeListener sh = new ShapeListener();
+                        
+                        string quadrant; 
+                        //Top Left: Line
+                        if(yPos < 24 && xPos < 373){
+                            quadrant = "TL";
+                        }
+                        //Top Right: Rectangle 
+                        else if(yPos < 24 && xPos > 373){
+                            quadrant = "TR";
+                        }
+                        //Bottom Left: Circle 
+                        else if(yPos > 24 && xPos < 373){
+                            quadrant = "BL";
+                        }
+                        //Bottom Right: Triangle
+                        else if(yPos > 24 && xPos > 373){
+                            quadrant = "BR";
+                        }
+
+                        ShapeListener sh = new ShapeListener(quadrant);
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
                     }
+
                     //Button five: UNDO --- INCOMING: dependency: implement undo/redo
                     if(yPos < 50 && xPos > h2 * 4 + 1 && xPos < h2 * 5){
                         writeln("button5");
-                        //button5pressed = true; 
                     }
                     //Button six: REDO --- INCOMING: Dependency: implement undo/redo 
                     if(yPos < 50 && xPos > h2 * 5 + 1 && xPos < h2 * 6){
                         writeln("button6");
-                        //button6pressed = true; 
                     }
                     //END MENU BUTTON SELECTOR 
 
@@ -575,11 +605,14 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
 }
 
 int brushSizeChanger(int curBrush){
-    if (curBrush < 3) {
-        curBrush++;
+    if (curBrush < 8) {
+        curBrush += 2;
         writeln(curBrush);
+    }
+    else if (curBrush == 8){
+        curBrush = 12;
     } else {
-        curBrush=1;
+        curBrush = 2;
     }
     writeln("Changing to brush size: " , to!string(curBrush));
     return curBrush;
