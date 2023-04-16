@@ -143,7 +143,10 @@ class SDLApp{
                     //**TECH DEBT: pull this out into a separate function with xpos args**
                     
                     if(yPos < 50 && xPos > h2 && xPos < h2 * 2){
-                        erasing = false;
+                        if(erasing == true){
+                            writeln("ERASER: Deactivated");
+                            erasing = false;
+                        }
                         if(xPos > 112 && xPos < 124){
                             writeln("You selected: color RED");
                             color = 1;
@@ -166,8 +169,7 @@ class SDLApp{
                         }else if(xPos > 194 && xPos < 206){
                             writeln("You selected: color VIOLET");
                             color = 6;
-                        }
-                        
+                        }  
                     }
 
                     ///Based on color selected, update the RGB values using colorValueSetter
@@ -540,31 +542,30 @@ int colorChanger(int curColor){
 
     string[6] colorNameArr;
     colorNameArr = ["Red", "Orange", "Yellow", 
-                              "Green", "Blue", "Violet"];
+                    "Green", "Blue", "Violet"];
     writeln("Changing to color : " , colorNameArr[curColor - 1]);
     return curColor; 
 }
 
 void createMenu(Surface imgSurface){
  /// **Tech debt: Create variables for window size so they can be changed proportionally**
-        /// **Tech debt: Move menu creation into its own function**
-        //Draw bottom bar of menu skeleton
-        menuBarSetup(imgSurface);
-        //Setting up brush size button display (Button 1)
-        button1Setup(imgSurface);
-        //Setting up color button display (Button 2)
-        button2Setup(imgSurface);
-        //Setting up eraser button display (Button 3)
-        button3Setup(imgSurface);
-        //Setting up shape button display (Button 4)
-        button4Setup(imgSurface);
-        //Setting up undo button display (Button 5)
-        button5Setup(imgSurface);
-        //Setting up redo button display (Button 6)
-        button6Setup(imgSurface);
+    //Draw bars of menu skeleton
+    menuBarSetup(imgSurface);
+    //Setting up brush size button display (Button 1)
+    button1Setup(imgSurface);
+    //Setting up color button display (Button 2)
+    button2Setup(imgSurface);
+    //Setting up eraser button display (Button 3)
+    button3Setup(imgSurface);
+    //Setting up shape button display (Button 4)
+    button4Setup(imgSurface);
+    //Setting up undo button display (Button 5)
+    button5Setup(imgSurface);
+    //Setting up redo button display (Button 6)
+    button6Setup(imgSurface);
 }
 
-
+/// This creates the white lines that divide the buttons from the rest of the screen and each other
 void menuBarSetup(Surface imgSurface){
     int b1;
         for(b1 = 1; b1 <= 640; b1++){
@@ -621,39 +622,39 @@ void button3Setup(Surface imgSurface){
 }
 
 void button4Setup(Surface imgSurface){
-            //Horizontal line across button 4 
-        int s1;
-        int sStart = 320;
-        for(s1 = 0; s1 < 106; s1++){
-            imgSurface.lerp(sStart, 24, sStart, 24, 1, 255, 255, 255);
-            sStart ++;
-        }
-        //Vertical line down button 4
-        int s11;
-        for (s11 = 0; s11 < 50; s11++){
-            imgSurface.lerp(372, s11, 372, s11, 1, 255, 255, 255);
-        }
-        //Button 4 Top left: Line 
-        imgSurface.lerp(330, 20, 355, 3, 1, 255, 255, 255);
+        //Horizontal line across button 4 
+    int s1;
+    int sStart = 320;
+    for(s1 = 0; s1 < 106; s1++){
+        imgSurface.lerp(sStart, 24, sStart, 24, 1, 255, 255, 255);
+        sStart ++;
+    }
+    //Vertical line down button 4
+    int s11;
+    for (s11 = 0; s11 < 50; s11++){
+        imgSurface.lerp(372, s11, 372, s11, 1, 255, 255, 255);
+    }
+    //Button 4 Top left: Line 
+    imgSurface.lerp(330, 20, 355, 3, 1, 255, 255, 255);
 
-        //Button 4 Top Right: Rectangle 
-        Rectangle menuRect = new Rectangle(&imgSurface);
-        menuRect.fillRectangle(385, 410, 5, 15, 255, 255, 255);
+    //Button 4 Top Right: Rectangle 
+    Rectangle menuRect = new Rectangle(&imgSurface);
+    menuRect.fillRectangle(385, 410, 5, 15, 255, 255, 255);
 
-        //Button 4 Bottom left: Circle 
-        Circle menuCirc = new Circle(&imgSurface);
-        Tuple!(int, int) circPoint;
-        circPoint= tuple(342, 36);
-        menuCirc.fillCircle(circPoint, 8, 255, 255, 255);
+    //Button 4 Bottom left: Circle 
+    Circle menuCirc = new Circle(&imgSurface);
+    Tuple!(int, int) circPoint;
+    circPoint= tuple(342, 36);
+    menuCirc.fillCircle(circPoint, 8, 255, 255, 255);
 
-        //Button 4 Bottom right: Triangle 
-        Triangle menuTri = new Triangle(&imgSurface);
-        Tuple!(int, int) tp1, tp2, tp3;
-        tp1 = tuple(385, 41);
-        tp2 = tuple(395, 31);
-        tp3 = tuple(405, 41);
+    //Button 4 Bottom right: Triangle 
+    Triangle menuTri = new Triangle(&imgSurface);
+    Tuple!(int, int) tp1, tp2, tp3;
+    tp1 = tuple(385, 41);
+    tp2 = tuple(395, 31);
+    tp3 = tuple(405, 41);
 
-        menuTri.fillTriangle(tp1, tp2, tp3, 1, 255, 255, 255);
+    menuTri.fillTriangle(tp1, tp2, tp3, 1, 255, 255, 255);
     }
 }
 
