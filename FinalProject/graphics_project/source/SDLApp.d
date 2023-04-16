@@ -298,7 +298,7 @@ class SDLApp{
                                 if (traffic.size() > 0 ) {
                                     if (packet != traffic.back() ) {
                                         auto pack = uniform(0, 9, rnd);
-                                        if (pack == 2 || pack == 5 || pack == 8) {
+                                        if (pack == 5) {
                                             traffic.push_front(packet);
                                         }
                                     }
@@ -434,12 +434,14 @@ class SDLApp{
                             writeln("inbound x: " ~ to!string(inbound.x) ~ " inbound y: " ~ to!string(inbound.y));
                             received.push_front(inbound);
                             writeln("Size of Received: " ~to!string(received.size()));
-                            while (received.size() > 5) {
-                                //draw the packets
-                                // writeln("do i get here?");
-                                drawInbound(received, imgSurface);
-                            }
+                            drawInbound(received, imgSurface);
+                            // while (received.size() > 2) {
+                            //     //draw the packets
+                            //     writeln("send to draw");
+                            //     writeln("Size of Received: " ~to!string(received.size()));
 
+                            //     drawInbound(received, imgSurface);
+                            // }
                         } 
                         }).start();
 
@@ -487,11 +489,11 @@ class SDLApp{
                     
                 }
                 // core.thread.thread_joinAll();
-                while (received.size() > 0) {
-                    //draw the packets
-                    writeln("do i get here?");
-                    drawInbound(received, imgSurface);
-                }
+                // while (received.size() > 0) {
+                //     //draw the packets
+                //     writeln("do i get here?");
+                //     drawInbound(received, imgSurface);
+                // }
             }
             
             /// Blit the surace (i.e. update the window with another surfaces pixels
@@ -553,17 +555,32 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
     int prevY = -9999;
     while(traffic.size() > 0) {
         auto curr = traffic.pop_back();
-        writeln("and now here");
+        // writeln("and now here");
         //TODO: Fix order
-        writeln("Prevx : " ~ to!string(prevX) ~ " Prevy : " ~ to!string(prevY) ~  " curr.bs : " ~ to!string(curr.bs) ~  " red : " ~ to!string(curr.r) ~  " green : " ~ to!string(curr.g) ~ " blue : " ~ to!string(curr.b));     
-        imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, curr.r, curr.g, curr.b);
+        // int brushs = cast(int)(curr.bs & 0xff);
+        red = cast(char)(curr.r & 0xff);
+        blue = cast(char)(curr.b & 0xff);
+        green = cast(char)(curr.g & 0xff);
+        writeln("Prevx : " ~ to!string(prevX) ~ " Prevy : " ~ to!string(prevY) ~  " curr.bs : " ~ to!string(curr.bs) ~  " red : " ~ to!string(red) ~  " green : " ~ to!string(green) ~ " blue : " ~ to!string(blue));     
+        // writeln("NEW RBG VALS:: " ~ to!string(convertBytetoUnsigned(curr.r))  ~ to!string(convertBytetoUnsigned(curr.g))~ to!string(convertBytetoUnsigned(curr.b)));
+        // imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, red, green, blue);
         prevX = curr.x;
         prevY = curr.y;
-        // imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
+        imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
         // imgSurface.lerp(prevX, prevY,curr.x, curr.y, 1, curr.r, curr.g, curr.b);
     }
 
 }
+
+// ubyte convertBytetoUnsigned(byte inbyte) {
+//     ubyte returnVal = 0;
+//     if (inbyte <=127) {
+//         returnVal = *cast(ubyte*)&inbyte;
+//     } else {
+//         returnVal = 256 - *cast(int*)&inbyte;
+//     }
+//     return returnVal;
+// }
 
 int brushSizeChanger(int curBrush){
     if (curBrush < 8) {
