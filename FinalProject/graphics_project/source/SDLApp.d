@@ -485,6 +485,7 @@ class SDLApp{
                     networked = false;
                     
                 }
+                // core.thread.thread_joinAll();
                 while (received.size() > 0) {
                     //draw the packets
                     writeln("do i get here?");
