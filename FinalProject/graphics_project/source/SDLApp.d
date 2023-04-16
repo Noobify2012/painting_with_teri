@@ -140,11 +140,11 @@ class SDLApp{
 
         //Setting up eraser button display (Button 3)
         imgSurface.lerp(240, 40, 290, 40, 2, 224, 125, 19);
-        imgSurface.lerp(230, 20, 275, 8, 2, 255, 255, 255);
-        imgSurface.lerp(230, 20, 240, 40, 2, 255, 255, 255);
-        imgSurface.lerp(275, 8, 285, 28, 2, 255, 255, 255);
-        imgSurface.lerp(243, 17, 253, 37, 2, 255, 255, 255);
-        imgSurface.lerp(240, 40, 285, 28, 2, 255, 255, 255);
+        imgSurface.lerp(230, 20, 275, 8, 1, 255, 255, 255);
+        imgSurface.lerp(230, 20, 240, 40, 1, 255, 255, 255);
+        imgSurface.lerp(275, 8, 285, 28, 1, 255, 255, 255);
+        imgSurface.lerp(243, 17, 253, 37, 1, 255, 255, 255);
+        imgSurface.lerp(240, 40, 285, 28, 1, 255, 255, 255);
         
         //Setting up shape button display (Button 4)
         //Horizontal line across button 4 
