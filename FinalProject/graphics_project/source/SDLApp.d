@@ -6,6 +6,10 @@ import std.conv;
 import std.socket;
 import std.parallelism;
 import core.thread.osthread;
+import std.math;
+import std.typecons;
+
+
 
 /// Load the SDL2 library
 import bindbc.sdl;
@@ -25,8 +29,8 @@ import drawing_utilities;
 import mClient;
 
 import Rectangle : Rectangle;
-
-
+import Triangle : Triangle; 
+import Circle : Circle; 
 // For printing the key pressed info
 // void PrintKeyInfo( SDL_KeyboardEvent *key );
 
@@ -148,11 +152,27 @@ class SDLApp{
             imgSurface.lerp(372, s11, 372, s11, 1, 255, 255, 255);
         }
         //Top left: Line 
-        imgSurface.lerp(325, 20, 360, 3, 1, 255, 255, 255);
+        imgSurface.lerp(330, 20, 355, 3, 1, 255, 255, 255);
 
         //Top Right: Rectangle 
         Rectangle menuRect = new Rectangle(&imgSurface);
         menuRect.fillRectangle(385, 410, 5, 15, 255, 255, 255);
+
+        //Bottom left: Circle 
+        Circle menuCirc = new Circle(&imgSurface);
+        Tuple!(int, int) circPoint;
+        circPoint= tuple(342, 36);
+        menuCirc.fillCircle(circPoint, 8, 255, 255, 255);
+
+        //Bottom right: Triangle 
+        Triangle menuTri = new Triangle(&imgSurface);
+        Tuple!(int, int) tp1, tp2, tp3;
+        tp1 = tuple(385, 41);
+        tp2 = tuple(395, 31);
+        tp3 = tuple(405, 41);
+
+        menuTri.fillTriangle(tp1, tp2, tp3, 1, 255, 255, 255);
+
 
         brush = 2;
         // SDL_EnableUNICODE( 1 );
