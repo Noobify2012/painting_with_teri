@@ -9,8 +9,6 @@ import core.thread.osthread;
 import std.math;
 import std.typecons;
 
-
-
 /// Load the SDL2 library
 import bindbc.sdl;
 import bindbc.sdl.image;
@@ -68,20 +66,16 @@ class SDLApp{
         /// Initialize variables
         /// Application running flag for determing if we are running the main application loop
         bool runApplication = true;
-        /// Drawing flag for determining if we are 'drawing' (i.e. mouse has been pressed
-        ///                                                but not yet released)
+        /// Drawing flag for determining if we are 'drawing' 
         bool drawing = false;
 
         bool change = false;
         bool networked = false;
 
+        ///Defaults 
         int brush = 1;
-        
         int color = 1;
-        
         int brushSize = 4;
-        
-
         int prevX = -9999;
         int prevY = -9999;
 
@@ -121,8 +115,8 @@ class SDLApp{
                     int h2 = 640/6;
 
 
-                ///**BEGIN MENU BUTTON SELECTOR**
-                    //Button one: change brush size 
+                 ///**BEGIN MENU BUTTON SELECTOR**
+                    /// Button one: change brush size 
                     if (yPos < 50 && xPos < h2){
                         if (xPos > 10 && xPos < 18){
                             writeln("You selected: BRUSH SIZE 2");
@@ -146,7 +140,7 @@ class SDLApp{
                         }
                     }
 
-                    //Button two: change brush color                     
+                    /// Button two: change brush color                     
                     if(yPos < 50 && xPos > h2 && xPos < h2 * 2){
                         if(erasing == true){
                             writeln("ERASER: Deactivated");
@@ -177,9 +171,9 @@ class SDLApp{
                         }  
                     }
 
-                    ///Based on color selected, update the RGB values using colorValueSetter
+                    /// Based on color selected, update the RGB values using colorValueSetter
                     if (color == 1 && !erasing) {
-                        // Set brush color to red
+                        /// Set brush color to red
                         colorValueSetter(1);
                     } else if (color == 2 && !erasing) {
                         /// Set brush color to orange
@@ -203,57 +197,57 @@ class SDLApp{
                         blue = 0;
                     }
                     
-                    //Button three: Eraser Activator/Deactivator
+                    /// Button three: Eraser Activator/Deactivator
                     if(yPos < 50 && xPos > h2 * 2 + 1 && xPos < h2 * 3){
                         eraserToggle(erasing, color);
                     }
 
-                    //Button four: Shape Activator 
-                    // Splits the 4 quadrants of B4 into shape assignments  
+                    /// Button four: Shape Activator 
+                    /// Splits the 4 quadrants of B4 into shape assignments  
                     if(yPos < 50 && xPos > h2 * 3 + 1 && xPos < h2 * 4){
                         string quadrant; 
                     
-                        //Top Left: Line
+                        /// Top Left: Line
                         if(yPos < 24 && xPos < 373){
                             writeln("You selected: Draw LINE");
                             writeln("LINE: Click start and end points");
                             quadrant = "TL";
                         }
-                        //Top Right: Rectangle 
+                        /// Top Right: Rectangle 
                         else if(yPos < 24 && xPos > 373){
                             writeln("You selected: Draw RECTANGLE");
                             writeln("RECTANGLE: Click two corner points");
                             quadrant = "TR";
                         }
-                        //Bottom Left: Circle 
+                        /// Bottom Left: Circle 
                         else if(yPos > 24 && xPos < 373){
                             writeln("You selected: Draw CIRCLE");
                             writeln("CIRCLE: Click two points");
                             quadrant = "BL";
                         }
-                        //Bottom Right: Triangle
+                        /// Bottom Right: Triangle
                         else if(yPos > 24 && xPos > 373){
                             writeln("You selected: Draw TRIANGLE");
                             writeln("TRIANGLE: Click three corner points");
                             quadrant = "BR";
                         }
 
-                        //Send the selected shape to the ShapeListener so the user can draw it. 
+                        /// Send the selected shape to the ShapeListener so the user can draw it. 
                         ShapeListener sh = new ShapeListener(quadrant, brushSize);
                         sh.drawShape(&imgSurface, brush, red, green, blue);
                     }
 
-                    //Button five: UNDO --- INCOMING: dependency: implement undo/redo
+                    /// Button five: UNDO --- INCOMING: dependency: implement undo/redo
                     if(yPos < 50 && xPos > h2 * 4 + 1 && xPos < h2 * 5){
                         writeln("You selected: UNDO");
                         /// UNDO FUNCTION HERE 
                     }
-                    //Button six: REDO --- INCOMING: Dependency: implement undo/redo 
+                    /// Button six: REDO --- INCOMING: Dependency: implement undo/redo 
                     if(yPos < 50 && xPos > h2 * 5 + 1 && xPos < h2 * 6){
                         writeln("You selected: REDO");
                         /// REDO FUNCTION HERE 
                     }
-                //END MENU BUTTON SELECTOR 
+                 /// **END MENU BUTTON SELECTOR**
 
                 }else if(e.type == SDL_MOUSEBUTTONUP){
                     drawing=false;
@@ -311,12 +305,12 @@ class SDLApp{
                     
                 /// If keyboard is pressed check for change event
                 } else if(e.type == SDL_KEYDOWN) { 
-                    /// Wait for key to be lifted before we do anything. 
+                    // Wait for key to be lifted before we do anything. 
                 } else if(e.type == SDL_KEYUP) {
                     writeln("key released: ");
                     //, to!string(e.key.keysym.sym));
                     if (e.key.keysym.sym == SDLK_b){
-                        //For each key press, cycle through the 3 brush sizes. 
+                        /// For each key press, cycle through the 3 brush sizes. 
                         brush = brushSizeChanger(brush);
 
                     } else if (e.key.keysym.sym == SDLK_c) {
@@ -328,7 +322,7 @@ class SDLApp{
                         eraserToggle(erasing, color);
 
                     } else if (e.key.keysym.sym == SDLK_n) {
-                        ///When you press the n key, you want to join a network 
+                        /// When you press the n key, you want to join a network 
                         if (networked == false) {
                             /// Set up the socket and connection to server
                             // sendSocket = test_client.initialize();
@@ -358,7 +352,7 @@ class SDLApp{
             }
 
             auto received = new Deque!(Packet);
-            //if we have turned networking on, the client not the server
+            /// if we have turned networking on, the client not the server
             if (networked == true) {
                 // while(!tear_down) {
                     /// Check if there is traffic to send, if so send it, else listen
@@ -419,7 +413,7 @@ class SDLApp{
                     
                 }
                 while (received.size() > 0) {
-                    //draw the packets
+                    /// draw the packets
                     writeln("do i get here?");
                     drawInbound(received, imgSurface);
                 }
@@ -445,7 +439,7 @@ class SDLApp{
     **/
     void colorValueSetter(int colorNum) { 
         if (colorNum == 1) {
-            // Set brush color to red
+            /// Set brush color to red
             red = 24;
             green = 20;
             blue = 195;
@@ -506,10 +500,10 @@ class SDLApp{
         if (curBrush < 8) {
             curBrush += 2;
             writeln(curBrush);
-        }
-        else if (curBrush == 8){
+        } else if (curBrush == 8){
             curBrush = 12;
         } else {
+            /// reset to first brush
             curBrush = 2;
         }
         writeln("Changing to brush size: " , to!string(curBrush));
@@ -522,10 +516,10 @@ class SDLApp{
     **/
     int colorChanger(int curColor){
         writeln("C");
-        //Increment color 
+        /// Increment color 
         if (curColor < 6) {
             curColor++;
-        //Reset to first color when you reach the end
+        /// Reset to first color when you reach the end
         } else {
             curColor=1;   
         }
@@ -543,11 +537,13 @@ class SDLApp{
     **/
     void eraserToggle(bool eraseBool, int color){
         int temp_color = 0;
+        /// Activate eraser 
         if (eraseBool == false) {
             erasing = true;
             temp_color = color;
             color = -1;
             writeln("You selected: ERASER ACTIVATE");
+        /// Deactivate eraser and restore previous color
         } else {
             erasing = false;
             color = temp_color;
@@ -561,19 +557,19 @@ class SDLApp{
     **/
     void createMenu(Surface imgSurface){
     /// **Tech debt: Create variables for window size so they can be changed proportionally**
-        //Draw bars of menu skeleton
+        /// Draw bars of menu skeleton
         menuBarSetup(imgSurface);
-        //Setting up brush size button display (Button 1)
+        /// Setting up brush size button display (Button 1)
         button1Setup(imgSurface);
-        //Setting up color button display (Button 2)
+        /// Setting up color button display (Button 2)
         button2Setup(imgSurface);
-        //Setting up eraser button display (Button 3)
+        /// Setting up eraser button display (Button 3)
         button3Setup(imgSurface);
-        //Setting up shape button display (Button 4)
+        /// Setting up shape button display (Button 4)
         button4Setup(imgSurface);
-        //Setting up undo button display (Button 5)
+        /// Setting up undo button display (Button 5)
         button5Setup(imgSurface);
-        //Setting up redo button display (Button 6)
+        /// Setting up redo button display (Button 6)
         button6Setup(imgSurface);
     }
 
@@ -583,18 +579,19 @@ class SDLApp{
     **/
     void menuBarSetup(Surface imgSurface){
         int b1;
-            for(b1 = 1; b1 <= 640; b1++){
-                imgSurface.lerp(b1 - 1, 50, b1, 50, 2, 255, 255, 255);  
-            }
+        /// Draw bottom bar that separates menu from drawing space 
+        for(b1 = 1; b1 <= 640; b1++){
+            imgSurface.lerp(b1 - 1, 50, b1, 50, 2, 255, 255, 255);  
+        }
 
-        //Draw divider bars for menu skeleton 
+        /// Draw divider bars for menu skeleton 
         int h1;
         int h2 = 640/6;
         int h3;
-        //There needs to be 5 dividers, this is what h1 iterates over 
+        /// There needs to be 5 dividers, this is what h1 iterates over 
         for (h1 = 1; h1 <= 5; h1++){
             int divX = h1 * h2;
-            //The dividers each need to be 50 pixels tall. that is h3
+            /// The dividers each need to be 50 pixels tall. that is h3
             for (h3 = 0; h3 < 50; h3++){
                 imgSurface.lerp(divX - 1, h3, divX, h3+1, 2, 255, 255, 255);
             }
@@ -608,6 +605,7 @@ class SDLApp{
         int bs;
         int bsStart = 15;
         int bs1;
+        /// Draw the lines at size 2, 4, 6, 8, 12 in the loop
         for (bs = 1; bs <= 5; bs++){
             for(bs1 = 0; bs1 <= bs * 2; bs1++){
             imgSurface.lerp(bsStart, 8 + 2 * bs, bsStart, 40 - 2 * bs, bs * 2, 255, 255, 255);
@@ -623,6 +621,7 @@ class SDLApp{
         int cn;
         int cn1;
         int cnStart = 112;
+        /// Iterate through the colors, draw a line of each color 
         for (cn = 1; cn <= 6; cn++){
             colorValueSetter(cn);
             for (cn1 = 0; cn1 < 12; cn1++){
@@ -639,7 +638,10 @@ class SDLApp{
     that is erasing a blue line. 
     **/
     void button3Setup(Surface imgSurface){
+        /// Draw the blue line 
         imgSurface.lerp(240, 40, 290, 40, 2, 224, 125, 19);
+
+        /// Draw the white eraser 
         imgSurface.lerp(230, 20, 275, 8, 1, 255, 255, 255);
         imgSurface.lerp(230, 20, 240, 40, 1, 255, 255, 255);
         imgSurface.lerp(275, 8, 285, 28, 1, 255, 255, 255);
@@ -653,7 +655,7 @@ class SDLApp{
     and then draws each shape so the user can choose one. 
     **/
     void button4Setup(Surface imgSurface){
-        //Horizontal line across button 4 
+        /// Horizontal line across button 4 
         int s1;
         int sStart = 320;
         for(s1 = 0; s1 < 106; s1++){
@@ -661,26 +663,26 @@ class SDLApp{
             sStart ++;
         }
 
-        //Vertical line down button 4
+        /// Vertical line down button 4
         int s11;
         for (s11 = 0; s11 < 50; s11++){
             imgSurface.lerp(372, s11, 372, s11, 1, 255, 255, 255);
         }
 
-        //Button 4 Top left: Line 
+        /// Button 4 Top left: Line 
         imgSurface.lerp(330, 20, 355, 3, 1, 255, 255, 255);
 
-        //Button 4 Top Right: Rectangle 
+        /// Button 4 Top Right: Rectangle 
         Rectangle menuRect = new Rectangle(&imgSurface);
         menuRect.fillRectangle(385, 410, 5, 15, 255, 255, 255);
 
-        //Button 4 Bottom left: Circle 
+        /// Button 4 Bottom left: Circle 
         Circle menuCirc = new Circle(&imgSurface);
         Tuple!(int, int) circPoint;
         circPoint= tuple(342, 36);
         menuCirc.fillCircle(circPoint, 8, 255, 255, 255);
 
-        //Button 4 Bottom right: Triangle 
+        /// Button 4 Bottom right: Triangle 
         Triangle menuTri = new Triangle(&imgSurface);
         Tuple!(int, int) tp1, tp2, tp3;
         tp1 = tuple(385, 41);
@@ -695,9 +697,9 @@ class SDLApp{
     which points to the left. 
     **/
     void button5Setup(Surface imgSurface){
+        /// Draw the red arrow 
         Rectangle undoRect = new Rectangle(&imgSurface);
         undoRect.fillRectangle(470, 495, 20, 30, 24, 20, 195);
-
         Triangle undoTri = new Triangle(&imgSurface);
         Tuple!(int, int) tp1, tp2, tp3;
         tp1 = tuple(450, 25);
@@ -712,9 +714,9 @@ class SDLApp{
     which points to the right. 
     **/
     void button6Setup(Surface imgSurface){
+        /// Draw the blue arrow 
         Rectangle undoRect = new Rectangle(&imgSurface);
         undoRect.fillRectangle(560, 585, 20, 30, 224, 129, 19);
-
         Triangle undoTri = new Triangle(&imgSurface);
         Tuple!(int, int) tp1, tp2, tp3;
         tp1 = tuple(605, 25);
