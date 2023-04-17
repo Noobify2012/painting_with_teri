@@ -601,24 +601,32 @@ void getNewData() {
 
 
 void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
-    int prevX = -9999;
-    int prevY = -9999;
-    while(traffic.size() > 0) {
-        auto curr = traffic.pop_back();
-        // writeln("and now here");
-        //TODO: Fix order
-        // int brushs = cast(int)(curr.bs & 0xff);
-        red = cast(char)(curr.r & 0xff);
-        blue = cast(char)(curr.b & 0xff);
-        green = cast(char)(curr.g & 0xff);
-        writeln("Prevx : " ~ to!string(prevX) ~ " Prevy : " ~ to!string(prevY) ~  " curr.x : " ~ to!string(curr.x) ~  " curr.y : " ~ to!string(curr.y)~  " curr.bs : " ~ to!string(curr.bs) ~  " red : " ~ to!string(red) ~  " green : " ~ to!string(green) ~ " blue : " ~ to!string(blue));     
-        // writeln("NEW RBG VALS:: " ~ to!string(convertBytetoUnsigned(curr.r))  ~ to!string(convertBytetoUnsigned(curr.g))~ to!string(convertBytetoUnsigned(curr.b)));
-        imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, red, green, blue);
-        prevX = curr.x;
-        prevY = curr.y;
-        // imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
+    auto threads = ThreadBase.getAll(); 
+    writeln("Number of threads: " ~to!string(threads.length));    
+    
+        int prevX = -9999;
+        int prevY = -9999;
+        new Thread({
+        while(traffic.size() > 0) {
+            
+                auto curr = traffic.pop_back();
+                // writeln("and now here");
+                //TODO: Fix order
+                // int brushs = cast(int)(curr.bs & 0xff);
+                red = cast(char)(curr.r & 0xff);
+                blue = cast(char)(curr.b & 0xff);
+                green = cast(char)(curr.g & 0xff);
+                writeln("Prevx : " ~ to!string(prevX) ~ " Prevy : " ~ to!string(prevY) ~  " curr.x : " ~ to!string(curr.x) ~  " curr.y : " ~ to!string(curr.y)~  " curr.bs : " ~ to!string(curr.bs) ~  " red : " ~ to!string(red) ~  " green : " ~ to!string(green) ~ " blue : " ~ to!string(blue));     
+                // writeln("NEW RBG VALS:: " ~ to!string(convertBytetoUnsigned(curr.r))  ~ to!string(convertBytetoUnsigned(curr.g))~ to!string(convertBytetoUnsigned(curr.b)));
+                // imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, red, green, blue);
+            
+                prevX = curr.x;
+                prevY = curr.y;
+            
+                imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
         // imgSurface.lerp(prevX, prevY,curr.x, curr.y, 1, curr.r, curr.g, curr.b);
-    }
+            
+        }}).start();
 
 }
 
