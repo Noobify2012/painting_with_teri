@@ -306,8 +306,13 @@ class SDLApp{
                             /// Send change from user to deque
                             if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 52 && prevY > 52)
                                 imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
+                            
+                            
+                            // writeln("Values of test[0]: " ~to!string(test[0])~ "Values of test[1]: " ~to!string(test[1]) ~ "Values of test[2]: " ~to!string(test[2]));
 
                             if(networked == true) {
+                                int[] test = imgSurface.PixelAt(xPos+w,yPos+h);
+                                if (!(test[0] == red && test[1]==green && test[2] == blue)){
                                 Packet packet;
                                 packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue, 0, brushSize);
                                 auto rnd = Random(69);
@@ -326,6 +331,7 @@ class SDLApp{
                                     traffic.push_front(packet);
                                 }
                                 // test_client.sendToServer(packet, sendSocket);
+                            }
                             }
                         }
                     }
