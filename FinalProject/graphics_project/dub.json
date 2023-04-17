@@ -7,6 +7,11 @@
 		"bindbc-sdl": "~>1.2.4",
 		"unit-threaded": "~>2.1.3"
 	},
+	"configurations": [
+        {
+            "name": "docs"
+        }
+    ],
 	"description": "A minimal D application.",
 	"license": "proprietary",
 	"name": "graphics_project"

@@ -30,9 +30,14 @@ class Surface{
     * Name: Surface Constructor 
     * Description: constructs surface of given size and color
     * Params: 
-        * @param flags: SLD flags,
-        * @param width, height, depth: surface width, height, and depth, 
-        * @param Rmask, Gmask, Bmask, Amask: red, green, blue, and alpha mask for pixels
+        * flags = SLD flags,
+        * width = width, 
+        * height = height,
+        * depth = surface width, height, and depth, 
+        * Rmask = red,
+        * Gmask = green, 
+        * Bmask = blue, 
+        * Amask = red, green, blue, and alpha mask for pixels
     */
     this(uint flags, int width, int height, int depth,
         uint Rmask, uint Gmask, uint Bmask, uint Amask) {
@@ -68,8 +73,11 @@ class Surface{
     * Name: UpdateSurfacePixel 
     * Description: Changes color of selected pixel
     * Params:    
-        * @param xPos: x-coordinate of pixel, yPos: y-coordinate of pixel
-        * @param blueVal: rgb blue value, greenVal: rgb green value, redVal: rgb red value
+        * xPos = x-coordinate of pixel, 
+        * yPos = y-coordinate of pixel
+        * blueVal = rgb blue value, 
+        * greenVal = rgb green value, 
+        * redVal = rgb red value
     * Changes pixel color at xPos, yPos
     */
     void UpdateSurfacePixel(int xPos, int yPos, ubyte blueVal, ubyte greenVal, ubyte redVal){
