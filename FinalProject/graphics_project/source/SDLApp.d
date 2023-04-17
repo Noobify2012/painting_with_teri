@@ -474,8 +474,8 @@ class SDLApp{
 
                         // auto size = Thread.getAll();
                         // long threads = size.length();
-                auto threads = ThreadBase.getAll(); 
-                writeln(threads.length);
+                // auto threads = ThreadBase.getAll(); 
+                // writeln(threads.length);
                         // writeln("NUM THREADS: " ~ to!string(threads));
 
                 if (traffic.size > 0 && !tear_down) {
@@ -521,6 +521,7 @@ class SDLApp{
                     networked = false;
                     
                 } else if (received.size() > 0 && !tear_down){
+                    writeln("i'm going to draw something.")
                     drawInbound(received, imgSurface);
                 }
                 //try this
