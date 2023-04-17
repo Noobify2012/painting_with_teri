@@ -9,6 +9,7 @@ import core.thread.osthread;
 import std.math;
 import std.typecons;
 import std.random;
+import core.thread.threadbase;
 
 
 
@@ -41,7 +42,7 @@ class SDLApp{
 
     /// global variable for sdl;
     const SDLSupport ret;
-    TCPClient client;
+    TCPClient client = new TCPClient();
 
     ubyte red = 255;
     ubyte green = 255;
@@ -98,6 +99,29 @@ class SDLApp{
 
         /// Main application loop that will run until a quit event has occurred.
         /// This is the 'main graphics loop'
+
+        auto received = new Deque!(Packet);
+
+       
+
+                // while (received.size() > 2) {
+                            //     //draw the packets
+                            //     writeln("send to draw");
+                            //     writeln("Size of Received: " ~to!string(received.size()));
+
+                            //     drawInbound(received, imgSurface);
+                            // }
+
+        auto recieveThread = new Thread({
+            if (!tear_down) {
+                Packet inbound = client.receiveDataFromServer();
+                // writeln("inbound x: " ~ to!string(inbound.x) ~ " inbound y: " ~ to!string(inbound.y));
+                // received.push_front(inbound);
+                writeln("Size of Received: " ~to!string(received.size()));
+                drawInbound(received, imgSurface);
+            } 
+        }).start();
+
         while(runApplication){
             SDL_Event e;
             /// Handle events
@@ -298,9 +322,9 @@ class SDLApp{
                                 if (traffic.size() > 0 ) {
                                     if (packet != traffic.back() ) {
                                         auto pack = uniform(0, 9, rnd);
-                                        if (pack == 5 || pack == 2 || pack == 8) {
-                                            traffic.push_front(packet);
-                                        }
+                                        // if (pack == 5 || pack == 2 || pack == 8) {
+                                        traffic.push_front(packet);
+                                        // }
                                     }
                                 } else {
                                     traffic.push_front(packet);
@@ -374,9 +398,8 @@ class SDLApp{
                             // auto port = test_addr.findPort();
                             // // recieveSocket =
                             // buffer = test_client.sendConnectionHandshake(sendSocket);  // FIX ALL THIS
-
-
-                            client = new TCPClient();
+                            client.init();
+                            
                             networked = true;
                         } else {
                             tear_down = true;
@@ -417,7 +440,7 @@ class SDLApp{
                 }
             }
 
-            auto received = new Deque!(Packet);
+            
             //if we have turned networking on, the client not the server
             if (networked == true) {
                 // while(!tear_down) {
@@ -428,22 +451,37 @@ class SDLApp{
                     // received.push_front(inbound);
 
             		// Spin up the new thread that will just take in data from the server
-                new Thread({
-                        if (!tear_down) {
-                            Packet inbound = client.receiveDataFromServer();
-                            writeln("inbound x: " ~ to!string(inbound.x) ~ " inbound y: " ~ to!string(inbound.y));
-                            received.push_front(inbound);
-                            writeln("Size of Received: " ~to!string(received.size()));
-                            drawInbound(received, imgSurface);
-                            // while (received.size() > 2) {
-                            //     //draw the packets
-                            //     writeln("send to draw");
-                            //     writeln("Size of Received: " ~to!string(received.size()));
 
-                            //     drawInbound(received, imgSurface);
-                            // }
-                        } 
-                        }).start();
+                    //solution: pull out with while true loop 
+                    //issue: causing too many threads 
+                // client = new TCPClient();
+
+                int threadCount = 0;
+                //auto mythread = new Thread;
+                // new Thread({
+                //     threadCount++;
+
+                //         if (!tear_down) {
+                //             Packet inbound = client.receiveDataFromServer();
+                //             writeln("inbound x: " ~ to!string(inbound.x) ~ " inbound y: " ~ to!string(inbound.y));
+                //             received.push_front(inbound);
+                //             writeln("Size of Received: " ~to!string(received.size()));
+                //             drawInbound(received, imgSurface);
+                //             // while (received.size() > 2) {
+                //             //     //draw the packets
+                //             //     writeln("send to draw");
+                //             //     writeln("Size of Received: " ~to!string(received.size()));
+
+                //             //     drawInbound(received, imgSurface);
+                //             // }
+                //         } 
+                //         }).start();
+
+                        // auto size = Thread.getAll();
+                        // long threads = size.length();
+                auto threads = ThreadBase.getAll(); 
+                writeln(threads.length);
+                        // writeln("NUM THREADS: " ~ to!string(threads));
 
                 if (traffic.size > 0 && !tear_down) {
 
@@ -488,6 +526,8 @@ class SDLApp{
                     networked = false;
                     
                 }
+                //try this
+                //mythread.join();
                 // core.thread.thread_joinAll();
                 // while (received.size() > 0) {
                 //     //draw the packets
@@ -561,7 +601,7 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
         red = cast(char)(curr.r & 0xff);
         blue = cast(char)(curr.b & 0xff);
         green = cast(char)(curr.g & 0xff);
-        writeln("Prevx : " ~ to!string(prevX) ~ " Prevy : " ~ to!string(prevY) ~  " curr.bs : " ~ to!string(curr.bs) ~  " red : " ~ to!string(red) ~  " green : " ~ to!string(green) ~ " blue : " ~ to!string(blue));     
+        writeln("Prevx : " ~ to!string(prevX) ~ " Prevy : " ~ to!string(prevY) ~  " curr.x : " ~ to!string(curr.x) ~  " curr.y : " ~ to!string(curr.y)~  " curr.bs : " ~ to!string(curr.bs) ~  " red : " ~ to!string(red) ~  " green : " ~ to!string(green) ~ " blue : " ~ to!string(blue));     
         // writeln("NEW RBG VALS:: " ~ to!string(convertBytetoUnsigned(curr.r))  ~ to!string(convertBytetoUnsigned(curr.g))~ to!string(convertBytetoUnsigned(curr.b)));
         // imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, red, green, blue);
         prevX = curr.x;

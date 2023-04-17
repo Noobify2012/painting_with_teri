@@ -21,14 +21,30 @@ class TCPClient{
 	/// The client socket connected to a server
 	Socket mSocket;
     Packet inbound;
+    string host;
+    ushort port;
 
 
 	/**
     Name: TCPClient Constructor
     Description: 
     */
-	this(string host = getServerAddress(), ushort port = getServerPort()){
-		writeln("Starting client...attempt to create socket");
+	this(){
+	}
+
+	/**
+    Name: TCPClient Destructor
+    Description: Closes client socket
+    */ 
+	~this(){
+		// Close the socket
+		mSocket.close();
+	}
+
+    void init() {
+        host = getServerAddress();
+        port = getServerPort();
+        writeln("Starting client...attempt to create socket");
         writeln("Host: "~host);
         writeln("Port: "~to!string(port));
 		/// Create a socket for connecting to a server
@@ -50,23 +66,14 @@ class TCPClient{
 		auto received = mSocket.receive(buffer);
 		writeln("On Connect: ", buffer[0 .. received]);
         writeln(">");
-	}
-
-	/**
-    Name: TCPClient Destructor
-    Description: Closes client socket
-    */ 
-	~this(){
-		// Close the socket
-		mSocket.close();
-	}
+    }
 
 	// Purpose here is to run the client thread to constantly send data to the server.
 	// This is your 'main' application code.
 	// 
 	// In order to make life a little easier, I will also spin up a new thread that constantly
 	// receives data from the server.
-	Packet run(Packet packet){
+	Packet run(Packet packet) {
 		writeln("Preparing to run client");
 		writeln("(me)",mSocket.localAddress(),"<---->",mSocket.remoteAddress(),"(server)");
 		// Buffer of data to send out
@@ -95,7 +102,7 @@ class TCPClient{
 
 	}
 
-    void sendDataToServer(Packet packet){
+    void sendDataToServer(Packet packet) {
         mSocket.send(packet.GetPacketAsBytes);
     }
 
