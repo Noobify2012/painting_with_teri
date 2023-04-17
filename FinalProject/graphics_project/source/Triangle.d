@@ -81,14 +81,22 @@ class Triangle : Shape {
                 }
             }
         }
+        
+        //Check that drawing triangle doesn't overlap menu bounds 
+        if((p1[1] < 50) || (p2[1] < 50) || (p3[1] < 50)){
+            writeln("Try again, circle set to overlap menu");
+        }
+        //Draw the triangle 
+        else {
 
-        this.points ~= p1;
-        this.points ~= p2;
-        this.points ~= p3;
+            this.points ~= p1;
+            this.points ~= p2;
+            this.points ~= p3;
 
-        // int top = min(p1[1], p2[1], p3[1]), bottom = max(p1[1], p2[1], p3[1]), 
-        //     left = min(p1[0], p1[0], p2[0]), right = max(p1[0], p2[0], p3[0]);
-        fillTriangle(p1, p2, p3, brushSize, r, g, b);
+            // int top = min(p1[1], p2[1], p3[1]), bottom = max(p1[1], p2[1], p3[1]), 
+            //     left = min(p1[0], p1[0], p2[0]), right = max(p1[0], p2[0], p3[0]);
+            fillTriangle(p1, p2, p3, brushSize, r, g, b);
+        }
     }
 
     override void drawFromPoints(Tuple!(int, int)[] points, ubyte r, ubyte g, ubyte b, int brushSize) {

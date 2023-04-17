@@ -6,6 +6,12 @@ import std.stdio;
 import std.conv;
 import std.array;
 import core.thread.osthread;
+import std.uni;
+import std.string;
+/// Load the SDL2 library
+// import bindbc.sdl;
+// import loader = bindbc.loader.sharedlib;
+
 
 import Packet : Packet;
 import test_addr;
@@ -78,10 +84,18 @@ class TCPServer{
 				/// Call this after the server has been created
 				/// to start running the server
 				void run(){
+					// SDL_Event e;
 					bool serverIsRunning=true;
 					writeln("Awaiting client connections");
 
 					while(serverIsRunning){
+						// if(e.type == SDL_KEYUP) {
+						// 	if (e.key.keysym.sym == SDLK_q) {
+						// 		serverIsRunning = false;
+						
+						// 	}
+
+						// }
 						// The servers job now is to just accept connections
 						writeln("Waiting to accept more connections");
 						/// accept is a blocking call.
@@ -116,7 +130,11 @@ class TCPServer{
 
 						// After our new thread has spawned, our server will now resume 
 						// listening for more client connections to accept.
+						// serverIsRunning = getServerCommands(serverIsRunning);
+						writeln("have a checked for a command?");
 					}
+
+					
 				}
 
 				// Function to spawn from a new thread for the client.
@@ -153,16 +171,22 @@ class TCPServer{
 						byte[4] field3 = buffer[24 .. 28].dup;
 						byte[4] field4 = buffer[28 .. 32].dup;
 						byte[4] field5 = buffer[32 .. 36].dup;
+						byte[4] field6 = buffer[36 .. 40].dup;
+						byte[4] field7 = buffer[32 .. 36].dup;
 						int f1 = *cast(int*)&field1;
 						int f2 = *cast(int*)&field2;
 						byte f3 = *cast(byte*)&field3;
 						byte f4 = *cast(byte*)&field4;
 						byte f5 = *cast(byte*)&field5;
+						int f6 = *cast(int*)&field6;
+						int f7 = *cast(int*)&field7;
 						p.x = f1;
 						p.y = f2;
 						p.r = f3;
 						p.g = f4;
 						p.b = f5;
+						p.s = f6;
+						p.bs = f7;
 
 						// Store data that we receive in our server.
 						// We append the buffer to the end of our server
@@ -173,7 +197,14 @@ class TCPServer{
 
 						/// After we receive a single message, we'll just 
 						/// immedietely broadcast out to all clients some data.
-						broadcastToAllClients();
+						// if (f1 == -9999 && f2 == -9999) {
+						// 	// clientSocket.shutdown(SocketShutdown.both);
+						// 	clientSocket.close();
+						// 	writeln("socket should have closed");
+						// } else {
+							broadcastToAllClients();
+						// }
+						
 					}
 									
 				}
@@ -195,8 +226,33 @@ class TCPServer{
 						}
 					}
 				}
+	bool getServerCommands(bool commandBool) {
+		/// Ask user what server they want to use
+		bool goodCom = false;
+		bool running = true;
+		// string user_addr = "localhost";
+		while (!goodCom){
+			writeln("Enter a command:");
+			/// Get input
+			string user_input = readln;
+			/// Trim off carriage return
+			user_input = user_input.strip;
+			/// Validate input(check if characters are either an int or .)
+			// string ip_regex = "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$";
+			if (std.uni.toLower(user_input) == "quit") {
+				goodCom = true;
+				running = false;						
+			} else {
+				writeln("Invalid command, please try again");
+			}
+		}
+		return running;
+		/// Return input as string formatted as ###.###.###.###
+	}
 
 }
+
+
 
 // Entry point to Server
 void main(){

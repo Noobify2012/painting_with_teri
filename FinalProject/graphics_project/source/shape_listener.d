@@ -21,6 +21,7 @@ import state;
 import Action : Action;
 
 class ShapeListener {
+  string quadrant; 
 
   State *state;
   int r, g, b;
@@ -28,6 +29,10 @@ class ShapeListener {
   this(State *_state) {
 
     this.state = _state;
+  }
+
+  this(string quad){
+    quadrant = quad;
   }
 
   ~this() {
@@ -62,7 +67,7 @@ class ShapeListener {
         if(e.type == SDL_QUIT){
             shapeIsDrawn = true;
 
-        } else if (e.key.keysym.sym == SDLK_r) {
+        } else if (e.key.keysym.sym == SDLK_r || this.quadrant == "TR") {
           writeln("Drawing rectangle");
 
           shapeType = "rectangle";
@@ -71,7 +76,7 @@ class ShapeListener {
 
           shapeIsDrawn = true;
 
-        } else if (e.key.keysym.sym == SDLK_l) {
+        } else if (e.key.keysym.sym == SDLK_l || this.quadrant == "TL") {
           writeln("Drawing line");
 
           shapeType = "line";
@@ -81,7 +86,7 @@ class ShapeListener {
           writeln("Line has been drawn");
           shapeIsDrawn = true;
 
-        } else if (e.key.keysym.sym == SDLK_c) {
+        } else if (e.key.keysym.sym == SDLK_c || this.quadrant == "BL") {
           writeln("Drawing circle");
 
           shapeType = "circle";
@@ -90,7 +95,7 @@ class ShapeListener {
 
           shapeIsDrawn = true;
 
-        } else if (e.key.keysym.sym == SDLK_t) {
+        } else if (e.key.keysym.sym == SDLK_t || this.quadrant == "BR") {
           writeln("Drawing triangle");
 
           shapeType = "triangle";
