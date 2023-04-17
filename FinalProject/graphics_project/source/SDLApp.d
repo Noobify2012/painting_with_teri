@@ -48,6 +48,10 @@ class SDLApp{
     ubyte green = 255;
     ubyte blue = 255;
 
+    Packet inbound;
+    bool tear_down = false;
+    auto received = new Deque!(Packet);
+
 
     void MainApplicationLoop(){
         /// Create an SDL window
@@ -87,7 +91,7 @@ class SDLApp{
         auto traffic = new Deque!(Packet);
         Socket sendSocket;
         byte[Packet.sizeof] buffer;
-        bool tear_down = false;
+        
         writeln("tear down : " ~ to!string(tear_down));
         
         Socket recieveSocket;
@@ -100,7 +104,7 @@ class SDLApp{
         /// Main application loop that will run until a quit event has occurred.
         /// This is the 'main graphics loop'
 
-        auto received = new Deque!(Packet);
+        
 
        
 
@@ -111,16 +115,7 @@ class SDLApp{
 
                             //     drawInbound(received, imgSurface);
                             // }
-
-        auto recieveThread = new Thread({
-            if (!tear_down) {
-                Packet inbound = client.receiveDataFromServer();
-                // writeln("inbound x: " ~ to!string(inbound.x) ~ " inbound y: " ~ to!string(inbound.y));
-                // received.push_front(inbound);
-                writeln("Size of Received: " ~to!string(received.size()));
-                drawInbound(received, imgSurface);
-            } 
-        }).start();
+        
 
         while(runApplication){
             SDL_Event e;
@@ -399,6 +394,7 @@ class SDLApp{
                             // // recieveSocket =
                             // buffer = test_client.sendConnectionHandshake(sendSocket);  // FIX ALL THIS
                             client.init();
+                            getNewData();
                             
                             networked = true;
                         } else {
@@ -456,7 +452,6 @@ class SDLApp{
                     //issue: causing too many threads 
                 // client = new TCPClient();
 
-                int threadCount = 0;
                 //auto mythread = new Thread;
                 // new Thread({
                 //     threadCount++;
@@ -525,6 +520,8 @@ class SDLApp{
                     tear_down = false;
                     networked = false;
                     
+                } else if (received.size() > 0 && !tear_down){
+                    drawInbound(received, imgSurface);
                 }
                 //try this
                 //mythread.join();
@@ -587,6 +584,17 @@ class SDLApp{
             green = 9;
             blue = 136;
         }
+    }
+
+void getNewData() {
+        new Thread({
+            if (!tear_down) {
+                inbound = client.receiveDataFromServer();
+                writeln("inbound x: " ~ to!string(inbound.x) ~ " inbound y: " ~ to!string(inbound.y));
+                received.push_front(inbound);
+                writeln("Size of Received: " ~to!string(received.size()));
+            } 
+        }).start();
     }
 
 
@@ -759,6 +767,8 @@ void button4Setup(Surface imgSurface){
         menuTri.fillTriangle(tp1, tp2, tp3, 1, 255, 255, 255);
     }
 }
+
+
 
 
 

@@ -23,6 +23,7 @@ class TCPClient{
     Packet inbound;
     string host;
     ushort port;
+    // Deque incoming;
 
 
 	/**
@@ -30,6 +31,7 @@ class TCPClient{
     Description: 
     */
 	this(){
+        // auto incoming = new Deque!(Packet);
 	}
 
 	/**
@@ -82,9 +84,9 @@ class TCPClient{
 		bool clientRunning=true;
 		
 		// Spin up the new thread that will just take in data from the server
-		new Thread({
-					inbound = receiveDataFromServer();
-				}).start();
+            new Thread({
+                        inbound = receiveDataFromServer();
+                    }).start();
         
 	
 		writeln(">");
