@@ -395,6 +395,7 @@ class SDLApp{
                             // buffer = test_client.sendConnectionHandshake(sendSocket);  // FIX ALL THIS
                             client.init();
                             getNewData();
+                            writeln("started new listener");
                             
                             networked = true;
                         } else {
@@ -589,7 +590,7 @@ class SDLApp{
 
 void getNewData() {
         new Thread({
-            if (!tear_down) {
+            while (!tear_down) {
                 inbound = client.receiveDataFromServer();
                 writeln("inbound x: " ~ to!string(inbound.x) ~ " inbound y: " ~ to!string(inbound.y));
                 received.push_front(inbound);
@@ -612,10 +613,10 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
         green = cast(char)(curr.g & 0xff);
         writeln("Prevx : " ~ to!string(prevX) ~ " Prevy : " ~ to!string(prevY) ~  " curr.x : " ~ to!string(curr.x) ~  " curr.y : " ~ to!string(curr.y)~  " curr.bs : " ~ to!string(curr.bs) ~  " red : " ~ to!string(red) ~  " green : " ~ to!string(green) ~ " blue : " ~ to!string(blue));     
         // writeln("NEW RBG VALS:: " ~ to!string(convertBytetoUnsigned(curr.r))  ~ to!string(convertBytetoUnsigned(curr.g))~ to!string(convertBytetoUnsigned(curr.b)));
-        // imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, red, green, blue);
+        imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, red, green, blue);
         prevX = curr.x;
         prevY = curr.y;
-        imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
+        // imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
         // imgSurface.lerp(prevX, prevY,curr.x, curr.y, 1, curr.r, curr.g, curr.b);
     }
 
