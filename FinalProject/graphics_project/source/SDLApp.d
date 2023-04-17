@@ -521,7 +521,7 @@ class SDLApp{
                     networked = false;
                     
                 } else if (received.size() > 0 && !tear_down){
-                    writeln("i'm going to draw something.")
+                    writeln("i'm going to draw something.");
                     drawInbound(received, imgSurface);
                 }
                 //try this
