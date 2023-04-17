@@ -237,7 +237,7 @@ class SDLApp{
                             quadrant = "BR";
                         }
 
-                        ShapeListener sh = new ShapeListener(quadrant);
+                        // ShapeListener sh = new ShapeListener(quadrant);
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
                     }
 
@@ -449,7 +449,7 @@ class SDLApp{
                         writeln("Drawing shape");
                         writeln("Type 'r' for rectangle", "\nType 'c' for circle", 
                                 "\nType 'l' for line", "\nType 'r' for rectangle");
-                        ShapeListener sh = new ShapeListener();
+                        // ShapeListener sh = new ShapeListener();
 
                         sh.setRGB(red, green, blue);
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
