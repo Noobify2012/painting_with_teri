@@ -12,6 +12,7 @@ import SDL_Surfaces;
 class Rectangle : Shape {
 
     Surface* surf;
+    Tuple!(int, int)[] points;
 
     this(Surface* surf) {
 
@@ -84,6 +85,9 @@ class Rectangle : Shape {
             }
         }
 
+        points ~= p1;
+        points ~= p3;
+
         // Declare remaining outstanding points
         p2 = tuple(p3[0], p1[1]);
         p4 = tuple(p1[0], p3[1]);
@@ -97,6 +101,28 @@ class Rectangle : Shape {
 
         // Fill rectangle
         fillRectangle(minX, maxX, minY, maxY, r, g, b);
+    }
+
+    override void drawFromPoints(Tuple!(int, int)[] points, ubyte r, ubyte g, ubyte b, int brushSize) {
+
+        assert(points.length == 2);
+
+        Tuple!(int, int) p1 = points[0], p3 = points[1], p2 = tuple(p3[0], p1[1]), p4 = tuple(p1[0], p3[1]);
+
+        // Find left, right, top and bottom most points to iterate over
+        int minX = min(p1[0], p3[0]);
+        int maxX = max(p1[0], p3[0]);
+
+        int minY = min(p1[1], p3[1]);
+        int maxY = max(p1[1], p3[1]);
+
+        // Fill rectangle
+        fillRectangle(minX, maxX, minY, maxY, r, g, b);
+    }
+
+    override Tuple!(int, int)[] getPoints() {
+
+        return this.points;
     }
 
 }

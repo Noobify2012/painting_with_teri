@@ -6,6 +6,7 @@ import std.conv;
 import std.socket;
 import std.parallelism;
 import core.thread.osthread;
+import std.typecons;
 
 /// Load the SDL2 library
 import bindbc.sdl;
@@ -21,6 +22,8 @@ import test_addr;
 import shape_listener;
 import drawing_utilities;
 import mClient;
+import Action : Action;
+import state;
 
 
 // For printing the key pressed info
@@ -69,7 +72,10 @@ class SDLApp{
         int prevX = -9999;
         int prevY = -9999;
 
+        State state = new State(&imgSurface);
+
         DrawingUtility du = new DrawingUtility();
+        ShapeListener sh = new ShapeListener(&state);
 
         /// Intialize deque for storing traffic to send
         auto traffic = new Deque!(Packet);
@@ -82,6 +88,8 @@ class SDLApp{
         
 
 
+        Action act = new Action([], [red, green, blue], "stroke");
+        
         // SDL_EnableUNICODE( 1 );
 
         /// Main application loop that will run until a quit event has occurred.
@@ -102,6 +110,11 @@ class SDLApp{
                 else if(e.type == SDL_MOUSEBUTTONDOWN){
                     drawing=true;
                 }else if(e.type == SDL_MOUSEBUTTONUP){
+                    if (drawing) {
+                        state.addAction(act);
+
+                        act = new Action([], [red, green, blue], "stroke");
+                    }
                     drawing=false;
                     prevX = -9999;
                     prevY = -9999;
@@ -109,6 +122,8 @@ class SDLApp{
                     /// Get position of the mouse when drawing
                     int xPos = e.button.x;
                     int yPos = e.button.y;
+
+                    act.addPoint(tuple(xPos, yPos));
                     /// Loop through and update specific pixels
                     // NOTE: No bounds checking performed --
                     //       think about how you might fix this :)
@@ -147,6 +162,7 @@ class SDLApp{
                                 green = 0;
                                 blue = 0;
                                 // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 0, 0, 0);
+                                act.setColor([cast(int) red, cast(int) green, cast(int) blue]);
                             }
                             /// Send change from user to deque
                             // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
@@ -198,6 +214,14 @@ class SDLApp{
                         } else {
                             color=1;
                         }
+
+                        // if (color == 1) {
+                        //     act.setColor([0, 0, 255]);
+                        // } else if (color == 2) {
+                        //     act.setColor([0, 255, 0]);
+                        // } else if (color == 3) {
+                        //     act.setColor([0, 0, 255]);
+                        // }
                         writeln("Changing to color : " , to!string(color));
                     } else if (e.key.keysym.sym == SDLK_e) {
                         if (erasing == false) {
@@ -252,8 +276,12 @@ class SDLApp{
                     } else if (e.key.keysym.sym == SDLK_s) {
                         /// This is where we draw the shape when prompted!
                         writeln("Drawing shape");
-                        ShapeListener sh = new ShapeListener();
+                        sh.setRGB(red, green, blue);
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
+                    } else if (e.key.keysym.sym == SDLK_u) {
+                        state.undo();
+                    } else if (e.key.keysym.sym == SDLK_r) {
+                        state.redo();
                     }
                     // } else if (e.key.keysym.sym == SDLK_h) {
                     //     server.run();
@@ -274,7 +302,6 @@ class SDLApp{
             		// Spin up the new thread that will just take in data from the server
                 new Thread({
                             Packet inbound = client.receiveDataFromServer();
-                            imgSurface.UpdateSurfacePixel(inbound.x, inbound.y, inbound.r, inbound.g, inbound.b);
                             received.push_front(inbound);
 
                         }).start();
@@ -319,7 +346,7 @@ class SDLApp{
                     writeln("do i get here?");
                     drawInbound(received, imgSurface);
                 }
-
+            }
             /// Blit the surace (i.e. update the window with another surfaces pixels
             ///                       by copying those pixels onto the window).
             SDL_BlitSurface(imgSurface.getSurface(),null,SDL_GetWindowSurface(window),null);
@@ -328,7 +355,6 @@ class SDLApp{
             /// Delay for 16 milliseconds
             /// Otherwise the program refreshes too quickly
             SDL_Delay(16);
-            }
         }
         /// Destroy our window
         SDL_DestroyWindow(window);

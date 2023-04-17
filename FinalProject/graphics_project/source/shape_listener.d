@@ -17,14 +17,28 @@ import Circle : Circle;
 import Line : Line;
 import Triangle : Triangle;
 import ShapeFactory : ShapeFactory;
+import state;
+import Action : Action;
 
 class ShapeListener {
 
-  this() {
+  State *state;
+  int r, g, b;
 
+  this(State *_state) {
+
+    this.state = _state;
   }
 
   ~this() {
+
+  }
+
+  void setRGB(int _r, int _g, int _b) {
+
+    this.r = _r;
+    this.g = _g;
+    this.b = _b;
 
   }
   
@@ -34,14 +48,16 @@ class ShapeListener {
 
     ShapeFactory shapeFactory = new ShapeFactory();
     SDL_Event e;
+
+    string shapeType;
     // Handle events
     // Events are pushed into an 'event queue' internally in SDL, and then
     // handled one at a time within this loop for as many events have
     // been pushed into the internal SDL queue. Thus, we poll until there
     // are '0' events or a NULL event is returned.
     bool shapeIsDrawn = false;
+    Shape sh;
     while (!shapeIsDrawn) {
-      Shape sh;
       while(SDL_PollEvent(&e) !=0){
         if(e.type == SDL_QUIT){
             shapeIsDrawn = true;
@@ -49,53 +65,7 @@ class ShapeListener {
         } else if (e.key.keysym.sym == SDLK_r) {
           writeln("Drawing rectangle");
 
-          // int numPoints = 0;
-          // int numPointsNeeded = 2;
-
-          // Tuple!(int, int) p1, p2, p3, p4;
-
-          // while (numPoints < numPointsNeeded) {
-          //   SDL_Event f;
-          //   while (SDL_PollEvent(&f) != 0) {
-          //     if (f.type == SDL_QUIT) {
-          //       shapeIsDrawn = true;
-          //       break;
-          //     } else if (f.type == SDL_MOUSEBUTTONDOWN) {
-          //       if (numPoints == 0) {
-          //         p1 = tuple(f.button.x, f.button.y);
-          //         surf.lerp(p1[0], p1[1], p1[0], p1[1], brushSize, r, g, b);
-          //       } else {
-          //         p3 = tuple(f.button.x, f.button.y);
-          //         surf.UpdateSurfacePixel(p3[0], p3[1], r, g, b);
-          //       }
-          //       ++numPoints;
-          //     }
-          //   }
-          // }
-
-          // p2 = tuple(p3[0], p1[1]);
-          // p4 = tuple(p1[0], p3[1]);
-
-          // surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
-          // surf.lerp(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
-          // surf.lerp(p3[0], p3[1], p4[0], p4[1], brushSize, r, g, b);
-          // surf.lerp(p4[0], p4[1], p1[0], p1[1], brushSize, r, g, b);
-
-          // int midX = (p1[0] + p3[0]) / 2;
-          // int midY = (p1[1] + p3[1]) / 2;
-
-          // int minX = min(p1[0], p3[0]);
-          // int maxX = max(p1[0], p3[0]);
-
-          // int minY = min(p1[1], p3[1]);
-          // int maxY = max(p1[1], p3[1]);
-
-          // for (int i = minX; i <= maxX; ++i) {
-          //   for (int j = minY; j <= maxY; ++j) {
-          //     surf.UpdateSurfacePixel(i, j, r, g, b);
-          //   }
-          // }
-
+          shapeType = "rectangle";
           sh = shapeFactory.createShape("rectangle", surf);
           sh.draw(brushSize, r, g, b);
 
@@ -104,33 +74,7 @@ class ShapeListener {
         } else if (e.key.keysym.sym == SDLK_l) {
           writeln("Drawing line");
 
-          // int numPoints = 0;
-          // int numPointsNeeded = 2;
-
-          // Tuple!(int, int) p1, p2;
-
-          // while (numPoints < numPointsNeeded) {
-          //   SDL_Event f;
-          //   while (SDL_PollEvent(&f) != 0) {
-          //     if (f.type == SDL_QUIT) {
-          //       shapeIsDrawn = true;
-          //       break;
-          //     } else if (f.type == SDL_MOUSEBUTTONDOWN) {
-          //       if (numPoints == 0) {
-          //         p1 = tuple(f.button.x, f.button.y);
-          //       } else {
-          //         p2 = tuple(f.button.x, f.button.y);
-          //       }
-          //       ++numPoints;
-          //     }
-          //   }
-          // }
-
-          // int left = min(p1[0], p2[0]), right = max(p1[0], p2[0]);
-          // int top = min(p1[1], p2[1]), bottom = max(p1[1], p2[1]);
-
-          // surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
-
+          shapeType = "line";
           sh = shapeFactory.createShape("line", surf);
           sh.draw(brushSize, r, g, b);
 
@@ -140,45 +84,7 @@ class ShapeListener {
         } else if (e.key.keysym.sym == SDLK_c) {
           writeln("Drawing circle");
 
-          // int numPoints = 0;
-          // int numPointsNeeded = 2;
-
-          // Tuple!(int, int) p1, p2, midpoint;
-
-          // while (numPoints < numPointsNeeded) {
-          //   SDL_Event f;
-          //   while (SDL_PollEvent(&f) != 0) {
-          //     if (f.type == SDL_QUIT) {
-          //       shapeIsDrawn = true;
-          //       break;
-          //     } else if (f.type == SDL_MOUSEBUTTONDOWN) {
-          //       if (numPoints == 0) {
-          //         p1 = tuple(f.button.x, f.button.y);
-          //       } else {
-          //         p2 = tuple(f.button.x, f.button.y);
-          //       }
-          //       ++numPoints;
-          //     }
-          //   }
-          // }
-
-          // int radius = cast(int) sqrt(cast(float) ((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]))) / 2;
-          // midpoint = tuple(cast(int) ((p1[0] + p2[0]) / 2), cast(int) ((p1[1] + p2[1]) / 2));
-
-          // int top, bottom, left, right;
-          // top = max(0, midpoint[1] - radius);
-          // bottom = min(480, midpoint[1] + radius);
-          // left = max(0, midpoint[0] - radius);
-          // right = min(640, midpoint[0] + radius);
-
-          // for (int i = top; i <= bottom; ++i) {
-          //   for (int j = left; j <= right; ++j) {
-          //     if ((j - midpoint[0]) * (j - midpoint[0]) + (i - midpoint[1]) * (i - midpoint[1]) <= radius * radius) {
-          //       surf.UpdateSurfacePixel(j, i, r, g, b);
-          //     }
-          //   }
-          // }
-
+          shapeType = "circle";
           sh = shapeFactory.createShape("circle", surf);
           sh.draw(brushSize, r, g, b);
 
@@ -187,52 +93,15 @@ class ShapeListener {
         } else if (e.key.keysym.sym == SDLK_t) {
           writeln("Drawing triangle");
 
-          // int numPoints = 0;
-          // int numPointsNeeded = 3;
-
-          // Tuple!(int, int) p1, p2, p3;
-
-          // while (numPoints < numPointsNeeded) {
-          //   SDL_Event f;
-          //   while (SDL_PollEvent(&f) != 0) {
-          //     if (f.type == SDL_QUIT) {
-          //       shapeIsDrawn = true;
-          //       break;
-          //     } else if (f.type == SDL_MOUSEBUTTONDOWN) {
-          //       if (numPoints == 0) {
-          //         p1 = tuple(f.button.x, f.button.y);
-          //       } else if (numPoints == 1) {
-          //         p2 = tuple(f.button.x, f.button.y);
-          //       } else {
-          //         p3 = tuple(f.button.x, f.button.y);
-          //       }
-          //       ++numPoints;
-          //     }
-          //   }
-          // }
-
-          // if (fabs(cast(float) (p2[0] - p1[0]))) {
-          //   continue;
-          // }
-
-          // (a, b), (c, d)
-          // y - b = (d - b)/(c - a) * (x - a)
-
-          // int top = min(p1[1], p2[1], p3[1]), bottom = max(p1[1], p2[1], p3[1]), left = min(p1[0], p1[0], p2[0]), right = max(p1[0], p2[0], p3[0]);
-
-          // surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
-          // surf.lerp(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
-          // surf.lerp(p1[0], p1[1], p3[0], p3[1], brushSize, r, g, b);
-
-          // Tuple!(int, int) centroid = tuple((p1[0] + p2[0] + p3[0]) / 3, (p1[1] + p2[1] + p3[1]) / 3);
-
-          // surf.lerp(centroid[0], centroid[1], centroid[0], centroid[1], brushSize, r, g, b);
-
+          shapeType = "triangle";
           sh = shapeFactory.createShape("triangle", surf);
           sh.draw(brushSize, r, g, b);
           shapeIsDrawn = true;
         }
       }
     }
+    int[3] color = [r, g, b];
+    Action action = new Action(sh.getPoints(), color, shapeType);
+    this.state.addAction(action);
   }
 }
