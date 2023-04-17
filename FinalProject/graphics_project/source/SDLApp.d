@@ -318,9 +318,9 @@ class SDLApp{
                                     if (packet != traffic.back() ) {
                                         auto pack = uniform(0, 9, rnd);
                                         // if (pack == 5 ) {
-                                        if (pack == 5 || pack == 2 || pack == 8) {
-                                            traffic.push_front(packet);
-                                        }
+                                        // if (pack == 5 || pack == 2 || pack == 8) {
+                                        traffic.push_front(packet);
+                                        // }
                                     }
                                 } else {
                                     traffic.push_front(packet);
