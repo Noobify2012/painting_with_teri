@@ -285,7 +285,7 @@ class Surface{
 * Test: Checks for the surface to be initialized to black, change the pixel color of 1,1 to blue, verify its blue,
 * change it to red, ensure that the color of 1,1 is now red 
 */
-@("Lerp test")
+@("Lerp test - straight line")
 unittest{
     SDLInit app = new SDLInit();
     Surface s = new Surface(0,640,480,32,0,0,0,0);
@@ -301,31 +301,31 @@ unittest{
     s.PixelAt(2,2)[1] == 128 &&
     s.PixelAt(2,2)[2] == 255, "error rgb value at x,y is wrong!");
     /// Parse values of new data struct
-    // writeln("[0,0]", s.PixelAt(0,0));
-    // writeln(s.PixelAt(1,0));
-    // writeln(s.PixelAt(2,0));
-    // writeln(s.PixelAt(3,0));
-    // writeln("[0,1]", s.PixelAt(0,1));
-    // writeln(s.PixelAt(1,1));
-    // writeln(s.PixelAt(2,1));
-    // writeln(s.PixelAt(3,1));
-    // writeln(s.PixelAt(4,1));
-    // writeln("[0,2]", s.PixelAt(0,2));
-    // writeln(s.PixelAt(1,2));
-    // writeln(s.PixelAt(2,2));
-    // writeln(s.PixelAt(3,2));
-    // writeln(s.PixelAt(4,2));
-    // writeln("[0,3]", s.PixelAt(0,3));
-    // writeln(s.PixelAt(1,3));
-    // writeln(s.PixelAt(2,3));
-    // writeln(s.PixelAt(3,3));
-    // writeln(s.PixelAt(4,3));
-    // writeln("[0,4]", s.PixelAt(0,4));
-    // writeln(s.PixelAt(1,4));
-    // writeln(s.PixelAt(2,4));
-    // writeln(s.PixelAt(3,4));
-    // writeln(s.PixelAt(4,4));
+    writeln("[0,0]", s.PixelAt(0,0));
+    writeln(s.PixelAt(1,0));
+    writeln(s.PixelAt(2,0));
+    writeln(s.PixelAt(3,0));
+    writeln("[0,1]", s.PixelAt(0,1));
+    writeln(s.PixelAt(1,1));
+    writeln(s.PixelAt(2,1));
+    writeln(s.PixelAt(3,1));
+    writeln(s.PixelAt(4,1));
+    writeln("[0,2]", s.PixelAt(0,2));
+    writeln(s.PixelAt(1,2));
+    writeln(s.PixelAt(2,2));
+    writeln(s.PixelAt(3,2));
+    writeln(s.PixelAt(4,2));
+    writeln("[0,3]", s.PixelAt(0,3));
+    writeln(s.PixelAt(1,3));
+    writeln(s.PixelAt(2,3));
+    writeln(s.PixelAt(3,3));
+    writeln(s.PixelAt(4,3));
+    writeln("[0,4]", s.PixelAt(0,4));
+    writeln(s.PixelAt(1,4));
+    writeln(s.PixelAt(2,4));
+    writeln(s.PixelAt(3,4));
+    writeln(s.PixelAt(4,4));
     assert(	s.PixelAt(1,2)[0] == 0 &&
     s.PixelAt(1,2)[1] == 0 &&
-    s.PixelAt(1,2)[2] == 0, "error rgb value at x,y is wrong!");
+    s.PixelAt(1,2)[2] == 0, "error rgb value at (1,2) is wrong!");
 }
