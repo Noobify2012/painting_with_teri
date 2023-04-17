@@ -113,17 +113,6 @@ class SDLApp{
 
         
 
-       
-
-                // while (received.size() > 2) {
-                            //     //draw the packets
-                            //     writeln("send to draw");
-                            //     writeln("Size of Received: " ~to!string(received.size()));
-
-                            //     drawInbound(received, imgSurface);
-                            // }
-        
-
         while(runApplication){
             SDL_Event e;
             /// Handle events
@@ -321,30 +310,18 @@ class SDLApp{
                             if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 52 && prevY > 52)
                                 imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
                             
-                            
-                            // writeln("Values of test[0]: " ~to!string(test[0])~ "Values of test[1]: " ~to!string(test[1]) ~ "Values of test[2]: " ~to!string(test[2]));
-
+                            // Check if the client is networked
                             if(networked == true) {
-                                // int[] test = imgSurface.PixelAt(xPos+w,yPos+h);
-                                // if (!(test[0] == red && test[1]==green && test[2] == blue)){
                                 Packet packet;
                                 packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue, 0, brushSize);
-                                auto rnd = Random(69);
-                                // writeln("Input values x: " ~to!string(xPos+w) ~ " y: " ~ to!string(yPos+h) ~ " r: " ~to!string(red) ~ " g: " ~ to!string(green) ~ " b: " ~ to!string(blue));
-                                // writeln("Packet values x: " ~to!string(packet.x) ~ " y: " ~ to!string(packet.y) ~ " r: " ~to!string(packet.r) ~ " g: " ~ to!string(packet.g) ~ " b: " ~ to!string(packet.b));
-                                // traffic = test_client.addToSend(traffic, packet);
+                                //if client networked then make sure that the next packet to send isn't equal to the last one(no sequential duplicate packets).
                                 if (traffic.size() > 0 ) {
                                     if (packet != traffic.back() ) {
-                                        auto pack = uniform(0, 9, rnd);
-                                        // if (pack == 5 ) {
-                                        // if (pack == 5 || pack == 2 || pack == 8) {
                                         traffic.push_front(packet);
-                                        // }
                                     }
                                 } else {
                                     traffic.push_front(packet);
                                 }
-                                // test_client.sendToServer(packet, sendSocket);
                             // }
                             }
                         }
@@ -407,21 +384,12 @@ class SDLApp{
 
                     } else if (e.key.keysym.sym == SDLK_n) {
                         if (networked == false) {
-                            /// Set up the socket and connection to server
-                            // sendSocket = test_client.initialize();
-                            // /// Perform initial handshake and test connect string
-                            // auto address = test_addr.find();
-                            // auto port = test_addr.findPort();
-                            // // recieveSocket =
-                            // buffer = test_client.sendConnectionHandshake(sendSocket);  // FIX ALL THIS
                             client.init();
                             getNewData();
                             writeln("started new listener");
-                            
                             networked = true;
                         } else {
                             tear_down = true;
-                            writeln("do the tear down");
                         }
                         
                     } else if (e.key.keysym.sym == SDLK_f) {
@@ -458,108 +426,29 @@ class SDLApp{
                     } else if (e.key.keysym.sym == SDLK_r) {
                         state.redo();
                     }
-                    // } else if (e.key.keysym.sym == SDLK_h) {
-                    //     server.run();
-                    // }
                 }
             }
 
-            
-            //if we have turned networking on, the client not the server
+            ///Networking Block:
+            //if we have turned networking on, check if there is traffic and that we are not in the tear down process. 
             if (networked == true) {
-                // while(!tear_down) {
-                    /// Check if there is traffic to send, if so send it, else listen
-                    // writeln("size of traffic: " ~ to!string(traffic.size));
-                    // Packet inbound = client.receiveDataFromServer();
-                    //     // writeln("traffic recieved down here");
-                    // received.push_front(inbound);
-
-            		// Spin up the new thread that will just take in data from the server
-
-                    //solution: pull out with while true loop 
-                    //issue: causing too many threads 
-                // client = new TCPClient();
-
-                //auto mythread = new Thread;
-                // new Thread({
-                //     threadCount++;
-
-                //         if (!tear_down) {
-                //             Packet inbound = client.receiveDataFromServer();
-                //             writeln("inbound x: " ~ to!string(inbound.x) ~ " inbound y: " ~ to!string(inbound.y));
-                //             received.push_front(inbound);
-                //             writeln("Size of Received: " ~to!string(received.size()));
-                //             drawInbound(received, imgSurface);
-                //             // while (received.size() > 2) {
-                //             //     //draw the packets
-                //             //     writeln("send to draw");
-                //             //     writeln("Size of Received: " ~to!string(received.size()));
-
-                //             //     drawInbound(received, imgSurface);
-                //             // }
-                //         } 
-                //         }).start();
-
-                        // auto size = Thread.getAll();
-                        // long threads = size.length();
-                // auto threads = ThreadBase.getAll(); 
-                // writeln(threads.length);
-                        // writeln("NUM THREADS: " ~ to!string(threads));
-
                 if (traffic.size > 0 && !tear_down) {
-
                     writeln(">");
+                    //send traffic to the server
                     client.sendDataToServer(traffic.pop_back);
-                    writeln("are we sending to server?");
-
-                    // received.push_front(client.run(traffic.pop_back));  // FIX
-
-                    
-                    // if(traffic.size > 0) {
-                    //     /// Send action to server
-
-                    //     received.push_front(client.run(traffic.pop_back));  // FIX
-                    //     // writeln("traffic sent");
-                    //     // Packet inbound = client.receiveDataFromServer();
-                    //     // writeln("traffic recieved up here");
-                    //     // received.push_front(inbound);
-                    // }
-                        
-                    //else {
-                        // Listen
-                        // Packet inbound;
-                        // Packet inbound = test_client.recieveFromServer(socket, buffer);
-                        // writeln("traffic recieved");
-                        /// If traffic recieved update surface.
-                        // imgSurface.UpdateSurfacePixel(inbound.x, inbound.y, inbound.r, inbound.g, inbound.b);
-                        // writeln("updated surface pixel");
-                    //}
-                    // else {
-                    //     //listen
-                    //     // Packet inbound;
-                        
-                    // }
-                // }
                 } else if (tear_down) {
+                    //initiate a grace full tear down with the server by sendings and empty packet. 
                     auto packet = mClient.getChangeForServer(-9999,-9999, 0, 0, 0,0,0);
                     client.sendDataToServer(packet);
+                    //close the socket
                     client.closeSocket();
-                    writeln("we should have closed the socket.");
                     tear_down = false;
                     networked = false;
-                    
-                } else if (received.size() > 0 && !tear_down){
-                    writeln("i'm going to draw something.");
+                // } else if (received.size() > 0 && !tear_down){
+                } else if (received.size() > 0){
+                    // if we have traffic that came in from the server, add it to the surface. 
                     drawInbound(received, imgSurface);
                 }
-                //try this
-                //mythread.join();
-                // core.thread.thread_joinAll();
-                // while (received.size() > 0) {
-                //     //draw the packets
-                //     writeln("do i get here?");
-                //     drawInbound(received, imgSurface);
-                // }
             }
             
             /// Blit the surace (i.e. update the window with another surfaces pixels
@@ -614,7 +503,11 @@ class SDLApp{
             blue = 136;
         }
     }
-
+/**
+    * Name: getNewData 
+    * Description: Establishes a new thread with a listener to get all incoming changes when we are networked
+    * Listens for incoming data from the server and adds it to the queue for inbound traffic to be added to the surface.
+    */
 void getNewData() {
         new Thread({
             while (!tear_down) {
@@ -626,13 +519,20 @@ void getNewData() {
         }).start();
     }
 
-
+/**
+    * Name: drawInbound 
+    * Description: Adds all networked painting pixels and adds them to the users surface. 
+    * Params:    
+        * @param traffic: Deque of packets from the server that contains pixel changes from the server
+        * @param imgSurface: The users image surface that needs to be updated
+    * Creates a seperate thread and removes all of the packets of pixel changes from the server from the queue and adds them to the surface. 
+    */
 void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
-    auto threads = ThreadBase.getAll(); 
-    writeln("Number of threads: " ~to!string(threads.length));    
+    // auto threads = ThreadBase.getAll(); 
+    // writeln("Number of threads: " ~to!string(threads.length));    
     
-        int prevX = -9999;
-        int prevY = -9999;
+        // int prevX = -9999;
+        // int prevY = -9999;
         new Thread({
         while(traffic.size() > 0) {
             
@@ -643,29 +543,18 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
                 red = cast(char)(curr.r & 0xff);
                 blue = cast(char)(curr.b & 0xff);
                 green = cast(char)(curr.g & 0xff);
-                writeln("Prevx : " ~ to!string(prevX) ~ " Prevy : " ~ to!string(prevY) ~  " curr.x : " ~ to!string(curr.x) ~  " curr.y : " ~ to!string(curr.y)~  " curr.bs : " ~ to!string(curr.bs) ~  " red : " ~ to!string(red) ~  " green : " ~ to!string(green) ~ " blue : " ~ to!string(blue));     
+                // writeln("Prevx : " ~ to!string(prevX) ~ " Prevy : " ~ to!string(prevY) ~  " curr.x : " ~ to!string(curr.x) ~  " curr.y : " ~ to!string(curr.y)~  " curr.bs : " ~ to!string(curr.bs) ~  " red : " ~ to!string(red) ~  " green : " ~ to!string(green) ~ " blue : " ~ to!string(blue));     
                 // writeln("NEW RBG VALS:: " ~ to!string(convertBytetoUnsigned(curr.r))  ~ to!string(convertBytetoUnsigned(curr.g))~ to!string(convertBytetoUnsigned(curr.b)));
                 // imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, red, green, blue);
             
-                prevX = curr.x;
-                prevY = curr.y;
+                // prevX = curr.x;
+                // prevY = curr.y;
             
-                imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
-        // imgSurface.lerp(prevX, prevY,curr.x, curr.y, 1, curr.r, curr.g, curr.b);
-            
+                imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);            
         }}).start();
 
 }
 
-// ubyte convertBytetoUnsigned(byte inbyte) {
-//     ubyte returnVal = 0;
-//     if (inbyte <=127) {
-//         returnVal = *cast(ubyte*)&inbyte;
-//     } else {
-//         returnVal = 256 - *cast(int*)&inbyte;
-//     }
-//     return returnVal;
-// }
 
 int brushSizeChanger(int curBrush){
     if (curBrush < 8) {
@@ -804,17 +693,6 @@ void button4Setup(Surface imgSurface){
         menuTri.fillTriangle(tp1, tp2, tp3, 1, 255, 255, 255);
     }
 }
-
-
-
-
-
-// void runClient(Deque traffic, Socket socket, Bool tear_down) {
-//     //if the client is running, loop
-    
-
-
-// }
 
 /**
 Test: Checks for the surface to be initialized to black RGB values or 0,0,0

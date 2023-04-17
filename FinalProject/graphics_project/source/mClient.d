@@ -109,7 +109,6 @@ class TCPClient{
     }
 
     void closeSocket() {
-        // mSocket.shutdown(SocketShutdown.both);
         mSocket.close();
     }
 
@@ -161,40 +160,25 @@ class TCPClient{
             write(">");
             return formattedPacket;
 
-
-            // if(fromServer.length > 0){
-            //         writeln("(from server)>",fromServer);
-            // }
 		}
 	}
 	
 }
 
-
+/**
+    * Name: getChangeForServer 
+    * Description: takes pixel changes and packs them up into a packet to send the server. 
+    * Params:    
+        * @param xPos: x-coordinate of pixel, yPos: y-coordinate of pixel
+        * @param blueVal: rgb blue value, greenVal: rgb green value, redVal: rgb red value
+        * @param brushSize: integer value of the size of the brush that is currently being used
+    * Turns the changes in pixel colors on the current users surface into a packet to send to other networked users. 
+    */
 Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyte blueVal, int shape, int brushSize) {
     Packet data;
 		// The 'with' statement allows us to access an object
 		// (i.e. member variables and member functions)
 		// in a slightly more convenient way
-        // writeln("Input for get change x: " ~to!string(xPos) ~ " y: " ~ to!string(yPos) ~ " r: " ~to!string(redVal) ~ " g: " ~ to!string(greenVal) ~ " b: " ~ to!string(blueVal));
-        // writeln("Inside Packet values x: " ~to!string(data.x) ~ " y: " ~ to!string(data.y) ~ " r: " ~to!string(data.r) ~ " g: " ~ to!string(data.g) ~ " b: " ~ to!string(data.b));
-        
-        //*******what is going on here?*******
-        byte red = cast(byte) redVal;
-        int redInt = to!int(red);
-        byte block = cast(byte) 256;
-
-        if (redInt >=128){
-            red = cast(byte) redInt;
-            // red = red + block;
-        } else { 
-            red = cast(byte) redInt;
-        }
-        
-        
-        // writeln("red = " ~ to!string(red));
-        // writeln("redVal = " ~ to!string(redVal));
-        // writeln("redInt = " ~ to!string(redInt));
 
 		with (data) {
 			user = "clientName\0";
@@ -208,16 +192,15 @@ Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyt
             s = shape;
             bs = brushSize;
 			message = "update from user: " ~ 1 ~ " test\0";
-            // writeln("Inside Packet values x: " ~to!string(data.x) ~ " y: " ~ to!string(data.y) ~ " r: " ~to!string(data.r) ~ " g: " ~ to!string(data.g) ~ " b: " ~ to!string(data.b));
 		}
-        // writeln("value of data: " ~ to!string(data));
-
-	// Send the packet of information breaks, can't send socket from SDLApp
-    // socket.send(data.GetPacketAsBytes());
     return data;
 }
 
-
+/**
+    * Name: getServerAddress 
+    * Description: Prompts the user for a IP address to try and connect to for a painting party.  
+    * Turns the changes in pixel colors on the current users surface into a packet to send to other networked users. 
+    */
 string getServerAddress() {
     /// Ask user what server they want to use
     bool good_addr = false;
@@ -228,7 +211,6 @@ string getServerAddress() {
         string user_input = readln;
         /// Trim off carriage return
         user_input = user_input.strip;
-
     /// Validate input(check if characters are either an int or .)
         string ip_regex = "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$";
         if (auto m = std.regex.matchFirst(user_input, ip_regex)) {

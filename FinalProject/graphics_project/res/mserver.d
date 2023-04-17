@@ -132,9 +132,7 @@ class TCPServer{
 						// listening for more client connections to accept.
 						// serverIsRunning = getServerCommands(serverIsRunning);
 						writeln("have a checked for a command?");
-					}
-
-					
+					}	
 				}
 
 				// Function to spawn from a new thread for the client.
@@ -202,7 +200,7 @@ class TCPServer{
 						// 	clientSocket.close();
 						// 	writeln("socket should have closed");
 						// } else {
-							broadcastToAllClients();
+						broadcastToAllClients();
 						// }
 						
 					}
