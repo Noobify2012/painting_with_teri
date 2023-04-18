@@ -486,8 +486,12 @@ class SDLApp{
                             client.sendDataToServer(shapePacket);
                         }
                     } else if (e.key.keysym.sym == SDLK_u) {
+                        Packet undoPack = mClient.getChangeForServer(0,0,0,0,0, -10, 0,0,0,0,0);
+                        client.sendDataToServer(undoPack);
                         state.undo();
                     } else if (e.key.keysym.sym == SDLK_r) {
+                        Packet rePack = mClient.getChangeForServer(0,0,0,0,0, 10, 0,0,0,0,0);
+                        client.sendDataToServer(rePack);
                         state.redo();
                     }
                 }
@@ -511,7 +515,7 @@ class SDLApp{
                 // } else if (received.size() > 0 && !tear_down){
                 } else if (received.size() > 0){
                     // if we have traffic that came in from the server, add it to the surface. 
-                    drawInbound(received, imgSurface);
+                    drawInbound(received, imgSurface, state);
                 } // else if (cast(int)shapeAction.getPoints.length != 0) {
                 //     // int x1, x2, x3, y1, y2, y3;
                 //     // for (int i = 0; i < shapeAction.getPoints.length; i++) {
@@ -596,7 +600,7 @@ void getNewData() {
         * @param imgSurface: The users image surface that needs to be updated
     * Creates a seperate thread and removes all of the packets of pixel changes from the server from the queue and adds them to the surface. 
     */
-void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
+void drawInbound(Deque!(Packet) traffic, Surface imgSurface, State state) {
     // auto threads = ThreadBase.getAll(); 
     // writeln("Number of threads: " ~to!string(threads.length));    
     
@@ -637,12 +641,16 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
                     Triangle inboundTri = new Triangle(&imgSurface);
                     inboundTri.drawFromPoints(shapePoints, red, green, blue, 4);
                     writeln("i got a triangle");
-                } else {
+                } else if (curr.s == 4) {
                     //line
                     Line inboundLine = new Line(&imgSurface);
                     inboundLine.drawFromPoints(shapePoints, red, green, blue, 4);
                     writeln("i got a line");
-                }        
+                } else if (curr.s == -10) {
+                    state.undo();
+                } else if (curr.s == 10) {
+                    state.redo();
+                }
         }}).start();
 
 }
