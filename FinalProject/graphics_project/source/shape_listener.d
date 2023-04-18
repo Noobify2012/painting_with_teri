@@ -24,16 +24,9 @@ class ShapeListener {
   string quadrant;
   int brushSize; 
 
-  State *state;
-  int r, g, b;
+  Action action;
 
-  this(){
-
-  }
-
-  this(State* state) {
-
-    this.state = state;
+  this() {
   }
 
   this(State* state, string quad, int brushSize){
@@ -46,12 +39,9 @@ class ShapeListener {
 
   }
 
-  void setRGB(int _r, int _g, int _b) {
-
-    this.r = _r;
-    this.g = _g;
-    this.b = _b;
-
+  Action getAction() {
+    
+    return this.action;
   }
   
   void drawShape(Surface* surf, int brushSize, ubyte r, ubyte g, ubyte b) {
@@ -111,7 +101,6 @@ class ShapeListener {
       }
     }
     int[3] color = [r, g, b];
-    Action action = new Action(sh.getPoints(), color, shapeType);
-    this.state.addAction(action);
+    this.action = new Action(sh.getPoints(), color, shapeType);
   }
 }

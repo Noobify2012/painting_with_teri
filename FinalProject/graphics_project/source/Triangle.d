@@ -111,3 +111,23 @@ class Triangle : Shape {
         return this.points;
     }
 }
+
+/**
+* Test: Checks for the surface to be initialized to black, draw red triangle
+* Ensure interior points are red, exterior remain black
+*/
+@("Draw triangle test")
+unittest{
+    SDLInit app = new SDLInit();
+    Surface s = new Surface(0,640,480,32,0,0,0,0);
+    Triangle tri = new Triangle(&s);
+    tri.drawFromPoints([tuple(1, 1), tuple(1,30), tuple(30,30)], 255, 128, 32, 1);
+    /// Check leftmost edge
+    assert(	s.PixelAt(1,30)[0] == 255 &&
+    s.PixelAt(1,30)[1] == 128 &&
+    s.PixelAt(1,30)[2] == 32, "error rgb value at 1,30 is wrong!");
+    /// Check that external pixel close to line is still red
+    assert(	s.PixelAt(3,1)[0] == 0 &&
+    s.PixelAt(3,1)[1] == 0 &&
+    s.PixelAt(3,1)[2] == 0, "error rgb value at 3,1 is wrong!");
+}

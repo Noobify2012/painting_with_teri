@@ -87,3 +87,63 @@ class Line : Shape {
         return this.points;
     }
 }
+
+/**
+* Test: Checks for the surface to be initialized to black, draws diagonal Line
+* and checks that intervening points have changed color
+*/
+@("Line test")
+unittest{
+    SDLInit app = new SDLInit();
+    Surface s = new Surface(0,640,480,32,0,0,0,0);
+    Line li = new Line(&s);
+    li.drawFromPoints([tuple(1, 1), tuple(3,3)], 255, 128, 32, 1);
+    /// Draw diagonal line and make sure the change takes
+    s.lerp(1, 1, 3, 3, 1, 32, 128, 255);
+    /// Parse values of new data struct
+    assert(	s.PixelAt(2,2)[0] == 32 &&
+    s.PixelAt(2,2)[1] == 128 &&
+    s.PixelAt(2,2)[2] == 255, "Line error rgb value at x,y is wrong!");
+    /// Other pixels should have changed as well bc of how UpdatePixel is implemented
+    assert(	s.PixelAt(0,0)[0] == 32 &&
+    s.PixelAt(0,0)[1] == 128 &&
+    s.PixelAt(0,0)[2] == 255, "Line error rgb value at x,y is wrong!");
+    assert(	s.PixelAt(0,1)[0] == 32 &&
+    s.PixelAt(0,1)[1] == 128 &&
+    s.PixelAt(0,1)[2] == 255, "Line error rgb value at x,y is wrong!");
+    assert(	s.PixelAt(3,2)[0] == 32 &&
+    s.PixelAt(3,2)[1] == 128 &&
+    s.PixelAt(3,2)[2] == 255, "Line error rgb value at x,y is wrong!");
+    /// Parse values of new data struct
+    // writeln("[0,0]", s.PixelAt(0,0));
+    // writeln(s.PixelAt(1,0));
+    // writeln(s.PixelAt(2,0));
+    // writeln(s.PixelAt(3,0));
+    // writeln("[0,1]", s.PixelAt(0,1));
+    // writeln(s.PixelAt(1,1));
+    // writeln(s.PixelAt(2,1));
+    // writeln(s.PixelAt(3,1));
+    // writeln(s.PixelAt(4,1));
+    // writeln("[0,2]", s.PixelAt(0,2));
+    // writeln(s.PixelAt(1,2));
+    // writeln(s.PixelAt(2,2));
+    // writeln(s.PixelAt(3,2));
+    // writeln(s.PixelAt(4,2));
+    // writeln("[0,3]", s.PixelAt(0,3));
+    // writeln(s.PixelAt(1,3));
+    // writeln(s.PixelAt(2,3));
+    // writeln(s.PixelAt(3,3));
+    // writeln(s.PixelAt(4,3));
+    // writeln("[0,4]", s.PixelAt(0,4));
+    // writeln(s.PixelAt(1,4));
+    // writeln(s.PixelAt(2,4));
+    // writeln(s.PixelAt(3,4));
+    // writeln(s.PixelAt(4,4));
+    /// Make sure other pixels were not colored
+    assert(	s.PixelAt(0,2)[0] == 0 &&
+    s.PixelAt(0,2)[1] == 0 &&
+    s.PixelAt(0,2)[2] == 0, "Line error rgb value at (1,2) is wrong!");
+    assert(	s.PixelAt(4,3)[0] == 0 &&
+    s.PixelAt(4,3)[1] == 0 &&
+    s.PixelAt(4,3)[2] == 0, "Line error rgb value at (1,2) is wrong!");
+}
