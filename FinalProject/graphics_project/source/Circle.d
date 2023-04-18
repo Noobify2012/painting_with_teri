@@ -129,3 +129,47 @@ class Circle : Shape {
     }
 
 }
+
+
+/**
+* Test: Checks for the surface to be initialized to black, draw red circle
+* Ensure interior points are red, exterior remain black
+*/
+@("Draw circle test")
+unittest{
+    SDLInit app = new SDLInit();
+    Surface s = new Surface(0,640,480,32,0,0,0,0);
+    Circle cir = new Circle(&s);
+    cir.drawFromPoints([tuple(1, 1), tuple(12,12)], 255, 128, 32, 1);
+    /// Check leftmost edge
+    assert(	s.PixelAt(1,6)[0] == 255 &&
+    s.PixelAt(1,6)[1] == 128 &&
+    s.PixelAt(1,6)[2] == 32, "error rgb value at 1,6 is wrong!");
+    /// Check top left corner
+    assert(	s.PixelAt(13,6)[0] == 255 &&
+    s.PixelAt(13,6)[1] == 128 &&
+    s.PixelAt(13,6)[2] == 32, "error rgb value at 13,6 is wrong!");
+    /// Check topmost edge
+    assert(	s.PixelAt(6,1)[0] == 255 &&
+    s.PixelAt(6,1)[1] == 128 &&
+    s.PixelAt(6,1)[2] == 32, "error rgb value at 6,1 is wrong!");
+    /// Check bottommost edge
+    assert(	s.PixelAt(13,6)[0] == 255 &&
+    s.PixelAt(6,13)[1] == 128 &&
+    s.PixelAt(6,13)[2] == 32, "error rgb value at 6,13 is wrong!");
+    /// Check top right corner
+    assert(	s.PixelAt(14,6)[0] == 0 &&
+    s.PixelAt(14,6)[1] == 0 &&
+    s.PixelAt(14,6)[2] == 0, "error rgb value at 14,6 is wrong!");
+    assert(	s.PixelAt(6,14)[0] == 0 &&
+    s.PixelAt(6,14)[1] == 0 &&
+    s.PixelAt(6,14)[2] == 0, "error rgb value at 6,14 is wrong!");
+    /// Check rounded courners weren't changed
+    writeln("(1,1): ", s.PixelAt(1,1));
+    assert(	s.PixelAt(1,1)[0] == 0 &&
+    s.PixelAt(1,1)[1] == 0 &&
+    s.PixelAt(1,1)[2] == 0, "error rgb value at 1,1 is wrong!");
+    assert(	s.PixelAt(13,13)[0] == 0 &&
+    s.PixelAt(13,13)[1] == 0 &&
+    s.PixelAt(13,13)[2] == 0, "error rgb value at 13,13 is wrong!");
+}

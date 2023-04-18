@@ -140,22 +140,41 @@ class Rectangle : Shape {
 
 
 /**
-* Test: Checks for the surface to be initialized to black, change the pixel color of 1,1 to blue, verify its blue,
-* change it to red, ensure that the color of 1,1 is now red 
+* Test: Checks for the surface to be initialized to black, draw red square
+* Ensure interior points are red, exterior remain black
 */
-// @("Lerp test")
-// unittest{
-//     SDLInit app = new SDLInit();
-//     Surface s = new Surface(0,640,480,32,0,0,0,0);
-//     s.lerp(1, 1, 3, 1, 1, 255, 128, 32);
-//     /// Parse values of new data struct
-//     assert(	s.PixelAt(2,1)[0] == 255 &&
-//     s.PixelAt(2,1)[1] == 128 &&
-//     s.PixelAt(2,1)[2] == 32, "error rgb value at x,y is wrong!");
-//     /// Change the color of the pixel and make sure the change takes
-//     s.lerp(1, 1, 3, 3, 1, 32, 128, 255);
-//     /// Parse values of new data struct
-//     assert(	s.PixelAt(2,2)[0] == 32 &&
-//     s.PixelAt(2,2)[1] == 128 &&
-//     s.PixelAt(2,2)[2] == 255, "error rgb value at x,y is wrong!");
-// }
+@("Draw rectangle test")
+unittest{
+    SDLInit app = new SDLInit();
+    Surface s = new Surface(0,640,480,32,0,0,0,0);
+    Rectangle rect = new Rectangle(&s);
+    rect.drawFromPoints([tuple(1, 1), tuple(3, 3)], 255, 128, 32, 1);
+    /// Check midpoint
+    assert(	s.PixelAt(2,2)[0] == 255 &&
+    s.PixelAt(2,2)[1] == 128 &&
+    s.PixelAt(2,2)[2] == 32, "error rgb value at 2,2 is wrong!");
+    /// Check top left corner
+    assert(	s.PixelAt(1,1)[0] == 255 &&
+    s.PixelAt(1,1)[1] == 128 &&
+    s.PixelAt(1,1)[2] == 32, "error rgb value at 1,1 is wrong!");
+    /// Check bottom left corner    /// Check top right corner
+    assert(	s.PixelAt(3,1)[0] == 255 &&
+    s.PixelAt(3,1)[1] == 128 &&
+    s.PixelAt(3,1)[2] == 32, "error rgb value at 3,1 is wrong!");
+    /// Check bottom left corner
+    assert(	s.PixelAt(1,3)[0] == 255 &&
+    s.PixelAt(1,3)[1] == 128 &&
+    s.PixelAt(1,3)[2] == 32, "error rgb value at 1,3 is wrong!");
+    /// Check bottom right corner
+    assert(	s.PixelAt(3,3)[0] == 255 &&
+    s.PixelAt(3,3)[1] == 128 &&
+    s.PixelAt(3,3)[2] == 32, "error rgb value at 3,3 is wrong!");
+    /// Check outside square wasn't changed
+    assert(	s.PixelAt(0,0)[0] == 0 &&
+    s.PixelAt(0,0)[1] == 0 &&
+    s.PixelAt(0,0)[2] == 0, "error rgb value at 3,3 is wrong!");    
+    /// Check outside square wasn't changed
+    assert(	s.PixelAt(4,4)[0] == 0 &&
+    s.PixelAt(4,4)[1] == 0 &&
+    s.PixelAt(4,4)[2] == 0, "error rgb value at 3,3 is wrong!");
+}
