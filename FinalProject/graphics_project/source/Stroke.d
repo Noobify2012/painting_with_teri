@@ -1,34 +1,33 @@
-// import Point : Point;
+import Point : Point;
+import std.typecons;
 
-// class Stroke {
+class Stroke {
 
-    // SDL_Color color;
-    // Point[] constituentPoints;
+    Point[] constituentPoints;
+    Point[] underlyingPoints;
 
+    this() {}
 
-    // this(SDL_Color col) {
-    //     this.color = col;
-    // }
+    ~this() {}
 
-    // ~this() {}
+    /**
+    *   Returns all points that constitute a stroke as an array of Points.
+    *
+    *   return: array of Points
+    */
+    Point[] getConstituentPoints() {
 
-    // /**
-    // *   Returns the color of this stroke.
-    // *
-    // *   return: SDL_Color of this stroke
-    // */
-    // SDL_Color getColor() {
-        
-    //     return this.color;
-    // }
+        return this.constituentPoints;
+    }
 
-    // /**
-    // *   Returns all points that constitute a stroke as an array of Points.
-    // *
-    // *   return: array of points
-    // */
-    // Point[] getConstituentPoints() {
+    /**
+    *   Returns all points that originally occupied the space this Stroke has
+    *   drawn over.
+    *
+    *   return: array of Points
+    */
+    Point[] getUnderlyingPoints() {
 
-    //     return this.constituentPoints;
-    // }
-// }
+        return this.underlyingPoints;
+    }
+}

@@ -170,11 +170,11 @@ class TCPServer{
 						byte[4] field4 = buffer[28 .. 32].dup;
 						byte[4] field5 = buffer[32 .. 36].dup;
 						byte[4] field6 = buffer[36 .. 40].dup;
-						byte[4] field7 = buffer[32 .. 36].dup;
-						byte[4] field8 = fromServer[44 .. 48].dup;
-						byte[4] field9 = fromServer[48 .. 52].dup;
-						byte[4] field10 = fromServer[52 .. 56].dup;
-						byte[4] field11 = fromServer[56 .. 60].dup;
+						byte[4] field7 = buffer[40 .. 44].dup;
+						byte[4] field8 = buffer[44 .. 48].dup;
+						byte[4] field9 = buffer[48 .. 52].dup;
+						byte[4] field10 = buffer[52 .. 56].dup;
+						byte[4] field11 = buffer[56 .. 60].dup;
 						int f1 = *cast(int*)&field1;
 						int f2 = *cast(int*)&field2;
 						byte f3 = *cast(byte*)&field3;

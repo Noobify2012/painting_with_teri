@@ -157,6 +157,18 @@ class TCPClient{
             int f9 = *cast(int*)&field9;
             int f10 = *cast(int*)&field10;
             int f11 = *cast(int*)&field11;
+
+            formattedPacket.x = f1;
+            formattedPacket.y = f2;
+            formattedPacket.r = f3;
+            formattedPacket.g = f4;
+            formattedPacket.b = f5;
+            formattedPacket.s = f6;
+            formattedPacket.bs = f7;
+            formattedPacket.x2 = f8;
+            formattedPacket.y2 = f9;
+            formattedPacket.x3 = f10;
+            formattedPacket.y3 = f11;
             
             write(">");
             return formattedPacket;
@@ -175,7 +187,7 @@ class TCPClient{
         * @param brushSize: integer value of the size of the brush that is currently being used
     * Turns the changes in pixel colors on the current users surface into a packet to send to other networked users. 
     */
-Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyte blueVal, int shape, int brushSize) {
+Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyte blueVal, int shape, int brushSize, int x2Pos, int y2Pos, int x3Pos, int y3Pos) {
     Packet data;
 		// The 'with' statement allows us to access an object
 		// (i.e. member variables and member functions)
@@ -193,6 +205,11 @@ Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyt
             s = shape;
             bs = brushSize;
 			message = "update from user: " ~ 1 ~ " test\0";
+            x2 = x2Pos;
+            y2= y2Pos;
+            x3 = x3Pos;
+            y3 = y3Pos;
+            
 		}
     return data;
 }

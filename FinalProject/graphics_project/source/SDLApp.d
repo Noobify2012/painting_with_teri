@@ -29,10 +29,13 @@ import test_addr;
 import shape_listener;
 import drawing_utilities;
 import mClient;
+import Action : Action;
+import state;
 
 import Rectangle : Rectangle;
 import Triangle : Triangle; 
-import Circle : Circle; 
+import Circle : Circle;
+import Line : Line;
 // For printing the key pressed info
 // void PrintKeyInfo( SDL_KeyboardEvent *key );
 
@@ -51,6 +54,7 @@ class SDLApp{
     Packet inbound;
     bool tear_down = false;
     auto received = new Deque!(Packet);
+    Action shapeAction;
 
 
     void MainApplicationLoop(){
@@ -85,7 +89,10 @@ class SDLApp{
         int prevX = -9999;
         int prevY = -9999;
 
+        State state = new State(&imgSurface);
+
         DrawingUtility du = new DrawingUtility();
+        ShapeListener sh = new ShapeListener();
 
         /// Intialize deque for storing traffic to send
         auto traffic = new Deque!(Packet);
@@ -98,6 +105,8 @@ class SDLApp{
         // Deque traffic = new Deque!Packet;
 
         createMenu(imgSurface);
+
+        Action act = new Action([], [red, green, blue], "stroke");
         brush = 2;
         // SDL_EnableUNICODE( 1 );
 
@@ -219,7 +228,7 @@ class SDLApp{
                             quadrant = "BR";
                         }
 
-                        ShapeListener sh = new ShapeListener(quadrant);
+                        // ShapeListener sh = new ShapeListener(quadrant);
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
                     }
 
@@ -234,6 +243,12 @@ class SDLApp{
                     //END MENU BUTTON SELECTOR 
 
                 }else if(e.type == SDL_MOUSEBUTTONUP){
+                    if (drawing) {
+                        act.setColor([cast(int) red, cast(int) green, cast(int) blue]);
+                        state.addAction(act);
+
+                        act = new Action([], [red, green, blue], "stroke");
+                    }
                     drawing=false;
                     prevX = -9999;
                     prevY = -9999;
@@ -242,6 +257,7 @@ class SDLApp{
                     int xPos = e.button.x;
                     int yPos = e.button.y;
 
+                    act.addPoint(tuple(xPos, yPos));
                     /// Loop through and update specific pixels
                     // NOTE: No bounds checking performed --
                     //       think about how you might fix this :)
@@ -299,7 +315,7 @@ class SDLApp{
                             // Check if the client is networked
                             if(networked == true) {
                                 Packet packet;
-                                packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue, 0, brushSize);
+                                packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue, 0, brushSize,0,0,0,0);
                                 //if client networked then make sure that the next packet to send isn't equal to the last one(no sequential duplicate packets).
                                 if (traffic.size() > 0 ) {
                                     if (packet != traffic.back() ) {
@@ -318,7 +334,7 @@ class SDLApp{
                     /// keep you from overflowing pixels
                     if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 50 && prevY > 51) {
                         imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
-                        //  writeln("are we hitting lerp?");
+                         writeln("are we hitting lerp?");
                     }
                     prevX = xPos;
                     prevY = yPos;
@@ -403,8 +419,70 @@ class SDLApp{
                         writeln("Drawing shape");
                         writeln("Type 'r' for rectangle", "\nType 'c' for circle", 
                                 "\nType 'l' for line", "\nType 'r' for rectangle");
-                        ShapeListener sh = new ShapeListener();
+                        // ShapeListener sh = new ShapeListener();
+
+                        // sh.setRGB(red, green, blue);
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
+                        shapeAction = sh.getAction();
+                        shapeAction.setColor([cast(int) red, cast(int) green, cast(int) blue]);
+                        state.addAction(sh.getAction());
+                        /// unpack the points
+                        int x,y,x2,y2,x3,y3;
+                        for(int i=0; i < shapeAction.getPoints.length; i++) {
+                            for (int j=0; j < 2; j++) {
+                                if(i == 0 && j == 0) {
+                                    x = shapeAction.getPoints[0][0];
+                                } else if (i == 0 && j == 1) {
+                                    y = shapeAction.getPoints[i][1];
+                                } else if (i == 1 && j == 0) {
+                                    x2 = shapeAction.getPoints[i][0];
+                                } else if (i == 1 && j == 1) {
+                                    y2 = shapeAction.getPoints[i][1];
+                                } else if (i == 2 && j == 0) {
+                                    x3 = shapeAction.getPoints[i][0];
+                                } else {
+                                    y3 = shapeAction.getPoints[i][1];
+                                }
+                            }
+                        }
+
+                        /// unpack type
+                        writeln("shape action type: " ~to!string(shapeAction.getActionType()));
+                        int st = 0;
+                        if (shapeAction.getPoints().length == 3) {
+                            st = 3;
+                            //do triangle
+                        } else {
+                            ///circle is shape type 1
+                            if (shapeAction.getActionType() == "circle") {
+                                st = 1;
+                            } else if (shapeAction.getActionType() == "rectangle") {
+                                ///rectangle is shape type 2
+                                st = 2;
+                            } else {
+                                ///line is shape type 4
+                                st = 4;
+                            }
+                        }
+
+                        ///unpack rgb values 
+                        // ubyte redU = *cast(byte*)&red;
+                        // ubyte greenU = *cast(byte*)&green;
+                        // ubyte blueU = *cast(byte*)&blue;
+                        int shapeBrush = 4;
+                        // writeln(shapeAction.getPoints[]);
+                        // writeln(shapeAction.getPoints[0][0]);
+                        // writeln(shapeAction.getPoints[0][1]);
+                        // writeln(shapeAction.getPoints[1][0]);
+                        // writeln(shapeAction.getPoints[1][1]);
+                        if (networked == true) {
+                            Packet shapePacket = mClient.getChangeForServer(x,y,red, green, blue, st, shapeBrush, x2, y2, x3, y3);
+                            client.sendDataToServer(shapePacket);
+                        }
+                    } else if (e.key.keysym.sym == SDLK_u) {
+                        state.undo();
+                    } else if (e.key.keysym.sym == SDLK_r) {
+                        state.redo();
                     }
                 }
             }
@@ -418,7 +496,7 @@ class SDLApp{
                     client.sendDataToServer(traffic.pop_back);
                 } else if (tear_down) {
                     //initiate a grace full tear down with the server by sendings and empty packet. 
-                    auto packet = mClient.getChangeForServer(-9999,-9999, 0, 0, 0,0,0);
+                    auto packet = mClient.getChangeForServer(-9999,-9999, 0, 0, 0,0,0,0,0,0,0);
                     client.sendDataToServer(packet);
                     //close the socket
                     client.closeSocket();
@@ -428,7 +506,12 @@ class SDLApp{
                 } else if (received.size() > 0){
                     // if we have traffic that came in from the server, add it to the surface. 
                     drawInbound(received, imgSurface);
-                }
+                } // else if (cast(int)shapeAction.getPoints.length != 0) {
+                //     // int x1, x2, x3, y1, y2, y3;
+                //     // for (int i = 0; i < shapeAction.getPoints.length; i++) {
+                //     //     writeln("Array index positions: "  ~ to!string(shapeAction.getPoints[i]));
+                //     // }
+                //  }   
             }
             
             /// Blit the surace (i.e. update the window with another surfaces pixels
@@ -492,7 +575,7 @@ void getNewData() {
         new Thread({
             while (!tear_down) {
                 inbound = client.receiveDataFromServer();
-                writeln("inbound x: " ~ to!string(inbound.x) ~ " inbound y: " ~ to!string(inbound.y));
+                // writeln("inbound x: " ~ to!string(inbound.x) ~ " inbound y: " ~ to!string(inbound.y)~ " inbound shape: " ~ to!string(inbound.s));
                 received.push_front(inbound);
                 writeln("Size of Received: " ~to!string(received.size()));
             } 
@@ -529,11 +612,50 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
             
                 // prevX = curr.x;
                 // prevY = curr.y;
-
-            
-                imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);            
+                Tuple!(int, int)[] shapePoints = buildShape(curr);
+                if (curr.s == 0) {
+                    imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
+                    writeln("i got a pixel");
+                } else if (curr.s == 1) {
+                    //circle
+                    Circle inboundCircle = new Circle(&imgSurface);
+                    inboundCircle.drawFromPoints(shapePoints, red, green, blue, 4);
+                    writeln("i got a circle");
+                } else if (curr.s == 2) {
+                    //rectangle
+                    Rectangle inboundRec = new Rectangle(&imgSurface);
+                    inboundRec.drawFromPoints(shapePoints, red, green, blue, 4);
+                    writeln("i got a rectangle");
+                } else if (curr.s == 3) {
+                    //triangle
+                    Triangle inboundTri = new Triangle(&imgSurface);
+                    inboundTri.drawFromPoints(shapePoints, red, green, blue, 4);
+                    writeln("i got a triangle");
+                } else {
+                    //line
+                    Line inboundLine = new Line(&imgSurface);
+                    inboundLine.drawFromPoints(shapePoints, red, green, blue, 4);
+                    writeln("i got a line");
+                }        
         }}).start();
 
+}
+
+Tuple!(int, int)[] buildShape(Packet packet) {
+    Tuple!(int, int)[] points;
+    Tuple!(int, int) point1, point2, point3;
+    point1[0] = packet.x;
+    point1[1] = packet.y;
+    point2[0] = packet.x2;
+    point2[1] = packet.y2;
+    point3[0] = packet.x3;
+    point3[1] = packet.y3;
+    points ~= point1;
+    points ~= point2;
+    if (packet.s == 3) {
+        points ~= point3;
+    }
+    return points; 
 }
 
 

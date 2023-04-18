@@ -14,6 +14,7 @@ import SDL_Surfaces;
 class Circle : Shape {
 
     Surface* surf;
+    Tuple!(int, int)[] points;
 
     this(Surface* surf) {
         this.surf = surf;
@@ -93,17 +94,82 @@ class Circle : Shape {
             }
         }
 
+        points ~= p1;
+        points ~= p2;
+
         //Stops the shape from drawing if you try to draw within the menu bounds 
         if((p1[1] < 50) || (p2[1] < 50)){
             writeln("Try again, circle set to overlap menu");
         }
         else{ 
-        // Find circle radius and midpoint
-        int radius = cast(int) sqrt(cast(float) ((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]))) / 2;
-        midpoint = tuple(cast(int) ((p1[0] + p2[0]) / 2), cast(int) ((p1[1] + p2[1]) / 2));
+            // Find circle radius and midpoint
+            int radius = cast(int) sqrt(cast(float) ((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]))) / 2;
+            midpoint = tuple(cast(int) ((p1[0] + p2[0]) / 2), cast(int) ((p1[1] + p2[1]) / 2));
 
-        // Fill points in circle
-        fillCircle(midpoint, radius, r, g, b);
+            // Fill points in circle
+            fillCircle(midpoint, radius, r, g, b);
         }
     }
+
+    override void drawFromPoints(Tuple!(int, int)[] points, ubyte r, ubyte g, ubyte b, int brushSize) {
+
+        assert(points.length == 2);
+
+        Tuple!(int, int) p1 = points[0], p2 = points[1];
+
+        int radius = cast(int) sqrt(cast(float) ((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]))) / 2;
+        Tuple!(int, int) midpoint = tuple(cast(int) ((p1[0] + p2[0]) / 2), cast(int) ((p1[1] + p2[1]) / 2));
+
+        fillCircle(midpoint, radius, r, g, b);
+    }
+
+    override Tuple!(int, int)[] getPoints() {
+
+        return this.points;
+    }
+
+}
+
+
+/**
+* Test: Checks for the surface to be initialized to black, draw red circle
+* Ensure interior points are red, exterior remain black
+*/
+@("Draw circle test")
+unittest{
+    SDLInit app = new SDLInit();
+    Surface s = new Surface(0,640,480,32,0,0,0,0);
+    Circle cir = new Circle(&s);
+    cir.drawFromPoints([tuple(1, 1), tuple(12,12)], 255, 128, 32, 1);
+    /// Check leftmost edge
+    assert(	s.PixelAt(1,6)[0] == 255 &&
+    s.PixelAt(1,6)[1] == 128 &&
+    s.PixelAt(1,6)[2] == 32, "error rgb value at 1,6 is wrong!");
+    /// Check top left corner
+    assert(	s.PixelAt(13,6)[0] == 255 &&
+    s.PixelAt(13,6)[1] == 128 &&
+    s.PixelAt(13,6)[2] == 32, "error rgb value at 13,6 is wrong!");
+    /// Check topmost edge
+    assert(	s.PixelAt(6,1)[0] == 255 &&
+    s.PixelAt(6,1)[1] == 128 &&
+    s.PixelAt(6,1)[2] == 32, "error rgb value at 6,1 is wrong!");
+    /// Check bottommost edge
+    assert(	s.PixelAt(13,6)[0] == 255 &&
+    s.PixelAt(6,13)[1] == 128 &&
+    s.PixelAt(6,13)[2] == 32, "error rgb value at 6,13 is wrong!");
+    /// Check top right corner
+    assert(	s.PixelAt(14,6)[0] == 0 &&
+    s.PixelAt(14,6)[1] == 0 &&
+    s.PixelAt(14,6)[2] == 0, "error rgb value at 14,6 is wrong!");
+    assert(	s.PixelAt(6,14)[0] == 0 &&
+    s.PixelAt(6,14)[1] == 0 &&
+    s.PixelAt(6,14)[2] == 0, "error rgb value at 6,14 is wrong!");
+    /// Check rounded courners weren't changed
+    writeln("(1,1): ", s.PixelAt(1,1));
+    assert(	s.PixelAt(1,1)[0] == 0 &&
+    s.PixelAt(1,1)[1] == 0 &&
+    s.PixelAt(1,1)[2] == 0, "error rgb value at 1,1 is wrong!");
+    assert(	s.PixelAt(13,13)[0] == 0 &&
+    s.PixelAt(13,13)[1] == 0 &&
+    s.PixelAt(13,13)[2] == 0, "error rgb value at 13,13 is wrong!");
 }

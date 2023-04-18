@@ -15,6 +15,7 @@ import SDL_Surfaces;
 class Triangle : Shape {
 
     Surface* surf;
+    Tuple!(int, int)[] points;
 
     this(Surface* surf) {
         this.surf = surf;
@@ -49,12 +50,12 @@ class Triangle : Shape {
             }
         }
         
-        if (isLine(p1, p2, p3, brushSize, r, g, b)) {
+        // if (isLine(p1, p2, p3, brushSize, r, g, b)) {
 
-            surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
-            surf.lerp(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
-            surf.lerp(p1[0], p1[1], p3[0], p3[1], brushSize, r, g, b);
-        }
+        //     surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
+        //     surf.lerp(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
+        //     surf.lerp(p1[0], p1[1], p3[0], p3[1], brushSize, r, g, b);
+        // }
     }
 
     override void draw(int brushSize, ubyte r, ubyte g, ubyte b) {
@@ -88,9 +89,45 @@ class Triangle : Shape {
         //Draw the triangle 
         else {
 
+            this.points ~= p1;
+            this.points ~= p2;
+            this.points ~= p3;
+
             // int top = min(p1[1], p2[1], p3[1]), bottom = max(p1[1], p2[1], p3[1]), 
             //     left = min(p1[0], p1[0], p2[0]), right = max(p1[0], p2[0], p3[0]);
             fillTriangle(p1, p2, p3, brushSize, r, g, b);
         }
     }
+
+    override void drawFromPoints(Tuple!(int, int)[] points, ubyte r, ubyte g, ubyte b, int brushSize) {
+
+        assert(points.length == 3);
+
+        fillTriangle(points[0], points[1], points[2], brushSize, r, g, b);
+    }
+
+    override Tuple!(int, int)[] getPoints() {
+
+        return this.points;
+    }
+}
+
+/**
+* Test: Checks for the surface to be initialized to black, draw red triangle
+* Ensure interior points are red, exterior remain black
+*/
+@("Draw triangle test")
+unittest{
+    SDLInit app = new SDLInit();
+    Surface s = new Surface(0,640,480,32,0,0,0,0);
+    Triangle tri = new Triangle(&s);
+    tri.drawFromPoints([tuple(1, 1), tuple(1,30), tuple(30,30)], 255, 128, 32, 1);
+    /// Check leftmost edge
+    assert(	s.PixelAt(1,30)[0] == 255 &&
+    s.PixelAt(1,30)[1] == 128 &&
+    s.PixelAt(1,30)[2] == 32, "error rgb value at 1,30 is wrong!");
+    /// Check that external pixel close to line is still red
+    assert(	s.PixelAt(3,1)[0] == 0 &&
+    s.PixelAt(3,1)[1] == 0 &&
+    s.PixelAt(3,1)[2] == 0, "error rgb value at 3,1 is wrong!");
 }
