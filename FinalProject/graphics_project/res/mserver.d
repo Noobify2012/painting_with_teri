@@ -268,6 +268,22 @@ class TCPServer{
 // Entry point to Server
 void main(){
 	// Note: I'm just using the defaults here.
-	TCPServer server = new TCPServer;
+	TCPServer server = new TCPServer();
 	server.run();
+}
+
+
+/**
+* Test: Checks for the surface to be initialized to black, draw red circle
+* Ensure interior points are red, exterior remain black
+*/
+@("Networking test")
+unittest{
+    TCPServer ser = new TCPServer("localhost", 50002);
+	TCPClient cl = new TCPClient;
+	TCPClient.init("localhost", 50002);
+	pack = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue, 0, brushSize,0,0,0,0);
+	received = cl.run(pack);
+	assert(pack == received, "Outbound and inbound packets are different"); 
+    
 }
