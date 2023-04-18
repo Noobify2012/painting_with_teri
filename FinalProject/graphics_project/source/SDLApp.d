@@ -557,7 +557,7 @@ class SDLApp{
                     // prevY = curr.y;
 
                     sh_inbound = new Shape;
-                    sh.drawFromPoints(curr._points, red, green, blue, 4);
+                    sh_inbound.drawFromPoints(curr._points, red, green, blue, 4);
                     // handle stroke which is different
 
                     // imgSurface.UpdateSurfacePixel(curr._points[0][0], curr._points[0[1]], curr.r, curr.g, curr.b);  // edited      
