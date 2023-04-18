@@ -334,7 +334,7 @@ class SDLApp{
                     /// keep you from overflowing pixels
                     if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 50 && prevY > 51) {
                         imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
-                        //  writeln("are we hitting lerp?");
+                         writeln("are we hitting lerp?");
                     }
                     prevX = xPos;
                     prevY = yPos;

@@ -192,7 +192,6 @@ class TCPServer{
 						p.g = f4;
 						p.b = f5;
 						p.s = f6;
-						writeln("value of shape at server: " ~ to!string(p.s));
 						p.bs = f7;
 						p.x2 = f8;
 						p.y2 = f9;
