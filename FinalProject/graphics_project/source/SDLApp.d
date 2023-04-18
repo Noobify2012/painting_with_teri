@@ -529,6 +529,7 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
             
                 // prevX = curr.x;
                 // prevY = curr.y;
+
             
                 imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);            
         }}).start();

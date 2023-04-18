@@ -132,7 +132,7 @@ class TCPClient{
             formattedPacket.user = cast(char[])(field0);
             writeln("Server echos back user: ", formattedPacket.user);
 
-            /// Get some of the fields
+                    /// Get some of the fields
             byte[4] field1 = fromServer[16 .. 20].dup;
             byte[4] field2 = fromServer[20 .. 24].dup;
             byte[4] field3 = fromServer[24 .. 28].dup;
@@ -140,6 +140,10 @@ class TCPClient{
             byte[4] field5 = fromServer[32 .. 36].dup;
             byte[4] field6 = fromServer[36 .. 40].dup;
             byte[4] field7 = fromServer[40 .. 44].dup;
+            byte[4] field8 = fromServer[44 .. 48].dup;
+            byte[4] field9 = fromServer[48 .. 52].dup;
+            byte[4] field10 = fromServer[52 .. 56].dup;
+            byte[4] field11 = fromServer[56 .. 60].dup;
             // byte[64] messageField = fromServer[36 .. 100].dup;
             // byte[4] field6 = fromServer[100 .. 104].dup;
             int f1 = *cast(int*)&field1;
@@ -149,13 +153,10 @@ class TCPClient{
             byte f5 = *cast(byte*)&field5;
             int f6 = *cast(int*)&field6;
             int f7 = *cast(int*)&field7;
-            formattedPacket.x = f1;
-            formattedPacket.y = f2;
-            formattedPacket.r = f3;
-            formattedPacket.g = f4;
-            formattedPacket.b = f5;
-            formattedPacket.s = f6;
-            formattedPacket.bs = f7;
+            int f8 = *cast(int*)&field8;
+            int f9 = *cast(int*)&field9;
+            int f10 = *cast(int*)&field10;
+            int f11 = *cast(int*)&field11;
             
             write(">");
             return formattedPacket;
