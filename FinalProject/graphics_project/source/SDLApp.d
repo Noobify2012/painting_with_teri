@@ -259,8 +259,8 @@ class SDLApp{
                         }
 
                         /// Send the selected shape to the ShapeListener so the user can draw it. 
-                        ShapeListener shQ = new ShapeListener(&state, quadrant, brushSize);
-                        shQ.setRGB(red, green, blue);
+                        ShapeListener shQ = new ShapeListener(quadrant, brushSize);
+                       // shQ.setRGB(red, green, blue);
                         shQ.drawShape(&imgSurface, brush, red, green, blue);
                     }
 
@@ -440,7 +440,7 @@ class SDLApp{
                                 "\nType 'l' for line", "\nType 'r' for rectangle");
                         // ShapeListener sh = new ShapeListener();
 
-                        sh.setRGB(red, green, blue);
+                        //sh.setRGB(red, green, blue);
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
                         shapeAction = sh.getAction();
                         shapeAction.setColor([cast(int) red, cast(int) green, cast(int) blue]);
@@ -686,22 +686,22 @@ Tuple!(int, int)[] buildShape(Packet packet) {
     return points; 
 }
 
-Tuple!(int, int)[] buildShape(Packet packet) {
-    Tuple!(int, int)[] points;
-    Tuple!(int, int) point1, point2, point3;
-    point1[0] = packet.x;
-    point1[1] = packet.y;
-    point2[0] = packet.x2;
-    point2[1] = packet.y2;
-    point3[0] = packet.x3;
-    point3[1] = packet.y3;
-    points ~= point1;
-    points ~= point2;
-    if (packet.s == 3) {
-        points ~= point3;
-    }
-    return points; 
-}
+// Tuple!(int, int)[] buildShape(Packet packet) {
+//     Tuple!(int, int)[] points;
+//     Tuple!(int, int) point1, point2, point3;
+//     point1[0] = packet.x;
+//     point1[1] = packet.y;
+//     point2[0] = packet.x2;
+//     point2[1] = packet.y2;
+//     point3[0] = packet.x3;
+//     point3[1] = packet.y3;
+//     points ~= point1;
+//     points ~= point2;
+//     if (packet.s == 3) {
+//         points ~= point3;
+//     }
+//     return points; 
+// }
 
     /**
      Change the brush size selected. 
