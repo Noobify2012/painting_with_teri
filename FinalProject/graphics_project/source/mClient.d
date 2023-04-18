@@ -20,7 +20,7 @@ import Packet : Packet;
 class TCPClient{
 	/// The client socket connected to a server
 	Socket mSocket;
-    Packet inbound;
+    Action inbound;  // edited
     string host;
     ushort port;
     // Deque incoming;
@@ -75,7 +75,7 @@ class TCPClient{
 	// 
 	// In order to make life a little easier, I will also spin up a new thread that constantly
 	// receives data from the server.
-	Packet run(Packet packet) {
+	Action run(Action packet) {  // edited
 		writeln("Preparing to run client");
 		writeln("(me)",mSocket.localAddress(),"<---->",mSocket.remoteAddress(),"(server)");
 		// Buffer of data to send out
@@ -104,7 +104,7 @@ class TCPClient{
 
 	}
 
-    void sendDataToServer(Packet packet) {
+    void sendDataToServer(Action packet) {  // edited
         mSocket.send(packet.GetPacketAsBytes);
     }
 
@@ -115,11 +115,11 @@ class TCPClient{
 
 
 	/// Purpose of this function is to receive data from the server as it is broadcast out.
-	Action receiveDataFromServer(){
+	Action receiveDataFromServer(){  // edited
 		while(true){	
 			// Note: It's important to recreate or 'zero out' the buffer so that you do not
 			// 			 get previous data leftover in the buffer.
-			byte[Action.sizeof] buffer;
+			byte[Action.sizeof] buffer;  // edited
             auto fromServer = buffer[0 .. mSocket.receive(buffer)];
             writeln("buffer length    :", buffer.length);
             writeln("fromServer (raw bytes): ",fromServer);
@@ -127,19 +127,13 @@ class TCPClient{
 
             /// Format the packet. Note, I am doing this in a very
             /// verbosoe manner so you can see each step.
-            Action formattedPacket;
-            byte[16] field0        = fromServer[0 .. 16].dup;  // will probably need to change this
+            Action formattedPacket;  // edited
+            byte[16] field0        = fromServer[0 .. 16].dup;
             formattedPacket.user = cast(char[])(field0);
             writeln("Server echos back user: ", formattedPacket.user);
 
-            /// Get shape field
+            /// Get some of the fields
             byte[4] field1 = fromServer[16 .. 20].dup;
-            int f1 = *cast(int*)&field1;
-            formattedPacket.shape = f1;
-            writeln("Shape from server: ", f1)
-
-
-            // Get some fields
             byte[4] field2 = fromServer[20 .. 24].dup;
             byte[4] field3 = fromServer[24 .. 28].dup;
             byte[4] field4 = fromServer[28 .. 32].dup;
@@ -148,19 +142,37 @@ class TCPClient{
             byte[4] field7 = fromServer[40 .. 44].dup;
             // byte[64] messageField = fromServer[36 .. 100].dup;
             // byte[4] field6 = fromServer[100 .. 104].dup;
-            int f2 = *cast(byte*)&field2;  // this will be r
-            byte f3 = *cast(byte*)&field3;  // this will be g
-            byte f4 = *cast(byte*)&field4;  // this will be b
-            byte f5 = *cast(int*)&field5;  // this will be brush size
-            // int f6 = *cast(int*)&field6;
-            // int f7 = *cast(int*)&field7;
+            int f1 = *cast(int*)&field1;
+            int f2 = *cast(int*)&field2;
+            byte f3 = *cast(byte*)&field3;
+            byte f4 = *cast(byte*)&field4;
+            byte f5 = *cast(byte*)&field5;
+            int f6 = *cast(int*)&field6;
+            int f7 = *cast(int*)&field7;
 
-            formattedPacket.y = f2;
+            if (f1 == 0) {
+                formattedPacket._actionType = "circle";
+                // get coordinates - how??
+            } else             if (f1 == 1) {
+                formattedPacket._actionType = "rectangle";
+                // get coordinates - how??
+            } else             if (f1 == 2) {
+                formattedPacket._actionType = "triangle";
+                // get coordinates - how??
+            } else             if (f1 == 3) {
+                formattedPacket._actionType = "line";
+                // get coordinates - how??
+            } else            if (f1 == 4) {
+                formattedPacket._actionType = "stroke";
+                // get coordinates - how?? - could be any number of pts
+            }
+
             formattedPacket.r = f3;
             formattedPacket.g = f4;
             formattedPacket.b = f5;
-            formattedPacket.s = f6;
-            formattedPacket.bs = f7;
+            // formattedPacket.bs = f7; this doesn't appear to be part of Action but it should be
+            // formattedPacket.x = f1;
+            // formattedPacket.y = f2;
             
             write(">");
             return formattedPacket;
@@ -179,24 +191,31 @@ class TCPClient{
         * @param brushSize: integer value of the size of the brush that is currently being used
     * Turns the changes in pixel colors on the current users surface into a packet to send to other networked users. 
     */
-Action getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyte blueVal, int shape, int brushSize) {
-    Action data;
+    // int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyte blueVal, int shape, int brushSize
+Action getChangeForServer(Action act) { // edited
+    Action data;  // edited
 		// The 'with' statement allows us to access an object
 		// (i.e. member variables and member functions)
 		// in a slightly more convenient way
 
 		with (data) {
-			s = shape;
-			// Just some 'dummy' data for now
-			// that the 'client' will continuously send
-			x = xPos;
-			y = yPos;
-			r = *cast(byte*)&redVal;
-			g = *cast(byte*)&greenVal;
-			b = *cast(byte*)&blueVal;
+			user = "clientName\0";
+            act.s = shape;
+            act._color = [r, g, b]
+			// // Just some 'dummy' data for now
+			// // that the 'client' will continuously send
+			// x = xPos;
+			// y = yPos;
+			// r = *cast(byte*)&redVal;
+			// g = *cast(byte*)&greenVal;
+			// b = *cast(byte*)&blueVal;
             // s = shape;
-            bs = brushSize;
-			message = "update from user: " ~ 1 ~ " test\0";
+            // bs = brushSize;
+			// message = "update from user: " ~ 1 ~ " test\0";
+
+            if (act.s == 0) {
+                act.
+            }
 		}
     return data;
 }

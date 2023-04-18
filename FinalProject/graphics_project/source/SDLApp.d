@@ -50,9 +50,9 @@ class SDLApp{
     ubyte green = 255;
     ubyte blue = 255;
 
-    Packet inbound;
+    Action inbound;  // edited
     bool tear_down = false;
-    auto received = new Deque!(Packet);
+    auto received = new Deque!(Action); // edited
 
 
     void MainApplicationLoop(){
@@ -312,8 +312,9 @@ class SDLApp{
                             
                             // Check if the client is networked
                             if(networked == true) {
-                                Packet packet;
-                                packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue, 0, brushSize);
+                                // Action packet;  // edited I think we actually want this to be the global action
+                                // packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue, 0, brushSize);
+                                packet = mClient.getChangeForServer(act);
                                 //if client networked then make sure that the next packet to send isn't equal to the last one(no sequential duplicate packets).
                                 if (traffic.size() > 0 ) {
                                     if (packet != traffic.back() ) {
@@ -503,161 +504,170 @@ class SDLApp{
             blue = 136;
         }
     }
-/**
+    /**
     * Name: getNewData 
     * Description: Establishes a new thread with a listener to get all incoming changes when we are networked
     * Listens for incoming data from the server and adds it to the queue for inbound traffic to be added to the surface.
     */
-void getNewData() {
-        new Thread({
-            while (!tear_down) {
-                inbound = client.receiveDataFromServer();
-                writeln("inbound x: " ~ to!string(inbound.x) ~ " inbound y: " ~ to!string(inbound.y));
-                received.push_front(inbound);
-                writeln("Size of Received: " ~to!string(received.size()));
-            } 
-        }).start();
-    }
+    void getNewData() {
+            new Thread({
+                while (!tear_down) {
+                    inbound = client.receiveDataFromServer();
+                    writeln("inbound x: " ~ to!string(inbound._points[0][0]) ~ " inbound y: " ~ to!string(inbound._points[0][0]));  // edited
+                    received.push_front(inbound);
+                    writeln("Size of Received: " ~to!string(received.size()));
+                } 
+            }).start();
+        }
 
-/**
+    /**
     * Name: drawInbound 
     * Description: Adds all networked painting pixels and adds them to the users surface. 
     * Params:    
-        * @param traffic: Deque of packets from the server that contains pixel changes from the server
+    * @param traffic: Deque of packets from the server that contains pixel changes from the server
         * @param imgSurface: The users image surface that needs to be updated
     * Creates a seperate thread and removes all of the packets of pixel changes from the server from the queue and adds them to the surface. 
     */
-void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
-    // auto threads = ThreadBase.getAll(); 
-    // writeln("Number of threads: " ~to!string(threads.length));    
-    
-        // int prevX = -9999;
-        // int prevY = -9999;
-        new Thread({
-        while(traffic.size() > 0) {
-            
-                auto curr = traffic.pop_back();
-                // writeln("and now here");
-                //TODO: Fix order
-                // int brushs = cast(int)(curr.bs & 0xff);
-                red = cast(char)(curr.r & 0xff);
-                blue = cast(char)(curr.b & 0xff);
-                green = cast(char)(curr.g & 0xff);
-                // writeln("Prevx : " ~ to!string(prevX) ~ " Prevy : " ~ to!string(prevY) ~  " curr.x : " ~ to!string(curr.x) ~  " curr.y : " ~ to!string(curr.y)~  " curr.bs : " ~ to!string(curr.bs) ~  " red : " ~ to!string(red) ~  " green : " ~ to!string(green) ~ " blue : " ~ to!string(blue));     
-                // writeln("NEW RBG VALS:: " ~ to!string(convertBytetoUnsigned(curr.r))  ~ to!string(convertBytetoUnsigned(curr.g))~ to!string(convertBytetoUnsigned(curr.b)));
-                // imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, red, green, blue);
-            
-                // prevX = curr.x;
-                // prevY = curr.y;
-            
-                imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);            
-        }}).start();
+    void drawInbound(Deque!(Action) traffic, Surface imgSurface) { // edited
+        // auto threads = ThreadBase.getAll(); 
+        // writeln("Number of threads: " ~to!string(threads.length));    
+        
+            // int prevX = -9999;
+            // int prevY = -9999;
+            new Thread({
+            while(traffic.size() > 0) {
+                
+                    auto curr = traffic.pop_back();
+                    // writeln("and now here");
+                    //TODO: Fix order
+                    // int brushs = cast(int)(curr.bs & 0xff);
+                    act_type = curr._actionType;  // edited all this
+                    red = cast(char)(curr._color[0] & 0xff);
+                    blue = cast(char)(curr._color[2] & 0xff);
+                    green = cast(char)(curr._color[3] & 0xff);
+                    colors = [r, g, b];
+                    // do we need to set points?
+                    // do we need to set brush size
 
-}
+                    // writeln("Prevx : " ~ to!string(prevX) ~ " Prevy : " ~ to!string(prevY) ~  " curr.x : " ~ to!string(curr.x) ~  " curr.y : " ~ to!string(curr.y)~  " curr.bs : " ~ to!string(curr.bs) ~  " red : " ~ to!string(red) ~  " green : " ~ to!string(green) ~ " blue : " ~ to!string(blue));     
+                    // writeln("NEW RBG VALS:: " ~ to!string(convertBytetoUnsigned(curr.r))  ~ to!string(convertBytetoUnsigned(curr.g))~ to!string(convertBytetoUnsigned(curr.b)));
+                    // imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, red, green, blue);
+                
+                    // prevX = curr.x;
+                    // prevY = curr.y;
 
+                    sh_inbound = new Shape;
+                    sh.drawFromPoints(curr._points, red, green, blue, 4);
+                    // handle stroke which is different
 
-int brushSizeChanger(int curBrush){
-    if (curBrush < 8) {
-        curBrush += 2;
-        writeln(curBrush);
-    }
-    else if (curBrush == 8){
-        curBrush = 12;
-    } else {
-        curBrush = 2;
-    }
-    writeln("Changing to brush size: " , to!string(curBrush));
-    return curBrush;
-}
+                    // imgSurface.UpdateSurfacePixel(curr._points[0][0], curr._points[0[1]], curr.r, curr.g, curr.b);  // edited      
+            }}).start();
 
-int colorChanger(int curColor){
-    if (curColor < 6) {
-        writeln("CHANGE COLOR BUTTON PRESSED");
-        curColor++;
-    } else {
-        curColor=1;
-        writeln("CHANGE COLOR BUTTON PRESSED");
     }
 
-    string[6] colorNameArr;
-    colorNameArr = ["Red", "Orange", "Yellow", 
-                              "Green", "Blue", "Violet"];
-    writeln("Changing to color : " , colorNameArr[curColor - 1]);
-    return curColor; 
-}
 
-void createMenu(Surface imgSurface){
- /// **Tech debt: Create variables for window size so they can be changed proportionally**
-        /// **Tech debt: Move menu creation into its own function**
-        //Draw bottom bar of menu skeleton
-        menuBarSetup(imgSurface);
-        //Setting up brush size button display (Button 1)
-        button1Setup(imgSurface);
-        //Setting up color button display (Button 2)
-        button2Setup(imgSurface);
-        //Setting up eraser button display (Button 3)
-        button3Setup(imgSurface);
-        //Setting up shape button display (Button 4)
-        button4Setup(imgSurface);
-}
+    int brushSizeChanger(int curBrush){
+        if (curBrush < 8) {
+            curBrush += 2;
+            writeln(curBrush);
+        }
+        else if (curBrush == 8){
+            curBrush = 12;
+        } else {
+            curBrush = 2;
+        }
+        writeln("Changing to brush size: " , to!string(curBrush));
+        return curBrush;
+    }
 
-
-void menuBarSetup(Surface imgSurface){
-    int b1;
-        for(b1 = 1; b1 <= 640; b1++){
-             imgSurface.lerp(b1 - 1, 50, b1, 50, 2, 255, 255, 255);  
+    int colorChanger(int curColor){
+        if (curColor < 6) {
+            writeln("CHANGE COLOR BUTTON PRESSED");
+            curColor++;
+        } else {
+            curColor=1;
+            writeln("CHANGE COLOR BUTTON PRESSED");
         }
 
-    //Draw divider bars for menu skeleton 
-    int h1;
-    int h2 = 640/6;
-    int h3;
-    //There needs to be 5 dividers, this is h1
-    for (h1 = 1; h1 <= 5; h1++){
-        int divX = h1 * h2;
-        //The dividers each need to be 50 pixels tall. that is h3
-        for (h3 = 0; h3 < 50; h3++){
-            imgSurface.lerp(divX - 1, h3, divX, h3+1, 2, 255, 255, 255);
-        }
+        string[6] colorNameArr;
+        colorNameArr = ["Red", "Orange", "Yellow", 
+                                "Green", "Blue", "Violet"];
+        writeln("Changing to color : " , colorNameArr[curColor - 1]);
+        return curColor; 
     }
-}
 
-void button1Setup(Surface imgSurface){
-  int bs;
-        int bsStart = 15;
-        int bs1;
-        for (bs = 1; bs <= 5; bs++){
-            for(bs1 = 0; bs1 <= bs * 2; bs1++){
-            imgSurface.lerp(bsStart, 8 + 2 * bs, bsStart, 40 - 2 * bs, bs * 2, 255, 255, 255);
+    void createMenu(Surface imgSurface){
+    /// **Tech debt: Create variables for window size so they can be changed proportionally**
+            /// **Tech debt: Move menu creation into its own function**
+            //Draw bottom bar of menu skeleton
+            menuBarSetup(imgSurface);
+            //Setting up brush size button display (Button 1)
+            button1Setup(imgSurface);
+            //Setting up color button display (Button 2)
+            button2Setup(imgSurface);
+            //Setting up eraser button display (Button 3)
+            button3Setup(imgSurface);
+            //Setting up shape button display (Button 4)
+            button4Setup(imgSurface);
+    }
+
+
+    void menuBarSetup(Surface imgSurface){
+        int b1;
+            for(b1 = 1; b1 <= 640; b1++){
+                imgSurface.lerp(b1 - 1, 50, b1, 50, 2, 255, 255, 255);  
             }
-        bsStart += bs * 4 + 6;
-        }
-}
 
-void button2Setup(Surface imgSurface){
-    int cn;
-    int cn1;
-    int cnStart = 112;
-    for (cn = 1; cn <= 6; cn++){
-        colorValueSetter(cn);
-        for (cn1 = 0; cn1 < 12; cn1++){
-            cnStart++;
-            imgSurface.lerp(cnStart, 8, cnStart, 40, 1, red, green, blue);
+        //Draw divider bars for menu skeleton 
+        int h1;
+        int h2 = 640/6;
+        int h3;
+        //There needs to be 5 dividers, this is h1
+        for (h1 = 1; h1 <= 5; h1++){
+            int divX = h1 * h2;
+            //The dividers each need to be 50 pixels tall. that is h3
+            for (h3 = 0; h3 < 50; h3++){
+                imgSurface.lerp(divX - 1, h3, divX, h3+1, 2, 255, 255, 255);
+            }
         }
-    cnStart += 4;
     }
-}
 
-void button3Setup(Surface imgSurface){
-    imgSurface.lerp(240, 40, 290, 40, 2, 224, 125, 19);
-    imgSurface.lerp(230, 20, 275, 8, 1, 255, 255, 255);
-    imgSurface.lerp(230, 20, 240, 40, 1, 255, 255, 255);
-    imgSurface.lerp(275, 8, 285, 28, 1, 255, 255, 255);
-    imgSurface.lerp(243, 17, 253, 37, 1, 255, 255, 255);
-    imgSurface.lerp(240, 40, 285, 28, 1, 255, 255, 255);
-}
+    void button1Setup(Surface imgSurface){
+    int bs;
+            int bsStart = 15;
+            int bs1;
+            for (bs = 1; bs <= 5; bs++){
+                for(bs1 = 0; bs1 <= bs * 2; bs1++){
+                imgSurface.lerp(bsStart, 8 + 2 * bs, bsStart, 40 - 2 * bs, bs * 2, 255, 255, 255);
+                }
+            bsStart += bs * 4 + 6;
+            }
+    }
 
-void button4Setup(Surface imgSurface){
+    void button2Setup(Surface imgSurface){
+        int cn;
+        int cn1;
+        int cnStart = 112;
+        for (cn = 1; cn <= 6; cn++){
+            colorValueSetter(cn);
+            for (cn1 = 0; cn1 < 12; cn1++){
+                cnStart++;
+                imgSurface.lerp(cnStart, 8, cnStart, 40, 1, red, green, blue);
+            }
+        cnStart += 4;
+        }
+    }
+
+    void button3Setup(Surface imgSurface){
+        imgSurface.lerp(240, 40, 290, 40, 2, 224, 125, 19);
+        imgSurface.lerp(230, 20, 275, 8, 1, 255, 255, 255);
+        imgSurface.lerp(230, 20, 240, 40, 1, 255, 255, 255);
+        imgSurface.lerp(275, 8, 285, 28, 1, 255, 255, 255);
+        imgSurface.lerp(243, 17, 253, 37, 1, 255, 255, 255);
+        imgSurface.lerp(240, 40, 285, 28, 1, 255, 255, 255);
+    }
+
+    void button4Setup(Surface imgSurface){
             //Horizontal line across button 4 
         int s1;
         int sStart = 320;

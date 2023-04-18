@@ -53,12 +53,12 @@ class Action {
 	*	otherwise saving to disk.	
 	* Returns: Payload, packet with bytes of color data for each pixel TODO: confirm
 	*/
-    char[Action.sizeof] GetPacketAsBytes(){
+    char[Action.sizeof] GetPacketAsBytes(){  // edited this whole fn
         byte[4] s;
         byte[4] r;
         byte[4] g;
         byte[4] b;
-		actn = "test user\0";
+		act_type = "test user\0";
         message = "test message\0";
         char[Packet.sizeof] payload;
 		/// Populate the payload with some bits
@@ -76,15 +76,30 @@ class Action {
         memmove(&payload[20],&b,b.sizeof);
 		memmove(&payload[28],&g,g.sizeof);
 		memmove(&payload[32],&b,b.sizeof);
-        // get coordinates - how?
+        // add coordinates - how?
 
-        this.color = [r, b, g]
-        if (s == 0) {
-            thisactionType = "circle"
-            // get coordinates - how?
+        this._color = [r, b, g]
+        if (this._actionType = "circle") {
+            s == 0;
+            // add coordinates - how?
+
+        } else if (this._actionType = "rectangle") {
+            s == 1;
+            // add coordinates - how?
+
+        } else if (this._actionType = "triangle") {
+            s == 2;
+            // add coordinates - how?
+
+        } else if (this._actionType = "line") {
+            s == 3;
+            // add coordinates - how?
+
+        } else if (this._actionType = "stroke") {
+            s == 4;
+            // add coordinates - how? this one is hard bc it has a million points
 
         }
-
 		// memmove(&payload[16],&x,x.sizeof);
 		// memmove(&payload[20],&y,y.sizeof);
 		// memmove(&payload[24],&r,r.sizeof);
