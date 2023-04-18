@@ -150,3 +150,33 @@ class State {
         }
     }
 }
+
+
+/**
+* Test: Checks for the surface to be initialized to black, draws diagonal Line
+* and checks that intervening points have changed color
+*/
+@("Undo test")
+unittest{
+    SDLInit app = new SDLInit();
+    Surface s = new Surface(0,640,480,32,0,0,0,0);
+    State sta = new State(&s);
+    Action a1 = new Action([tuple(1,1), tuple(3,3)], [32,128,255], "rectangle");
+    /// Check that undo and redo stack sizes are 0
+    assert( sta.undoStack.length == 0, "Initial undo stack length <>0");
+    assert( sta.redoStack.length == 0, "Initial redo stack length <>0");
+    /// Add action to state and check it increases undo stack by 1
+    sta.addAction(a1);
+    assert(	sta.undoStack.length == 1, "Undo stack after adding 1 <>1");
+    /// Undo action and check it decreases undo stack and increases redo stack by 1
+    sta.undo();
+    assert( sta.undoStack.length == 0, "After undo, undo stack length <>0");
+    assert( sta.redoStack.length == 1, "After undo, redo stack length <>1");
+    /// Redo action and check it increases undo stack and decreases redo stack by 1
+    sta.redo();
+    assert( sta.undoStack.length == 1, "Initial undo stack length <>1");
+    assert( sta.redoStack.length == 0, "Initial redo stack length <>0");
+
+    /// Check that what's been added, removed, and re-added to undo stack is a1
+    assert( sta.undoStack[0] == a1, "a1 not in undo stack");
+}
