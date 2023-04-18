@@ -635,7 +635,6 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
                     Line inboundLine = new Line(&imgSurface);
                     inboundLine.drawFromPoints(shapePoints, red, green, blue, 4);
                     writeln("i got a line");
-
                 }        
         }}).start();
 
