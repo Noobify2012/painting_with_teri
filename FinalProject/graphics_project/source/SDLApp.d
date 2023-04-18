@@ -315,15 +315,15 @@ class SDLApp{
                             // Check if the client is networked
                             if(networked == true) {
                                 Packet packet;
-                                packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue, 0, brushSize,0,0,0,0);
+                                // packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue, 0, brushSize,0,0,0,0);
                                 //if client networked then make sure that the next packet to send isn't equal to the last one(no sequential duplicate packets).
-                                if (traffic.size() > 0 ) {
-                                    if (packet != traffic.back() ) {
-                                        traffic.push_front(packet);
-                                    }
-                                } else {
-                                    traffic.push_front(packet);
-                                }
+                                // if (traffic.size() > 0 ) {
+                                //     if (packet != traffic.back() ) {
+                                //         traffic.push_front(packet);
+                                //     }
+                                // } else {
+                                //     traffic.push_front(packet);
+                                // }
                             // }
                             }
                         }
@@ -333,7 +333,13 @@ class SDLApp{
                     /// --This is also imposing bounds for drawing lines - the xPos & yPos limitations
                     /// keep you from overflowing pixels
                     if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 50 && prevY > 51) {
-                        imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                        Packet linePacket = mClient.getChangeForServer(prevX, prevY, red, green, blue, 4, brushSize, xPos, yPos,0,0);
+                        Line newLine = new Line(&imgSurface);
+                        newLine.drawFromPoints(buildShape(linePacket), red, green, blue, brushSize);
+                        // imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                        if (networked == true) {
+                            client.sendDataToServer(linePacket);
+                        }
                          writeln("are we hitting lerp?");
                     }
                     prevX = xPos;
