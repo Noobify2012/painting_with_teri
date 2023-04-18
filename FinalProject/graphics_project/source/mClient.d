@@ -115,11 +115,11 @@ class TCPClient{
 
 
 	/// Purpose of this function is to receive data from the server as it is broadcast out.
-	Packet receiveDataFromServer(){
+	Action receiveDataFromServer(){
 		while(true){	
 			// Note: It's important to recreate or 'zero out' the buffer so that you do not
 			// 			 get previous data leftover in the buffer.
-			byte[Packet.sizeof] buffer;
+			byte[Action.sizeof] buffer;
             auto fromServer = buffer[0 .. mSocket.receive(buffer)];
             writeln("buffer length    :", buffer.length);
             writeln("fromServer (raw bytes): ",fromServer);
@@ -127,13 +127,19 @@ class TCPClient{
 
             /// Format the packet. Note, I am doing this in a very
             /// verbosoe manner so you can see each step.
-            Packet formattedPacket;
-            byte[16] field0        = fromServer[0 .. 16].dup;
+            Action formattedPacket;
+            byte[16] field0        = fromServer[0 .. 16].dup;  // will probably need to change this
             formattedPacket.user = cast(char[])(field0);
             writeln("Server echos back user: ", formattedPacket.user);
 
-            /// Get some of the fields
+            /// Get shape field
             byte[4] field1 = fromServer[16 .. 20].dup;
+            int f1 = *cast(int*)&field1;
+            formattedPacket.shape = f1;
+            writeln("Shape from server: ", f1)
+
+
+            // Get some fields
             byte[4] field2 = fromServer[20 .. 24].dup;
             byte[4] field3 = fromServer[24 .. 28].dup;
             byte[4] field4 = fromServer[28 .. 32].dup;
@@ -142,14 +148,13 @@ class TCPClient{
             byte[4] field7 = fromServer[40 .. 44].dup;
             // byte[64] messageField = fromServer[36 .. 100].dup;
             // byte[4] field6 = fromServer[100 .. 104].dup;
-            int f1 = *cast(int*)&field1;
-            int f2 = *cast(int*)&field2;
-            byte f3 = *cast(byte*)&field3;
-            byte f4 = *cast(byte*)&field4;
-            byte f5 = *cast(byte*)&field5;
-            int f6 = *cast(int*)&field6;
-            int f7 = *cast(int*)&field7;
-            formattedPacket.x = f1;
+            int f2 = *cast(byte*)&field2;  // this will be r
+            byte f3 = *cast(byte*)&field3;  // this will be g
+            byte f4 = *cast(byte*)&field4;  // this will be b
+            byte f5 = *cast(int*)&field5;  // this will be brush size
+            // int f6 = *cast(int*)&field6;
+            // int f7 = *cast(int*)&field7;
+
             formattedPacket.y = f2;
             formattedPacket.r = f3;
             formattedPacket.g = f4;
@@ -174,14 +179,14 @@ class TCPClient{
         * @param brushSize: integer value of the size of the brush that is currently being used
     * Turns the changes in pixel colors on the current users surface into a packet to send to other networked users. 
     */
-Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyte blueVal, int shape, int brushSize) {
-    Packet data;
+Action getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyte blueVal, int shape, int brushSize) {
+    Action data;
 		// The 'with' statement allows us to access an object
 		// (i.e. member variables and member functions)
 		// in a slightly more convenient way
 
 		with (data) {
-			user = "clientName\0";
+			s = shape;
 			// Just some 'dummy' data for now
 			// that the 'client' will continuously send
 			x = xPos;
@@ -189,7 +194,7 @@ Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyt
 			r = *cast(byte*)&redVal;
 			g = *cast(byte*)&greenVal;
 			b = *cast(byte*)&blueVal;
-            s = shape;
+            // s = shape;
             bs = brushSize;
 			message = "update from user: " ~ 1 ~ " test\0";
 		}
