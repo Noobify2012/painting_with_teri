@@ -90,7 +90,7 @@ class SDLApp{
         State state = new State(&imgSurface);
 
         DrawingUtility du = new DrawingUtility();
-        ShapeListener sh = new ShapeListener(&state);
+        ShapeListener sh = new ShapeListener();
 
         /// Intialize deque for storing traffic to send
         auto traffic = new Deque!(Packet);
@@ -242,6 +242,7 @@ class SDLApp{
 
                 }else if(e.type == SDL_MOUSEBUTTONUP){
                     if (drawing) {
+                        act.setColor([cast(int) red, cast(int) green, cast(int) blue]);
                         state.addAction(act);
 
                         act = new Action([], [red, green, blue], "stroke");
@@ -304,7 +305,6 @@ class SDLApp{
                                 green = 0;
                                 blue = 0;
                                 // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 0, 0, 0);
-                                act.setColor([cast(int) red, cast(int) green, cast(int) blue]);
                             }
                             /// Send change from user to deque
                             if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 52 && prevY > 52)
@@ -421,6 +421,9 @@ class SDLApp{
 
                         sh.setRGB(red, green, blue);
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
+                        Action shapeAction = sh.getAction();
+                        shapeAction.setColor([cast(int) red, cast(int) green, cast(int) blue]);
+                        state.addAction(sh.getAction());
                     } else if (e.key.keysym.sym == SDLK_u) {
                         state.undo();
                     } else if (e.key.keysym.sym == SDLK_r) {

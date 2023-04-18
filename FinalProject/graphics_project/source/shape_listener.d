@@ -23,12 +23,9 @@ import Action : Action;
 class ShapeListener {
   string quadrant; 
 
-  State *state;
-  int r, g, b;
+  Action action;
 
-  this(State *_state) {
-
-    this.state = _state;
+  this() {
   }
 
   this(string quad){
@@ -39,12 +36,9 @@ class ShapeListener {
 
   }
 
-  void setRGB(int _r, int _g, int _b) {
-
-    this.r = _r;
-    this.g = _g;
-    this.b = _b;
-
+  Action getAction() {
+    
+    return this.action;
   }
   
   void drawShape(Surface* surf, int brushSize, ubyte r, ubyte g, ubyte b) {
@@ -106,7 +100,6 @@ class ShapeListener {
       }
     }
     int[3] color = [r, g, b];
-    Action action = new Action(sh.getPoints(), color, shapeType);
-    this.state.addAction(action);
+    this.action = new Action(sh.getPoints(), color, shapeType);
   }
 }
