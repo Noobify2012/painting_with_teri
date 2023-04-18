@@ -468,12 +468,7 @@ class SDLApp{
                         // ubyte redU = *cast(byte*)&red;
                         // ubyte greenU = *cast(byte*)&green;
                         // ubyte blueU = *cast(byte*)&blue;
-
                         int shapeBrush = 4;
-
-
-                        
-
                         // writeln(shapeAction.getPoints[]);
                         // writeln(shapeAction.getPoints[0][0]);
                         // writeln(shapeAction.getPoints[0][1]);
@@ -482,7 +477,6 @@ class SDLApp{
                         if (networked == true) {
                             Packet shapePacket = mClient.getChangeForServer(x,y,red, green, blue, st, shapeBrush, x2, y2, x3, y3);
                             client.sendDataToServer(shapePacket);
-                            writeln("send shape to server");
                         }
                     } else if (e.key.keysym.sym == SDLK_u) {
                         state.undo();
@@ -580,7 +574,7 @@ void getNewData() {
         new Thread({
             while (!tear_down) {
                 inbound = client.receiveDataFromServer();
-                writeln("inbound x: " ~ to!string(inbound.x) ~ " inbound y: " ~ to!string(inbound.y));
+                // writeln("inbound x: " ~ to!string(inbound.x) ~ " inbound y: " ~ to!string(inbound.y)~ " inbound shape: " ~ to!string(inbound.s));
                 received.push_front(inbound);
                 writeln("Size of Received: " ~to!string(received.size()));
             } 
@@ -620,16 +614,27 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
                 Tuple!(int, int)[] shapePoints = buildShape(curr);
                 if (curr.s == 0) {
                     imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
+                    writeln("i got a pixel");
                 } else if (curr.s == 1) {
                     //circle
                     Circle inboundCircle = new Circle(&imgSurface);
                     inboundCircle.drawFromPoints(shapePoints, red, green, blue, 4);
+                    writeln("i got a circle");
                 } else if (curr.s == 2) {
                     //rectangle
+                    Rectangle inboundRec = new Rectangle(&imgSurface);
+                    inboundRec.drawFromPoints(shapePoints, red, green, blue, 4);
+                    writeln("i got a rectangle");
                 } else if (curr.s == 3) {
                     //triangle
+                    Traiangle inboundTri = new Triangle(&imgSurface);
+                    inboundTri.drawFromPoints(shapePoints, red, green, blue, 4);
+                    writeln("i got a triangle");
                 } else {
                     //line
+                    Line inboundLine = new Line(&imgSurface);
+                    inboundLine.drawFromPoints(shapePoints, red, green, blue, 4);
+                    writeln("i got a line");
 
                 }        
         }}).start();

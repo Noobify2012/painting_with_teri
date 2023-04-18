@@ -157,6 +157,18 @@ class TCPClient{
             int f9 = *cast(int*)&field9;
             int f10 = *cast(int*)&field10;
             int f11 = *cast(int*)&field11;
+
+            formattedPacket.x = f1;
+            formattedPacket.y = f2;
+            formattedPacket.r = f3;
+            formattedPacket.g = f4;
+            formattedPacket.b = f5;
+            formattedPacket.s = f6;
+            formattedPacket.bs = f7;
+            formattedPacket.x2 = f8;
+            formattedPacket.y2 = f9;
+            formattedPacket.x3 = f10;
+            formattedPacket.y3 = f11;
             
             write(">");
             return formattedPacket;

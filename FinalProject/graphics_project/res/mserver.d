@@ -170,7 +170,7 @@ class TCPServer{
 						byte[4] field4 = buffer[28 .. 32].dup;
 						byte[4] field5 = buffer[32 .. 36].dup;
 						byte[4] field6 = buffer[36 .. 40].dup;
-						byte[4] field7 = buffer[32 .. 36].dup;
+						byte[4] field7 = buffer[40 .. 44].dup;
 						byte[4] field8 = buffer[44 .. 48].dup;
 						byte[4] field9 = buffer[48 .. 52].dup;
 						byte[4] field10 = buffer[52 .. 56].dup;
@@ -192,6 +192,7 @@ class TCPServer{
 						p.g = f4;
 						p.b = f5;
 						p.s = f6;
+						writeln("value of shape at server: " ~ to!string(p.s));
 						p.bs = f7;
 						p.x2 = f8;
 						p.y2 = f9;
