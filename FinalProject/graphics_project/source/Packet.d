@@ -65,8 +65,8 @@ struct Packet{
 		memmove(&payload[24],&r,r.sizeof);
 		memmove(&payload[28],&g,g.sizeof);
 		memmove(&payload[32],&b,b.sizeof);
-		memmove(&payload[36],&b,b.sizeof);
-		memmove(&payload[40],&b,b.sizeof);
+		memmove(&payload[36],&s,s.sizeof);
+		memmove(&payload[40],&bs,bs.sizeof);
 
         return payload;
 

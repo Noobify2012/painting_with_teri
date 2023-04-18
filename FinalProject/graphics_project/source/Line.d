@@ -13,6 +13,7 @@ import SDL_Surfaces;
 class Line : Shape {
 
     Surface* surf;
+    Tuple!(int, int)[] points;
 
     this(Surface* surf) {
         this.surf = surf;
@@ -64,10 +65,25 @@ class Line : Shape {
         }
         //Draw the line
         else {
-        int left = min(p1[0], p2[0]), right = max(p1[0], p2[0]);
-        int top = min(p1[1], p2[1]), bottom = max(p1[1], p2[1]);
+            this.points ~= p1;
+            this.points ~= p2;
+            
+            int left = min(p1[0], p2[0]), right = max(p1[0], p2[0]);
+            int top = min(p1[1], p2[1]), bottom = max(p1[1], p2[1]);
 
-        surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
+            surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
         }
+    }
+
+    override void drawFromPoints(Tuple!(int, int)[] points, ubyte r, ubyte g, ubyte b, int brushSize) {
+
+        assert(points.length == 2);
+
+        this.surf.lerp(points[0][0], points[0][1], points[1][0], points[1][1], brushSize, r, g, b);
+    }
+
+    override Tuple!(int, int)[] getPoints() {
+
+        return this.points;
     }
 }

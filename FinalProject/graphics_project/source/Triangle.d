@@ -15,6 +15,7 @@ import SDL_Surfaces;
 class Triangle : Shape {
 
     Surface* surf;
+    Tuple!(int, int)[] points;
 
     this(Surface* surf) {
         this.surf = surf;
@@ -49,12 +50,12 @@ class Triangle : Shape {
             }
         }
         
-        if (isLine(p1, p2, p3, brushSize, r, g, b)) {
+        // if (isLine(p1, p2, p3, brushSize, r, g, b)) {
 
-            surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
-            surf.lerp(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
-            surf.lerp(p1[0], p1[1], p3[0], p3[1], brushSize, r, g, b);
-        }
+        //     surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
+        //     surf.lerp(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
+        //     surf.lerp(p1[0], p1[1], p3[0], p3[1], brushSize, r, g, b);
+        // }
     }
 
     override void draw(int brushSize, ubyte r, ubyte g, ubyte b) {
@@ -88,9 +89,25 @@ class Triangle : Shape {
         //Draw the triangle 
         else {
 
+            this.points ~= p1;
+            this.points ~= p2;
+            this.points ~= p3;
+
             // int top = min(p1[1], p2[1], p3[1]), bottom = max(p1[1], p2[1], p3[1]), 
             //     left = min(p1[0], p1[0], p2[0]), right = max(p1[0], p2[0], p3[0]);
             fillTriangle(p1, p2, p3, brushSize, r, g, b);
         }
+    }
+
+    override void drawFromPoints(Tuple!(int, int)[] points, ubyte r, ubyte g, ubyte b, int brushSize) {
+
+        assert(points.length == 3);
+
+        fillTriangle(points[0], points[1], points[2], brushSize, r, g, b);
+    }
+
+    override Tuple!(int, int)[] getPoints() {
+
+        return this.points;
     }
 }

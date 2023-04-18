@@ -17,13 +17,19 @@ import Circle : Circle;
 import Line : Line;
 import Triangle : Triangle;
 import ShapeFactory : ShapeFactory;
+import state;
+import Action : Action;
 
 class ShapeListener {
   string quadrant;
   int brushSize; 
 
+  State *state;
+  int r, g, b;
+
   this() {
 
+    this.state = _state;
   }
 
   this(string quad, int brushSize){
@@ -34,6 +40,14 @@ class ShapeListener {
   ~this() {
 
   }
+
+  void setRGB(int _r, int _g, int _b) {
+
+    this.r = _r;
+    this.g = _g;
+    this.b = _b;
+
+  }
   
   void drawShape(Surface* surf, int brushSize, ubyte r, ubyte g, ubyte b) {
 
@@ -41,39 +55,49 @@ class ShapeListener {
 
     ShapeFactory shapeFactory = new ShapeFactory();
     SDL_Event e;
+
+    string shapeType;
     // Handle events
     
     bool shapeIsDrawn = false;
+    Shape sh;
     while (!shapeIsDrawn) {
-      Shape sh;
       while(SDL_PollEvent(&e) !=0){
         if(e.type == SDL_QUIT){
           ///Reset if user quits 
             shapeIsDrawn = true;
 
         } else if (e.key.keysym.sym == SDLK_r || this.quadrant == "TR") {
-          /// Draw a rectangle
+          writeln("Drawing rectangle");
+
+          shapeType = "rectangle";
           sh = shapeFactory.createShape("rectangle", surf);
           sh.draw(brushSize, r, g, b);
           writeln("RECTANGLE: Finished drawing");
           shapeIsDrawn = true;
 
         } else if (e.key.keysym.sym == SDLK_l || this.quadrant == "TL") {
-          /// Draw a line
+          writeln("Drawing line");
+
+          shapeType = "line";
           sh = shapeFactory.createShape("line", surf);
           sh.draw(brushSize, r, g, b);
           writeln("LINE: Finished drawing");
           shapeIsDrawn = true;
 
         } else if (e.key.keysym.sym == SDLK_c || this.quadrant == "BL") {
-          ///Draw a circle
+          writeln("Drawing circle");
+
+          shapeType = "circle";
           sh = shapeFactory.createShape("circle", surf);
           sh.draw(brushSize, r, g, b);
           writeln("CIRCLE: Finished drawing");
           shapeIsDrawn = true;
 
         } else if (e.key.keysym.sym == SDLK_t || this.quadrant == "BR") {
-          ///Draw a triangle
+          writeln("Drawing triangle");
+
+          shapeType = "triangle";
           sh = shapeFactory.createShape("triangle", surf);
           sh.draw(brushSize, r, g, b);
           writeln("TRIANGLE: Finished drawing");
@@ -81,5 +105,8 @@ class ShapeListener {
         }
       }
     }
+    int[3] color = [r, g, b];
+    Action action = new Action(sh.getPoints(), color, shapeType);
+    this.state.addAction(action);
   }
 }

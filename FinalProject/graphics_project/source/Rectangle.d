@@ -13,6 +13,7 @@ import SDL_Surfaces;
 class Rectangle : Shape {
 
     Surface* surf;
+    Tuple!(int, int)[] points;
 
     this(Surface* surf) {
 
@@ -94,6 +95,13 @@ class Rectangle : Shape {
             p2 = tuple(p3[0], p1[1]);
             p4 = tuple(p1[0], p3[1]);
 
+            points ~= p1;
+            points ~= p3;
+
+            // Declare remaining outstanding points
+            p2 = tuple(p3[0], p1[1]);
+            p4 = tuple(p1[0], p3[1]);
+
             // Find left, right, top and bottom most points to iterate over
             int minX = min(p1[0], p3[0]);
             int maxX = max(p1[0], p3[0]);
@@ -106,4 +114,48 @@ class Rectangle : Shape {
         }
     }
 
+    override void drawFromPoints(Tuple!(int, int)[] points, ubyte r, ubyte g, ubyte b, int brushSize) {
+
+        assert(points.length == 2);
+
+        Tuple!(int, int) p1 = points[0], p3 = points[1], p2 = tuple(p3[0], p1[1]), p4 = tuple(p1[0], p3[1]);
+
+        // Find left, right, top and bottom most points to iterate over
+        int minX = min(p1[0], p3[0]);
+        int maxX = max(p1[0], p3[0]);
+
+        int minY = min(p1[1], p3[1]);
+        int maxY = max(p1[1], p3[1]);
+
+        // Fill rectangle
+        fillRectangle(minX, maxX, minY, maxY, r, g, b);
+    }
+
+    override Tuple!(int, int)[] getPoints() {
+
+        return this.points;
+    }
+
 }
+
+
+/**
+* Test: Checks for the surface to be initialized to black, change the pixel color of 1,1 to blue, verify its blue,
+* change it to red, ensure that the color of 1,1 is now red 
+*/
+// @("Lerp test")
+// unittest{
+//     SDLInit app = new SDLInit();
+//     Surface s = new Surface(0,640,480,32,0,0,0,0);
+//     s.lerp(1, 1, 3, 1, 1, 255, 128, 32);
+//     /// Parse values of new data struct
+//     assert(	s.PixelAt(2,1)[0] == 255 &&
+//     s.PixelAt(2,1)[1] == 128 &&
+//     s.PixelAt(2,1)[2] == 32, "error rgb value at x,y is wrong!");
+//     /// Change the color of the pixel and make sure the change takes
+//     s.lerp(1, 1, 3, 3, 1, 32, 128, 255);
+//     /// Parse values of new data struct
+//     assert(	s.PixelAt(2,2)[0] == 32 &&
+//     s.PixelAt(2,2)[1] == 128 &&
+//     s.PixelAt(2,2)[2] == 255, "error rgb value at x,y is wrong!");
+// }
