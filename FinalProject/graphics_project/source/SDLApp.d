@@ -11,6 +11,8 @@ import std.typecons;
 import std.random;
 import core.thread.threadbase;
 
+
+
 /// Load the SDL2 library
 import bindbc.sdl;
 import bindbc.sdl.image;
@@ -47,6 +49,17 @@ class SDLApp{
     ubyte red = 255;
     ubyte green = 255;
     ubyte blue = 255;
+
+    /// Set erasing to false by default on launch
+    bool erasing = false;
+
+    auto traffic = new Deque!(Packet);
+    Socket sendSocket;
+    byte[Packet.sizeof] buffer;
+
+    Packet inbound;
+    bool tear_down = false;
+    auto received = new Deque!(Packet);
 
 
     /**
@@ -91,7 +104,7 @@ class SDLApp{
         Socket sendSocket;
         byte[Packet.sizeof] buffer;
         
-        writeln("tear down : " ~ to!string(tear_down));
+       // writeln("tear down : " ~ to!string(tear_down));
         
         Socket recieveSocket;
         // Deque traffic = new Deque!Packet;
@@ -244,8 +257,9 @@ class SDLApp{
                         }
 
                         /// Send the selected shape to the ShapeListener so the user can draw it. 
-                        ShapeListener sh = new ShapeListener(quadrant, brushSize);
-                        sh.drawShape(&imgSurface, brush, red, green, blue);
+                        ShapeListener shQ = new ShapeListener(&state, quadrant, brushSize);
+                        shQ.setRGB(red, green, blue);
+                        shQ.drawShape(&imgSurface, brush, red, green, blue);
                     }
 
                     /// Button five: UNDO --- INCOMING: dependency: implement undo/redo
@@ -404,6 +418,7 @@ class SDLApp{
                 }
             }
 
+            auto received = new Deque!(Packet);
             ///Networking Block:
             //if we have turned networking on, check if there is traffic and that we are not in the tear down process. 
             if (networked == true) {
@@ -489,6 +504,7 @@ class SDLApp{
     */
 void getNewData() {
         new Thread({
+            auto received = new Deque!(Packet);
             while (!tear_down) {
                 inbound = client.receiveDataFromServer();
                 writeln("inbound x: " ~ to!string(inbound.x) ~ " inbound y: " ~ to!string(inbound.y));
@@ -498,42 +514,19 @@ void getNewData() {
         }).start();
     }
 
-/**
-    * Name: drawInbound 
-    * Description: Adds all networked painting pixels and adds them to the users surface. 
-    * Params:    
-        * @param traffic: Deque of packets from the server that contains pixel changes from the server
-        * @param imgSurface: The users image surface that needs to be updated
-    * Creates a seperate thread and removes all of the packets of pixel changes from the server from the queue and adds them to the surface. 
-    */
+
 void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
-    // auto threads = ThreadBase.getAll(); 
-    // writeln("Number of threads: " ~to!string(threads.length));    
-    
-        // int prevX = -9999;
-        // int prevY = -9999;
-        new Thread({
-        while(traffic.size() > 0) {
-            
-                auto curr = traffic.pop_back();
-                // writeln("and now here");
-                //TODO: Fix order
-                // int brushs = cast(int)(curr.bs & 0xff);
-                red = cast(char)(curr.r & 0xff);
-                blue = cast(char)(curr.b & 0xff);
-                green = cast(char)(curr.g & 0xff);
-                // writeln("Prevx : " ~ to!string(prevX) ~ " Prevy : " ~ to!string(prevY) ~  " curr.x : " ~ to!string(curr.x) ~  " curr.y : " ~ to!string(curr.y)~  " curr.bs : " ~ to!string(curr.bs) ~  " red : " ~ to!string(red) ~  " green : " ~ to!string(green) ~ " blue : " ~ to!string(blue));     
-                // writeln("NEW RBG VALS:: " ~ to!string(convertBytetoUnsigned(curr.r))  ~ to!string(convertBytetoUnsigned(curr.g))~ to!string(convertBytetoUnsigned(curr.b)));
-                // imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, red, green, blue);
-            
-                // prevX = curr.x;
-                // prevY = curr.y;
-            
-                imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);            
-        }}).start();
+    int prevX = -9999;
+    int prevY = -9999;
+    while(traffic.size() > 0) {
+        auto curr = traffic.pop_back();
+        writeln("and now here");
+        //TODO: Fix order
+        imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
+        // imgSurface.lerp(prevX, prevY,curr.x, curr.y, 1, curr.r, curr.g, curr.b);
+    }
 
 }
-
 
     /**
      Change the brush size selected. 
@@ -734,7 +727,7 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
         menuTri.fillTriangle(tp1, tp2, tp3, 1, 255, 255, 255);
     }
 
-    /**
+        /**
     Sets up the Undo button, 
     this method draws a red undo or go back arrow
     which points to the left. 
@@ -768,6 +761,15 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
         undoTri.fillTriangle(tp1, tp2, tp3, 1, 224, 129, 19);
     }
 }
+
+
+
+// void runClient(Deque traffic, Socket socket, Bool tear_down) {
+//     //if the client is running, loop
+    
+
+
+// }
 
 /**
 Test: Checks for the surface to be initialized to black RGB values or 0,0,0

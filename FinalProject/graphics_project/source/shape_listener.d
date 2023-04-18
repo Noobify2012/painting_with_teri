@@ -27,12 +27,17 @@ class ShapeListener {
   State *state;
   int r, g, b;
 
-  this() {
+  this(){
 
-    this.state = _state;
   }
 
-  this(string quad, int brushSize){
+  this(State* state) {
+
+    this.state = state;
+  }
+
+  this(State* state, string quad, int brushSize){
+    this.state = state;
     this.quadrant = quad;
     this.brushSize = brushSize;
   }
