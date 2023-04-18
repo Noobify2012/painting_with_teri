@@ -34,7 +34,8 @@ import state;
 
 import Rectangle : Rectangle;
 import Triangle : Triangle; 
-import Circle : Circle; 
+import Circle : Circle;
+import Line : Line;
 // For printing the key pressed info
 // void PrintKeyInfo( SDL_KeyboardEvent *key );
 
@@ -627,7 +628,7 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
                     writeln("i got a rectangle");
                 } else if (curr.s == 3) {
                     //triangle
-                    Traiangle inboundTri = new Triangle(&imgSurface);
+                    Triangle inboundTri = new Triangle(&imgSurface);
                     inboundTri.drawFromPoints(shapePoints, red, green, blue, 4);
                     writeln("i got a triangle");
                 } else {
