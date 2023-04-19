@@ -336,9 +336,10 @@ class SDLApp{
                         Packet linePacket = mClient.getChangeForServer(prevX, prevY, red, green, blue, 4, brushSize, xPos, yPos,0,0);
                         Line newLine = new Line(&imgSurface);
                         newLine.drawFromPoints(buildShape(linePacket), red, green, blue, brushSize);
-                         imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                        imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
                         if (networked == true) {
-                            client.sendDataToServer(linePacket);
+                            // client.sendDataToServer(linePacket);
+                            traffic.push_front(linePacket);
                         }
                          writeln("are we hitting lerp?");
                     }
@@ -515,7 +516,9 @@ class SDLApp{
                 // } else if (received.size() > 0 && !tear_down){
                 } else if (received.size() > 0){
                     // if we have traffic that came in from the server, add it to the surface. 
-                    drawInbound(received, imgSurface, state);
+                    // drawInbound(received, imgSurface, state);
+                       drawInbound(received, imgSurface, state);
+
                 } // else if (cast(int)shapeAction.getPoints.length != 0) {
                 //     // int x1, x2, x3, y1, y2, y3;
                 //     // for (int i = 0; i < shapeAction.getPoints.length; i++) {
@@ -600,7 +603,8 @@ void getNewData() {
         * @param imgSurface: The users image surface that needs to be updated
     * Creates a seperate thread and removes all of the packets of pixel changes from the server from the queue and adds them to the surface. 
     */
-void drawInbound(Deque!(Packet) traffic, Surface imgSurface, State state) {
+void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
+// void drawInbound(Deque!(Packet) traffic, Surface imgSurface, State state) {
     // auto threads = ThreadBase.getAll(); 
     // writeln("Number of threads: " ~to!string(threads.length));    
     
