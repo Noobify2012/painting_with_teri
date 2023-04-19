@@ -336,7 +336,7 @@ class SDLApp{
                         Packet linePacket = mClient.getChangeForServer(prevX, prevY, red, green, blue, 4, brushSize, xPos, yPos,0,0);
                         Line newLine = new Line(&imgSurface);
                         newLine.drawFromPoints(buildShape(linePacket), red, green, blue, brushSize);
-                        // imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                         imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
                         if (networked == true) {
                             client.sendDataToServer(linePacket);
                         }
