@@ -132,6 +132,7 @@ class Circle : Shape {
 
 
 /**
+* stop point
 * Test: Checks for the surface to be initialized to black, draw red circle
 * Ensure interior points are red, exterior remain black
 */
