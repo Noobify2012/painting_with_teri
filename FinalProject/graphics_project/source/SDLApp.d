@@ -247,40 +247,117 @@ class SDLApp{
                         string quadrant; 
                         ///Top Left: Line
                         if(yPos < 24 && xPos < 373){
-                            writeln("You selected: Draw LINE");
-                            writeln("LINE: Click start and end points");
+                            // writeln("You selected: Draw LINE");
+                            // writeln("LINE: Click start and end points");
                             quadrant = "TL";
                         }
                         ///Top Right: Rectangle 
                         else if(yPos < 24 && xPos > 373){
-                            writeln("You selected: Draw RECTANGLE");
-                            writeln("RECTANGLE: Click two corner points");
+                            // writeln("You selected: Draw RECTANGLE");
+                            // writeln("RECTANGLE: Click two corner points");
                             quadrant = "TR";
                         }
                         ///Bottom Left: Circle 
                         else if(yPos > 24 && xPos < 373){
-                            writeln("You selected: Draw CIRCLE");
-                            writeln("CIRCLE: Click two points");
+                            // writeln("You selected: Draw CIRCLE");
+                            // writeln("CIRCLE: Click two points");
                             quadrant = "BL";
                         }
                         ///Bottom Right: Triangle
                         else if(yPos > 24 && xPos > 373){
-                            writeln("You selected: Draw TRIANGLE");
-                            writeln("TRIANGLE: Click three corner points");
+                            // writeln("You selected: Draw TRIANGLE");
+                            // writeln("TRIANGLE: Click three corner points");
                             quadrant = "BR";
                         }
+                        writeln("Drawing shape");
+                        
+                        writeln("Type 'r' for rectangle", "\nType 'c' for circle",
+                                "\nType 'l' for line", "\nType 'r' for rectangle");
 
                         // ShapeListener sh = new ShapeListener(quadrant);
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
+
+                        shapeAction = sh.getAction();
+                        shapeAction.setColor([cast(int) red, cast(int) green, cast(int) blue]);
+                        state.addAction(sh.getAction());
+
+                        
+                        /// unpack the points
+                        int x,y,x2,y2,x3,y3;
+                        for(int i=0; i < shapeAction.getPoints.length; i++) {
+                            for (int j=0; j < 2; j++) {
+                                if(i == 0 && j == 0) {
+                                    x = shapeAction.getPoints[0][0];
+                                } else if (i == 0 && j == 1) {
+                                    y = shapeAction.getPoints[i][1];
+                                } else if (i == 1 && j == 0) {
+                                    x2 = shapeAction.getPoints[i][0];
+                                } else if (i == 1 && j == 1) {
+                                    y2 = shapeAction.getPoints[i][1];
+                                } else if (i == 2 && j == 0) {
+                                    x3 = shapeAction.getPoints[i][0];
+                                } else {
+                                    y3 = shapeAction.getPoints[i][1];
+                                }
+                            }
+                        }
+
+                        /// unpack type
+                        writeln("shape action type: " ~to!string(shapeAction.getActionType()));
+                        int st = 0;
+                        if (shapeAction.getPoints().length == 3) {
+                            st = 3;
+                            //do triangle
+                        } else {
+                            ///circle is shape type 1
+                            if (shapeAction.getActionType() == "circle") {
+                                st = 1;
+                            } else if (shapeAction.getActionType() == "rectangle") {
+                                ///rectangle is shape type 2
+                                st = 2;
+                            } else {
+                                ///line is shape type 4
+                                st = 4;
+                            }
+                        }
+
+                        ///unpack rgb values 
+                        // ubyte redU = *cast(byte*)&red;
+                        // ubyte greenU = *cast(byte*)&green;
+                        // ubyte blueU = *cast(byte*)&blue;
+                        int shapeBrush = 4;
+                        // writeln(shapeAction.getPoints[]);
+                        // writeln(shapeAction.getPoints[0][0]);
+                        // writeln(shapeAction.getPoints[0][1]);
+                        // writeln(shapeAction.getPoints[1][0]);
+                        // writeln(shapeAction.getPoints[1][1]);
+                        if (networked == true) {
+                            Packet shapePacket = mClient.getChangeForServer(x,y,red, green, blue, st, shapeBrush, x2, y2, x3, y3);
+                            client.sendDataToServer(shapePacket);
+                        }
+                        /// Send the selected shape to the ShapeListener so the user can draw it. 
+                        // ShapeListener shQ = new ShapeListener(quadrant, brushSize);
+                        // // shQ.setRGB(red, green, blue);
+                        // shQ.drawShape(&imgSurface, brush, red, green, blue);
                     }
 
-                    //Button five: UNDO --- INCOMING: dependency: implement undo/redo
+                    ///Button five: UNDO --- INCOMING: dependency: implement undo/redo
                     if(yPos < 50 && xPos > h2 * 4 + 1 && xPos < h2 * 5){
-                        writeln("button5");
+                        writeln("You selected: UNDO");
+                        state.undo();
+                        if (networked) {
+                            Packet undoPack = mClient.getChangeForServer(0,0,0,0,0, -10, 0,0,0,0,0);
+                            client.sendDataToServer(undoPack);
+                        }
                     }
-                    //Button six: REDO --- INCOMING: Dependency: implement undo/redo 
+                    ///Button six: REDO --- INCOMING: Dependency: implement undo/redo 
                     if(yPos < 50 && xPos > h2 * 5 + 1 && xPos < h2 * 6){
-                        writeln("button6");
+                        writeln("You selected: REDO");
+                        state.redo();
+                        if (networked) {
+                            Packet rePack = mClient.getChangeForServer(0,0,0,0,0, 10, 0,0,0,0,0);
+                            client.sendDataToServer(rePack);
+                        }
                     }
                     //END MENU BUTTON SELECTOR 
 
@@ -422,18 +499,21 @@ class SDLApp{
 
                     } else if (e.key.keysym.sym == SDLK_e) {
                         //Activate Eraser 
-                        if (erasing == false) {
-                            erasing = true;
-                            temp_color = color;
-                            color = -1;
-                            writeln("eraser active, value of temp_color: ", to!string(temp_color));
-                        } else {
-                            erasing = false;
-                            color = temp_color;
-                            writeln("Changing to color : " , to!string(color));
-                        }
+                        // if (erasing == false) {
+                        //     erasing = true;
+                        //     temp_color = color;
+                        //     color = -1;
+                        //     writeln("eraser active, value of temp_color: ", to!string(temp_color));
+                        // } else {
+                        //     erasing = false;
+                        //     color = temp_color;
+                        //     writeln("Changing to color : " , to!string(color));
+                        // }
+                        writeln("E");
+                        eraserToggle(erasing, color);
 
                     } else if (e.key.keysym.sym == SDLK_n) {
+                        /// When you press the n key, you want to join a network 
                         if (networked == false) {
                             client.init();
                             getNewData();
@@ -442,39 +522,21 @@ class SDLApp{
                         } else {
                             tear_down = true;
                         }
-                        
-                    } else if (e.key.keysym.sym == SDLK_f) {
-                        /// This is where we fill the shape once drawn!
-                        writeln("Starting fill");
-                        bool isFilled = false;
 
-                        while (!isFilled) {
-                        SDL_Event fill;
-                            while (SDL_PollEvent(&fill)) {
-                                if(fill.type == SDL_QUIT){
-                                    runApplication= false;
-                                    break;
-                                } else if (fill.type == SDL_MOUSEBUTTONUP) {
-                                    int fillStartX = fill.button.x, fillStartY = fill.button.y;
-                                    du.dfs(fillStartX, fillStartY, &imgSurface, red, green, blue);
-                                    isFilled = true;
-                                }
-                            }
-                        }
-                        writeln("Fill ended");
-
-                    } else if (e.key.keysym.sym == SDLK_s) {
+                     } else if (e.key.keysym.sym == SDLK_s) {
                         /// This is where we draw the shape when prompted!
+                        /// When you press the S key, you activate shape listener 
                         writeln("Drawing shape");
                         writeln("Type 'r' for rectangle", "\nType 'c' for circle", 
                                 "\nType 'l' for line", "\nType 'r' for rectangle");
                         // ShapeListener sh = new ShapeListener();
-
                         // sh.setRGB(red, green, blue);
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
                         shapeAction = sh.getAction();
                         shapeAction.setColor([cast(int) red, cast(int) green, cast(int) blue]);
                         state.addAction(sh.getAction());
+
+
                         /// unpack the points
                         int x,y,x2,y2,x3,y3;
                         for(int i=0; i < shapeAction.getPoints.length; i++) {
@@ -514,16 +576,7 @@ class SDLApp{
                             }
                         }
 
-                        ///unpack rgb values 
-                        // ubyte redU = *cast(byte*)&red;
-                        // ubyte greenU = *cast(byte*)&green;
-                        // ubyte blueU = *cast(byte*)&blue;
                         int shapeBrush = 4;
-                        // writeln(shapeAction.getPoints[]);
-                        // writeln(shapeAction.getPoints[0][0]);
-                        // writeln(shapeAction.getPoints[0][1]);
-                        // writeln(shapeAction.getPoints[1][0]);
-                        // writeln(shapeAction.getPoints[1][1]);
                         if (networked == true) {
                             Packet shapePacket = mClient.getChangeForServer(x,y,red, green, blue, st, shapeBrush, x2, y2, x3, y3);
                             client.sendDataToServer(shapePacket);
@@ -546,32 +599,26 @@ class SDLApp{
             }
 
             ///Networking Block:
-            //if we have turned networking on, check if there is traffic and that we are not in the tear down process. 
+            ///if we have turned networking on, check if there is traffic and that we are not in the tear down process. 
             if (networked == true) {
                 if (traffic.size > 0 && !tear_down) {
                     writeln(">");
-                    //send traffic to the server
+                    ///send traffic to the server
                     client.sendDataToServer(traffic.pop_back);
                 } else if (tear_down) {
-                    //initiate a grace full tear down with the server by sendings and empty packet. 
+                    ///initiate a grace full tear down with the server by sendings and empty packet. 
                     auto packet = mClient.getChangeForServer(-9999,-9999, 0, 0, 0,0,0,0,0,0,0);
                     client.sendDataToServer(packet);
-                    //close the socket
+                    ///close the socket
                     client.closeSocket();
                     tear_down = false;
                     networked = false;
-                // } else if (received.size() > 0 && !tear_down){
                 } else if (received.size() > 0){
-                    // if we have traffic that came in from the server, add it to the surface. 
+                    /// if we have traffic that came in from the server, add it to the surface. 
                     // drawInbound(received, imgSurface, state);
                        drawInbound(received, imgSurface);
 
-                } // else if (cast(int)shapeAction.getPoints.length != 0) {
-                //     // int x1, x2, x3, y1, y2, y3;
-                //     // for (int i = 0; i < shapeAction.getPoints.length; i++) {
-                //     //     writeln("Array index positions: "  ~ to!string(shapeAction.getPoints[i]));
-                //     // }
-                //  }   
+                }   
             }
             
             /// Blit the surace (i.e. update the window with another surfaces pixels
@@ -590,7 +637,7 @@ class SDLApp{
 
     void colorValueSetter(int colorNum) { 
         if (colorNum == 1) {
-            // Set brush color to red
+            /// Set brush color to red
             red = 24;
             green = 20;
             blue = 195;
@@ -777,16 +824,20 @@ int colorChanger(int curColor){
 void createMenu(Surface imgSurface){
  /// **Tech debt: Create variables for window size so they can be changed proportionally**
         /// **Tech debt: Move menu creation into its own function**
-        //Draw bottom bar of menu skeleton
+        ///Draw bottom bar of menu skeleton
         menuBarSetup(imgSurface);
-        //Setting up brush size button display (Button 1)
+        ///Setting up brush size button display (Button 1)
         button1Setup(imgSurface);
-        //Setting up color button display (Button 2)
+        ///Setting up color button display (Button 2)
         button2Setup(imgSurface);
-        //Setting up eraser button display (Button 3)
+        ///Setting up eraser button display (Button 3)
         button3Setup(imgSurface);
-        //Setting up shape button display (Button 4)
+        ///Setting up shape button display (Button 4)
         button4Setup(imgSurface);
+        ///Setting up undo button display (Button 5)
+        button5Setup(imgSurface);
+        ///Setting up redo button display (Button 6)
+        button6Setup(imgSurface);
 }
 
 
@@ -796,14 +847,14 @@ void menuBarSetup(Surface imgSurface){
              imgSurface.lerp(b1 - 1, 50, b1, 50, 2, 255, 255, 255);  
         }
 
-    //Draw divider bars for menu skeleton 
+    ///Draw divider bars for menu skeleton 
     int h1;
     int h2 = 640/6;
     int h3;
-    //There needs to be 5 dividers, this is h1
+    ///There needs to be 5 dividers, this is h1
     for (h1 = 1; h1 <= 5; h1++){
         int divX = h1 * h2;
-        //The dividers each need to be 50 pixels tall. that is h3
+        ///The dividers each need to be 50 pixels tall. that is h3
         for (h3 = 0; h3 < 50; h3++){
             imgSurface.lerp(divX - 1, h3, divX, h3+1, 2, 255, 255, 255);
         }
@@ -846,32 +897,32 @@ void button3Setup(Surface imgSurface){
 }
 
 void button4Setup(Surface imgSurface){
-            //Horizontal line across button 4 
+        ///Horizontal line across button 4 
         int s1;
         int sStart = 320;
         for(s1 = 0; s1 < 106; s1++){
             imgSurface.lerp(sStart, 24, sStart, 24, 1, 255, 255, 255);
             sStart ++;
         }
-        //Vertical line down button 4
+        ///Vertical line down button 4
         int s11;
         for (s11 = 0; s11 < 50; s11++){
             imgSurface.lerp(372, s11, 372, s11, 1, 255, 255, 255);
         }
-        //Button 4 Top left: Line 
+        ///Button 4 Top left: Line 
         imgSurface.lerp(330, 20, 355, 3, 1, 255, 255, 255);
 
-        //Button 4 Top Right: Rectangle 
+        ///Button 4 Top Right: Rectangle 
         Rectangle menuRect = new Rectangle(&imgSurface);
         menuRect.fillRectangle(385, 410, 5, 15, 255, 255, 255);
 
-        //Button 4 Bottom left: Circle 
+        ///Button 4 Bottom left: Circle 
         Circle menuCirc = new Circle(&imgSurface);
         Tuple!(int, int) circPoint;
         circPoint= tuple(342, 36);
         menuCirc.fillCircle(circPoint, 8, 255, 255, 255);
 
-        //Button 4 Bottom right: Triangle 
+        ///Button 4 Bottom right: Triangle 
         Triangle menuTri = new Triangle(&imgSurface);
         Tuple!(int, int) tp1, tp2, tp3;
         tp1 = tuple(385, 41);
@@ -879,6 +930,40 @@ void button4Setup(Surface imgSurface){
         tp3 = tuple(405, 41);
 
         menuTri.fillTriangle(tp1, tp2, tp3, 1, 255, 255, 255);
+    }
+
+    /**
+    Sets up the Undo button, 
+    this method draws a red undo or go back arrow
+    which points to the left. 
+    **/
+    void button5Setup(Surface imgSurface){
+        /// Draw the red arrow 
+        Rectangle undoRect = new Rectangle(&imgSurface);
+        undoRect.fillRectangle(470, 495, 20, 30, 24, 20, 195);
+        Triangle undoTri = new Triangle(&imgSurface);
+        Tuple!(int, int) tp1, tp2, tp3;
+        tp1 = tuple(450, 25);
+        tp2 = tuple(470, 12);
+        tp3 = tuple(470, 38);
+        undoTri.fillTriangle(tp1, tp2, tp3, 1, 24, 20, 195);
+    }
+
+    /**
+    Sets up the Redo button, 
+    this method draws a blue redo or go forward arrow
+    which points to the right. 
+    **/
+    void button6Setup(Surface imgSurface){
+        /// Draw the blue arrow 
+        Rectangle undoRect = new Rectangle(&imgSurface);
+        undoRect.fillRectangle(560, 585, 20, 30, 224, 129, 19);
+        Triangle undoTri = new Triangle(&imgSurface);
+        Tuple!(int, int) tp1, tp2, tp3;
+        tp1 = tuple(605, 25);
+        tp2 = tuple(585, 12);
+        tp3 = tuple(585, 38);
+        undoTri.fillTriangle(tp1, tp2, tp3, 1, 224, 129, 19);
     }
 }
 
