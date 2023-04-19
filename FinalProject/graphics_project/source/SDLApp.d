@@ -706,61 +706,63 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
         // int prevX = -9999;
         // int prevY = -9999;
         new Thread({
-        while(traffic.size() > 0) {
-            
-                auto curr = traffic.pop_back();
-                // writeln("and now here");
-                //TODO: Fix order
-                // int brushs = cast(int)(curr.bs & 0xff);
-                red = cast(char)(curr.r & 0xff);
-                blue = cast(char)(curr.b & 0xff);
-                green = cast(char)(curr.g & 0xff);
-                // writeln("Prevx : " ~ to!string(prevX) ~ " Prevy : " ~ to!string(prevY) ~  " curr.x : " ~ to!string(curr.x) ~  " curr.y : " ~ to!string(curr.y)~  " curr.bs : " ~ to!string(curr.bs) ~  " red : " ~ to!string(red) ~  " green : " ~ to!string(green) ~ " blue : " ~ to!string(blue));     
-                // writeln("NEW RBG VALS:: " ~ to!string(convertBytetoUnsigned(curr.r))  ~ to!string(convertBytetoUnsigned(curr.g))~ to!string(convertBytetoUnsigned(curr.b)));
-                // imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, red, green, blue);
-            
-                // prevX = curr.x;
-                // prevY = curr.y;
-                Action nextAct;
-                /// build tuple for drawing network points and adjusting state
-                Tuple!(int, int)[] shapePoints = buildShape(curr);
-                /// build color array for state update
-                int[3] color = buildColor(curr);
-                string actType;
-                if (curr.s == 0) {
-                    imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
-                    writeln("i got a pixel");
-                } else if (curr.s == 1) {
-                    //circle
-                    Circle inboundCircle = new Circle(&imgSurface);
-                    inboundCircle.drawFromPoints(shapePoints, red, green, blue, 4);
-                    nextAct = new Action(shapePoints,color, "circle");
-                    state.addAction(nextAct); 
-                    writeln("i got a circle");
-                } else if (curr.s == 2) {
-                    //rectangle
-                    Rectangle inboundRec = new Rectangle(&imgSurface);
-                    inboundRec.drawFromPoints(shapePoints, red, green, blue, 4);
-                    nextAct = new Action(shapePoints,color, "rectangle");
-                    state.addAction(nextAct);
-                    writeln("i got a rectangle");
-                } else if (curr.s == 3) {
-                    //triangle
-                    Triangle inboundTri = new Triangle(&imgSurface);
-                    inboundTri.drawFromPoints(shapePoints, red, green, blue, 4);
-                    nextAct = new Action(shapePoints,color, "triangle");
-                    state.addAction(nextAct);
-                    writeln("i got a triangle");
-                } else if (curr.s == -10) {
-                    state.undo();
-                } else if (curr.s == 10) {
-                    state.redo();
-                } else {
-                    //line
-                    Line inboundLine = new Line(&imgSurface);
-                    inboundLine.drawFromPoints(shapePoints, red, green, blue, 4);
-                    writeln("i got a line");
-                } 
+            Action nextAct;
+            while(traffic.size() > 0) {
+                
+                    auto curr = traffic.pop_back();
+                    // writeln("and now here");
+                    //TODO: Fix order
+                    // int brushs = cast(int)(curr.bs & 0xff);
+                    red = cast(char)(curr.r & 0xff);
+                    blue = cast(char)(curr.b & 0xff);
+                    green = cast(char)(curr.g & 0xff);
+                    // writeln("Prevx : " ~ to!string(prevX) ~ " Prevy : " ~ to!string(prevY) ~  " curr.x : " ~ to!string(curr.x) ~  " curr.y : " ~ to!string(curr.y)~  " curr.bs : " ~ to!string(curr.bs) ~  " red : " ~ to!string(red) ~  " green : " ~ to!string(green) ~ " blue : " ~ to!string(blue));     
+                    // writeln("NEW RBG VALS:: " ~ to!string(convertBytetoUnsigned(curr.r))  ~ to!string(convertBytetoUnsigned(curr.g))~ to!string(convertBytetoUnsigned(curr.b)));
+                    // imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, red, green, blue);
+                    // prevX = curr.x;
+                    // prevY = curr.y;
+                    /// build tuple for drawing network points and adjusting state
+                    Tuple!(int, int)[] shapePoints = buildShape(curr);
+                    /// build color array for state update
+                    int[3] color = buildColor(curr);
+                    string actType;
+                    if (curr.s == 0) {
+                        imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
+                        writeln("i got a pixel");
+                    } else if (curr.s == 1) {
+                        //circle
+                        Circle inboundCircle = new Circle(&imgSurface);
+                        inboundCircle.drawFromPoints(shapePoints, red, green, blue, 4);
+                        nextAct = new Action(shapePoints,color, "circle");
+                        state.addAction(nextAct); 
+                        writeln("i got a circle");
+                    } else if (curr.s == 2) {
+                        //rectangle
+                        Rectangle inboundRec = new Rectangle(&imgSurface);
+                        inboundRec.drawFromPoints(shapePoints, red, green, blue, 4);
+                        nextAct = new Action(shapePoints,color, "rectangle");
+                        state.addAction(nextAct);
+                        writeln("i got a rectangle");
+                    } else if (curr.s == 3) {
+                        //triangle
+                        Triangle inboundTri = new Triangle(&imgSurface);
+                        inboundTri.drawFromPoints(shapePoints, red, green, blue, 4);
+                        nextAct = new Action(shapePoints,color, "triangle");
+                        state.addAction(nextAct);
+                        writeln("i got a triangle");
+                    } else if (curr.s == -10) {
+                        state.undo();
+                    } else if (curr.s == 10) {
+                        state.redo();
+                    } else {
+                        //line
+                        Line inboundLine = new Line(&imgSurface);
+                        inboundLine.drawFromPoints(shapePoints, red, green, blue, 4);
+                        nextAct = new Action(shapePoints,color, "line");
+                        state.addAction(nextAct);
+                        writeln("i got a line");
+                    } 
+                    nextAct = null;
         }}).start();
 
 }
