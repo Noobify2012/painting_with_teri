@@ -645,16 +645,16 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
                     Triangle inboundTri = new Triangle(&imgSurface);
                     inboundTri.drawFromPoints(shapePoints, red, green, blue, 4);
                     writeln("i got a triangle");
-                } else if (curr.s == 4) {
-                    //line
-                    Line inboundLine = new Line(&imgSurface);
-                    inboundLine.drawFromPoints(shapePoints, red, green, blue, 4);
-                    writeln("i got a line");
                 } else if (curr.s == -10) {
                     // state.undo();
                 } else if (curr.s == 10) {
                     // state.redo();
-                }
+                } else {
+                    //line
+                    Line inboundLine = new Line(&imgSurface);
+                    inboundLine.drawFromPoints(shapePoints, red, green, blue, 4);
+                    writeln("i got a line");
+                } 
         }}).start();
 
 }
