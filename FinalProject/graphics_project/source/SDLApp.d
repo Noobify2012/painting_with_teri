@@ -584,19 +584,23 @@ class SDLApp{
                         }
                     } else if (e.key.keysym.sym == SDLK_u) {
                         
-                        // state.undo();
+                        // 
                         if (networked) {
                             Packet undoPack = mClient.getChangeForServer(0,0,0,0,0, -10, 0,0,0,0,0);
                             traffic.push_front(undoPack);
                             // client.sendDataToServer(undoPack);
+                        } else {
+                            state.undo();
                         }
                     } else if (e.key.keysym.sym == SDLK_r) {
                         writeln("button redo");
-                        // state.redo();
+                        // 
                         if (networked) {
                             Packet rePack = mClient.getChangeForServer(0,0,0,0,0, 10, 0,0,0,0,0);
                             traffic.push_front(rePack);
                             // client.sendDataToServer(rePack);
+                        } else {
+                            state.redo();
                         }
                     }
                 }
@@ -757,7 +761,8 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
                         state.undo();
                     } else if (curr.s == 10) {
                         writeln("inbound redo");
-                        state.redo();
+                        redoMethod();
+                        // state.redo();
                     } else {
                         //line
                         Line inboundLine = new Line(&imgSurface);
@@ -769,6 +774,10 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
                     // nextAct = null;
         }}).start();
 
+}
+
+void redoMethod() {
+    state.redo();
 }
 
 Tuple!(int, int)[] buildShape(Packet packet) {
