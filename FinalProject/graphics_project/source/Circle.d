@@ -11,26 +11,36 @@ import SDL_Initial :SDLInit;
 import Shape : Shape;
 import SDL_Surfaces;
 
+/**
+* A Circle is a Shape. It is filled, and is drawn by forming an equation from user clicks.
+* Two points are needed to draw a Circle.
+*/
 class Circle : Shape {
 
     Surface* surf;
     Tuple!(int, int)[] points;
 
+    /**
+    * Constructor. A Circle requires a Surface to draw on.
+    */
     this(Surface* surf) {
         this.surf = surf;
     }
 
+    /**
+    * Destructor.
+    */
     ~this() {}
 
     /**
-    * Helper for 'draw' function that fills circle based on user-chosen points.
-    *
+    * Name: fillCircle
+    * Description: Helper for 'draw' function that fills the Circle based on user-chosen points.
     * Params:
-    * midpoint - midpoint of the line formed by connecting user's points
-    * radius - half the length of the line formed by connecting user's points
-    * r - red color value in range [0, 255]
-    * g - green color value in range [0, 255]
-    * b - blue colover value in range [0, 255]
+    *   @param midpoint: the midpoint of this Circle
+    *   @param radius: the radius of this Circle
+    *   @param r: red color value in range [0, 255]
+    *   @param g: green color value in range [0, 255]
+    *   @param b: blue colover value in range [0, 255]
     */
     void fillCircle(Tuple!(int, int) midpoint, int radius, ubyte r, ubyte g, ubyte b) {
 
@@ -50,21 +60,14 @@ class Circle : Shape {
     }
 
     /**
-    * Draws this Circle based on the user's clicks. Exactly two mouse
-    * clicks are required to draw a Circle. The user's clicks represent
-    * the diameter of the Circle, regardless of the orientation the line is
-    * drawn at.
-    *
-    * Example
-    * --------------------
-    * Shape cir = new Circle();
-    * cir.draw();   // Draw filled circle upon two mouse clicks
-    *
-    *  Params:
-    *  brushSize - the width and height of each drawn point
-    *  r - red value in range [0, 255]
-    *  g - green value in range [0, 255]
-    *  b - blue value in range [0, 255]
+    * Name: draw
+    * Description: Draws this Circle based on the user's clicks. Exactly two mouse
+    * clicks are required to draw a Circle. The clicks represent the Circle's diameter.
+    * Params:
+    *   @param brushSize: not used.
+    *   @param r: red value in range [0, 255]
+    *   @param g: green value in range [0, 255]
+    *   @param b: blue value in range [0, 255]
     */
     override void draw(int brushSize, ubyte r, ubyte g, ubyte b) {
 
@@ -111,6 +114,15 @@ class Circle : Shape {
         }
     }
 
+    /**
+    * name: drawFromPoints
+    * description: Draws a Circle from an array of two points. The points should represent
+    * the Circle's diameter. The Circle will be drawn filled.
+    * params:
+    *   @param points: Array of points 
+    *   @param r, g, b: red, blue, green color values
+    *   @brushSize: Not used in Circle
+    */
     override void drawFromPoints(Tuple!(int, int)[] points, ubyte r, ubyte g, ubyte b, int brushSize) {
 
         assert(points.length == 2);
@@ -123,6 +135,13 @@ class Circle : Shape {
         fillCircle(midpoint, radius, r, g, b);
     }
 
+    /**
+    * name: getPoints
+    * description: Gets and returns the points that are needed to draw this Circle.
+    * If getPoints is invoked before the Circle is drawn, an empty array is
+    * returned.
+    * returns: An array of two integer tuples.
+    */
     override Tuple!(int, int)[] getPoints() {
 
         return this.points;
