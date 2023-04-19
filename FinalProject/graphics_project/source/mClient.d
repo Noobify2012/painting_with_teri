@@ -12,6 +12,7 @@ import core.thread.osthread;
  
 /// Packet
 import Packet : Packet;
+import mserver;
 
 /**
 * Name: TCPClient
@@ -43,9 +44,9 @@ class TCPClient{
 		mSocket.close();
 	}
 
-    void init() {
-        host = getServerAddress();
-        port = getServerPort();
+    void init(string host = getServerAddress(), ushort port = getServerPort()) {
+        // host = getServerAddress();
+        // port = getServerPort();
         writeln("Starting client...attempt to create socket");
         writeln("Host: "~host);
         writeln("Port: "~to!string(port));
@@ -65,6 +66,7 @@ class TCPClient{
 		// confirming that we are connected
 		// This will be something like "Hello friend\0"
 		byte[Packet.sizeof] buffer;
+        writeln("xyz");
 		auto received = mSocket.receive(buffer);
 		writeln("On Connect: ", buffer[0 .. received]);
         writeln(">");
@@ -282,3 +284,31 @@ ushort getServerPort() {
 // 	TCPClient client = new TCPClient();
 // 	client.run();
 // }
+
+
+
+/**
+* Test: Checks for the surface to be initialized to black, draw red circle
+* Ensure interior points are red, exterior remain black
+*/
+@("Networking test")
+unittest{
+    ubyte red = 255;
+    ubyte green = 128;
+    ubyte blue = 32;
+
+    TCPServer ser = new TCPServer("localhost", 50003);
+    ser.run();
+    ser.end();
+	TCPClient cl = new TCPClient;
+	Packet pack = getChangeForServer(1,2, red, green, blue, 0, 4,0,0,0,0);
+	// cl.init("localhost", 50002);
+    // writeln("are we hitting this");
+    // cl.sendDataToServer(pack);
+	// Packet received = cl.receiveDataFromServer();
+    // cl.closeSocket();
+    // ser.end();
+    // writeln("received.x: ", received.x);
+	// assert(received.x == 1, "Outbound and inbound packets are different"); 
+    
+}
