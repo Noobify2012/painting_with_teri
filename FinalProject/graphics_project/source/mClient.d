@@ -12,6 +12,7 @@ import core.thread.osthread;
  
 /// Packet
 import Packet : Packet;
+import mserver_copy;
 
 /**
 * Name: TCPClient
@@ -244,41 +245,85 @@ string getServerAddress() {
     return user_addr;
 }
 
-
+/**
+*  Name: GetPixelColorAt
+*  Description: Determines DSL color of pixel at point
+*  Params: 
+*    x, y: point coordinates
+*    imgSurface: SDL surface
+*  Returns: color of pixel
+*/
 ushort getServerPort() {
-    //ask user what port they want to use if not the default
+    /// ask user what port they want to use if not the default
     auto user_port = 50002;
-    //bool used to loop until we have a good port
+    /// bool used to loop until we have a good port
     bool good_port = false;
     while(!good_port){
         writeln("what port would you like to connect to? press enter for default(50002)");
-        // get input
+        /// get input
         string user_in = readln;
-        //string off carriage return and other nonsense
+        ///string off carriage return etc.
         user_in = strip(user_in);
-        // writeln(user_in.length);
-        //check if the user either gave an empty string or requested their own port
+        ///check if the user either gave an empty string or requested their own port
         if (((user_in == "") | isNumeric(user_in))) {
             good_port = true;
-            //check if port is numeric
+            /// check if port is numeric
             if (isNumeric(user_in)){
-                //if numeric, is it a legal port number
+                /// if numeric, is it a legal port number
                 if ((to!int(user_in) >= 0) & (to!int(user_in) <= 65535)) {
-                    //legal, set to return variable
+                    /// legal, set to return variable
                     user_port = to!int(user_in);
                 } else {
-                    //illegal port loop again
+                    /// illegal port loop again
                     good_port = false;
                 }
             }
         }
     }
-    //convert to proper data type before returning
+    /// convert to proper data type before returning
     return to!ushort(user_port);
 }
 
-// Entry point to client
-// void main(){
-// 	TCPClient client = new TCPClient();
-// 	client.run();
-// }
+
+/**
+* Test: Checks for the surface to be initialized to black, draw red circle
+* Ensure interior points are red, exterior remain black
+*/
+@("Networking test")
+unittest{
+    bool serverRunning = false;
+    ubyte red = 255;
+    ubyte green = 128;
+    ubyte blue = 32;
+    Packet pack = getChangeForServer(1,2, red, green, blue, 0, 4,0,0,0,0);
+
+
+    /// Create server & client with specified address
+    TCPServer ser = new TCPServer("localhost", 50003);
+	TCPClient cl = new TCPClient;
+    Packet received;
+    /// Run server & initialize client on server address
+    new Thread({
+        ser.run();
+        writeln("Test: Server running");
+        serverRunning = true;
+    }).start();
+  
+    while (serverRunning) {
+        cl.init("localhost", 50003);
+        writeln("Test: Client initialized");
+    
+
+        cl.sendDataToServer(pack);
+        writeln("Test: Sent data to server");
+        received = cl.receiveDataFromServer();
+        writeln("Test: Received data from server");
+        cl.closeSocket();
+        writeln("Test: Client socket closed");
+        // ser.end();
+        writeln("received.x: ", received.x);
+
+    }
+    assert(received.x == 1, "Outbound and inbound packets are different");         
+    
+}
