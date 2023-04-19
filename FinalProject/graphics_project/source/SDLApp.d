@@ -61,10 +61,14 @@ class SDLApp{
     auto received = new Deque!(Packet);
     Action shapeAction;
 
-
+    /**
+    Starts when you run the application and ends automatically 
+    when you destroy the window. This is the main loop which 
+    runs all of the primary app functionality. 
+    **/
     void MainApplicationLoop(){
         /// Create an SDL window
-        SDL_Window* window= SDL_CreateWindow("A Teri Chadbourne Experience",
+        SDL_Window* window= SDL_CreateWindow("The Teri Chadbourne Experience",
             SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
             640,
@@ -76,21 +80,18 @@ class SDLApp{
         /// Initialize variables
         /// Application running flag for determing if we are running the main application loop
         bool runApplication = true;
-        /// Drawing flag for determining if we are 'drawing' (i.e. mouse has been pressed
-        ///                                                but not yet released)
+        /// Drawing flag for determining if we are 'drawing'
         bool drawing = false;
 
         bool change = false;
         bool networked = false;
-
+        ///Defaults
         int brush = 1;
-        
         int color = 1;
-        
         int brushSize = 4;
         // bool erasing = false;
+        //left in but should be removed for new erasing method
         int temp_color = 0;
-
         int prevX = -9999;
         int prevY = -9999;
 
@@ -104,7 +105,7 @@ class SDLApp{
         // Socket sendSocket;
         // byte[Packet.sizeof] buffer;
         
-        writeln("tear down : " ~ to!string(tear_down));
+        // writeln("tear down : " ~ to!string(tear_down));
         
         Socket recieveSocket;
         // Deque traffic = new Deque!Packet;
@@ -140,96 +141,132 @@ class SDLApp{
 
 
                     ///**BEGIN MENU BUTTON SELECTOR**
-                    //Button one: change brush size 
+                    ///Button one: change brush size 
                     if (yPos < 50 && xPos < h2){
-                        writeln("button1: Change brush size");
+                        // writeln("button1: Change brush size");
 
                         if (xPos > 10 && xPos < 18){
-                            writeln("Brush Size 2");
+                            // writeln("Brush Size 2");
                             brush = 2;
                         } 
                         else if (xPos > 20 && xPos < 29){
-                            writeln("Brush Size 4");
+                            // writeln("Brush Size 4");
                             brush = 4;
                         }
                         else if (xPos > 30 && xPos < 45){
-                            writeln("Brush Size 6");
+                            // writeln("Brush Size 6");
                             brush = 6;
                         }
                         else if (xPos > 50 && xPos < 65){
-                            writeln("Brush Size 8");
+                            // writeln("Brush Size 8");
                             brush = 8;
                         }
                         else if (xPos > 69 && xPos < 89){
-                            writeln("Brush Size 12");
+                            // writeln("Brush Size 12");
                             brush = 12;
                         }
                     }
-                    //Button two: change brush color 
-                    //**TECH DEBT: pull this out into a separate function with xpos args**
-                    
+
+                    //Button two: change brush color                     
                     if(yPos < 50 && xPos > h2 && xPos < h2 * 2){
+                        if(erasing == true){
+                            writeln("ERASER: Deactivated");
+                            erasing = false;
+                        }
                         if(xPos > 112 && xPos < 124){
-                            writeln("You selected color RED");
+                            writeln("You selected: color RED");
                             color = 1;
                         }
                         else if(xPos > 130 && xPos < 142){
-                            writeln("You selected color ORANGE");
+                            writeln("You selected: color ORANGE");
                             color = 2;
                         }
                         else if(xPos > 146 && xPos < 158){
-                            writeln("You selected color YELLOW");
+                            writeln("You selected: color YELLOW");
                             color = 3;
                         }
                         else if(xPos > 162 && xPos < 174){
-                            writeln("You selected color GREEN");
+                            writeln("You selected: color GREEN");
                             color = 4;
                         }
                         else if(xPos > 178 && xPos < 190){
-                            writeln("You selected color BLUE");
+                            writeln("You selected: color BLUE");
                             color = 5;
                         }else if(xPos > 194 && xPos < 206){
-                            writeln("You selected color VIOLET");
+                            writeln("You selected: color VIOLET");
                             color = 6;
                         }
+                    }
                         
+                    // }s
+
+                    /// Based on color selected, update the RGB values using colorValueSetter
+                    if (color == 1 && !erasing) {
+                        /// Set brush color to red
+                        colorValueSetter(1);
+                    } else if (color == 2 && !erasing) {
+                        /// Set brush color to orange
+                        colorValueSetter(2);
+                    }  else if (color == 3 && !erasing) {
+                        /// Set brush color to yellow
+                        colorValueSetter(3);
+                    } else if (color == 4 && !erasing) {
+                        /// Set brush color to green
+                        colorValueSetter(4);
+                    } else if (color == 5 && !erasing) {
+                        /// Set brush color to blue
+                        colorValueSetter(5);
+                    } else if (color == 6 && !erasing) {
+                        /// Set brush color to violet
+                        colorValueSetter(6);
+                    } else if (erasing) {
+                        /// Erase: set color to black
+                        red = 0;
+                        green = 0;
+                        blue = 0;
                     }
                     //Button three:
                     //**TECH DEBT: pull this out into a separate function. Code is duplicate of key presses 
                     if(yPos < 50 && xPos > h2 * 2 + 1 && xPos < h2 * 3){
-                        writeln("button3: Toggle Eraser");
-                        if (erasing == false) {
-                            erasing = true;
-                            temp_color = color;
-                            color = -1;
-                            writeln("eraser active, value of temp_color: ", to!string(temp_color));
-                        } else {
-                            erasing = false;
-                            color = temp_color;
-                            writeln("Changing to color : " , to!string(color));
-                        }
+                        // writeln("button3: Toggle Eraser");
+                        // if (erasing == false) {
+                        //     erasing = true;
+                        //     temp_color = color;
+                        //     color = -1;
+                        //     writeln("eraser active, value of temp_color: ", to!string(temp_color));
+                        // } else {
+                        //     erasing = false;
+                        //     color = temp_color;
+                        //     writeln("Changing to color : " , to!string(color));
+                        // }
+                        eraserToggle(erasing, color);
                     }
-                    //Button four: Shape Activator 
-                    // Splits the 4 quadrants of B4 into shape assignments  
+                    ///Button four: Shape Activator 
+                    ///Splits the 4 quadrants of B4 into shape assignments  
                     if(yPos < 50 && xPos > h2 * 3 + 1 && xPos < h2 * 4){
-                        writeln("button4: Shape Activate");
-                        writeln("Drawing shape");
-                        
                         string quadrant; 
-                        //Top Left: Line
+                        ///Top Left: Line
                         if(yPos < 24 && xPos < 373){
+                            writeln("You selected: Draw LINE");
+                            writeln("LINE: Click start and end points");
                             quadrant = "TL";
                         }
-                        //Top Right: Rectangle 
+                        ///Top Right: Rectangle 
                         else if(yPos < 24 && xPos > 373){
+                            writeln("You selected: Draw RECTANGLE");
+                            writeln("RECTANGLE: Click two corner points");
                             quadrant = "TR";
                         }
-                        //Bottom Left: Circle 
+                        ///Bottom Left: Circle 
                         else if(yPos > 24 && xPos < 373){
+                            writeln("You selected: Draw CIRCLE");
+                            writeln("CIRCLE: Click two points");
                             quadrant = "BL";
                         }
-                        //Bottom Right: Triangle
+                        ///Bottom Right: Triangle
                         else if(yPos > 24 && xPos > 373){
+                            writeln("You selected: Draw TRIANGLE");
+                            writeln("TRIANGLE: Click three corner points");
                             quadrant = "BR";
                         }
 
@@ -716,6 +753,26 @@ int colorChanger(int curColor){
     writeln("Changing to color : " , colorNameArr[curColor - 1]);
     return curColor; 
 }
+
+/**
+    Method that activates or deactivates the eraser function. 
+    Accessed by pressing "E" key or by pressing button 3. 
+    **/
+    void eraserToggle(bool eraseBool, int color){
+        int temp_color = 0;
+        /// Activate eraser 
+        if (eraseBool == false) {
+            erasing = true;
+            temp_color = color;
+            color = -1;
+            writeln("You selected: ERASER ACTIVATE");
+        /// Deactivate eraser and restore previous color
+        } else {
+            erasing = false;
+            color = temp_color;
+            writeln("You selected: ERASER DEACTIVATE");
+        }
+    }
 
 void createMenu(Surface imgSurface){
  /// **Tech debt: Create variables for window size so they can be changed proportionally**
