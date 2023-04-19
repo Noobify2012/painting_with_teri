@@ -43,7 +43,8 @@ To erase part of your drawing you can either press the e key or the eraser butto
 like to erase. To get out of the eraser either press the e key, select the eraser button or click on one of the colors in the color pallete. 
 
 Undo/Redo Action:
-To undo and action simply press the u key. To redo an action press the r key. 
+To undo and action simply press the u key. To redo an action press the r key.
+Note: Redo does not currently work when you are networked, you will have to redraw anything undone at this time.  
 
 Ending a paint party:
 There are 2 ways to end a paint party. The first is if you are the host and just want to shut down the server, you can simply go to the server window and press the combination 
