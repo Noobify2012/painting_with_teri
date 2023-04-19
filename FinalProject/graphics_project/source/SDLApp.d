@@ -505,6 +505,8 @@ class SDLApp{
                         // writeln(shapeAction.getPoints[1][1]);
                         if (networked == true) {
                             Packet shapePacket = mClient.getChangeForServer(x,y,red, green, blue, st, shapeBrush, x2, y2, x3, y3);
+                            traffic.push_front(shapePacket);
+                            writeln("sending shapePacket traffic");
                             client.sendDataToServer(shapePacket);
                         }
                         // auto shapeQAction = new Action();
@@ -564,6 +566,8 @@ class SDLApp{
                         // writeln(shapeAction.getPoints[1][1]);
                         if (networked == true) {
                             Packet shapeQPacket = mClient.getChangeForServer(xx,yy,red, green, blue, st, shapeBrush, xx2, yy2, xx3, yy3);
+                            traffic.push_front(shapeQPacket);
+                            writeln("sending shapeQpacket traffic");
                             client.sendDataToServer(shapeQPacket);
                         }
                     } else if (e.key.keysym.sym == SDLK_u) {
