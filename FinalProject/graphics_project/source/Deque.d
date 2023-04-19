@@ -88,8 +88,9 @@ class Deque(T) : Container!(T) {
     /**
         * This is the push back method.
         * Params:
-        *       x=  a generic data type that is pushed into the deque on the back of the deque.
+        *       X=  a generic data type that is pushed into the deque on the back of the deque.
     */
+
     override void push_back(T x) {
         ++s.length;
         /// check if array is empty, reset indexes

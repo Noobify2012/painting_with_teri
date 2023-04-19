@@ -36,8 +36,6 @@ class TCPServer{
 				uint[] 			mCurrentMessageToSend;
 				// auto reflect = new Deque!(Packet);  // I think this is supposed to replace mServerData
 
-				auto instructions = new Deque!(Packet);
-
 				/**
 				/// Get server public address
 				Address serverAddr = test_addr.find();
@@ -118,8 +116,6 @@ class TCPServer{
 						writeln("Friends on server = ",mClientsConnectedToServer.length);
 						// Let's send our new client friend a welcome message
 						newClientSocket.send("Hello friend\0");
-						sendInstructions(newClientSocket);
-
 
 						// Now we'll spawn a new thread for the client that
 						// has recently joined.
@@ -202,8 +198,6 @@ class TCPServer{
 						p.x3 = f10;
 						p.y3 = f11;
 
-						instructions.push_back(p);
-
 
 						// Store data that we receive in our server.
 						// We append the buffer to the end of our server
@@ -243,15 +237,6 @@ class TCPServer{
 						}
 					}
 				}
-
-				void sendInstructions(Socket newClient) {
-					auto newClientInstructions = instructions;
-					while(newClientInstructions.size > 0) {
-						newClient.send(newClientInstructions.pop_front().GetPacketAsBytes());
-					}
-
-				}
-		
 	bool getServerCommands(bool commandBool) {
 		/// Ask user what server they want to use
 		bool goodCom = false;
@@ -283,22 +268,6 @@ class TCPServer{
 // Entry point to Server
 void main(){
 	// Note: I'm just using the defaults here.
-	TCPServer server = new TCPServer();
+	TCPServer server = new TCPServer;
 	server.run();
-}
-
-
-/**
-* Test: Checks for the surface to be initialized to black, draw red circle
-* Ensure interior points are red, exterior remain black
-*/
-@("Networking test")
-unittest{
-    TCPServer ser = new TCPServer("localhost", 50002);
-	TCPClient cl = new TCPClient;
-	TCPClient.init("localhost", 50002);
-	pack = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue, 0, brushSize,0,0,0,0);
-	received = cl.run(pack);
-	assert(pack == received, "Outbound and inbound packets are different"); 
-    
 }

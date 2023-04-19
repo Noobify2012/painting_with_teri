@@ -177,7 +177,6 @@ unittest{
     assert( sta.undoStack.length == 1, "Initial undo stack length <>1");
     assert( sta.redoStack.length == 0, "Initial redo stack length <>0");
 
-    /// Check that what's been added, removed, and re-added to undo stack is a1 
-    // Stop point
+    /// Check that what's been added, removed, and re-added to undo stack is a1
     assert( sta.undoStack[0] == a1, "a1 not in undo stack");
 }
