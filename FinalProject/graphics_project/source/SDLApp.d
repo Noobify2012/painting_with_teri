@@ -517,7 +517,7 @@ class SDLApp{
                 } else if (received.size() > 0){
                     // if we have traffic that came in from the server, add it to the surface. 
                     // drawInbound(received, imgSurface, state);
-                       drawInbound(received, imgSurface, state);
+                       drawInbound(received, imgSurface);
 
                 } // else if (cast(int)shapeAction.getPoints.length != 0) {
                 //     // int x1, x2, x3, y1, y2, y3;
@@ -651,9 +651,9 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
                     inboundLine.drawFromPoints(shapePoints, red, green, blue, 4);
                     writeln("i got a line");
                 } else if (curr.s == -10) {
-                    state.undo();
+                    // state.undo();
                 } else if (curr.s == 10) {
-                    state.redo();
+                    // state.redo();
                 }
         }}).start();
 
