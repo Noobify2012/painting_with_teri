@@ -21,15 +21,17 @@ import state;
 import Action : Action;
 
 class ShapeListener {
-  string quadrant; 
+  string quadrant;
+  int brushSize; 
 
   Action action;
 
   this() {
   }
 
-  this(string quad){
-    quadrant = quad;
+  this(string quad, int brushSize){
+    this.quadrant = quad;
+    this.brushSize = brushSize;
   }
 
   ~this() {
@@ -50,15 +52,13 @@ class ShapeListener {
 
     string shapeType;
     // Handle events
-    // Events are pushed into an 'event queue' internally in SDL, and then
-    // handled one at a time within this loop for as many events have
-    // been pushed into the internal SDL queue. Thus, we poll until there
-    // are '0' events or a NULL event is returned.
+    
     bool shapeIsDrawn = false;
     Shape sh;
     while (!shapeIsDrawn) {
       while(SDL_PollEvent(&e) !=0){
         if(e.type == SDL_QUIT){
+          ///Reset if user quits 
             shapeIsDrawn = true;
 
         } else if (e.key.keysym.sym == SDLK_r || this.quadrant == "TR") {
@@ -67,7 +67,7 @@ class ShapeListener {
           shapeType = "rectangle";
           sh = shapeFactory.createShape("rectangle", surf);
           sh.draw(brushSize, r, g, b);
-
+          writeln("RECTANGLE: Finished drawing");
           shapeIsDrawn = true;
 
         } else if (e.key.keysym.sym == SDLK_l || this.quadrant == "TL") {
@@ -76,8 +76,7 @@ class ShapeListener {
           shapeType = "line";
           sh = shapeFactory.createShape("line", surf);
           sh.draw(brushSize, r, g, b);
-
-          writeln("Line has been drawn");
+          writeln("LINE: Finished drawing");
           shapeIsDrawn = true;
 
         } else if (e.key.keysym.sym == SDLK_c || this.quadrant == "BL") {
@@ -86,7 +85,7 @@ class ShapeListener {
           shapeType = "circle";
           sh = shapeFactory.createShape("circle", surf);
           sh.draw(brushSize, r, g, b);
-
+          writeln("CIRCLE: Finished drawing");
           shapeIsDrawn = true;
 
         } else if (e.key.keysym.sym == SDLK_t || this.quadrant == "BR") {
@@ -95,6 +94,7 @@ class ShapeListener {
           shapeType = "triangle";
           sh = shapeFactory.createShape("triangle", surf);
           sh.draw(brushSize, r, g, b);
+          writeln("TRIANGLE: Finished drawing");
           shapeIsDrawn = true;
         }
       }
