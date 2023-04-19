@@ -10,29 +10,39 @@ import SDL_Initial :SDLInit;
 import Shape : Shape;
 import SDL_Surfaces;
 
+/**
+* A Rectangle is a Shape. It is filled, has four sides, and four right corners.
+* Two points are needed to draw a Rectangle.
+*/
 class Rectangle : Shape {
 
     Surface* surf;
     Tuple!(int, int)[] points;
 
+    /**
+    * Constructor. A Rectangle requires a Surface to draw on.
+    */
     this(Surface* surf) {
 
         this.surf = surf;
     }
 
+    /**
+    * Destructor.
+    */
     ~this() {}
 
     /**
-    * Helper for 'draw' function that fills rectangle based on user-chosen points.
-    *
+    * Name: fillRectangle
+    * Description: Helper for 'draw' function that fills rectangle based on user-chosen points.
     * Params:
-    * left - the left bound of the rectangle; no points to the left of this will be filled
-    * right - the right bound of the rectangle; no points to the right of this will be filled
-    * top - the upper bound of the rectangle; no points physically above it will be filled
-    * bottom - the lower of the of the rectangle; no points physically below it will be filled
-    * r - red color value in range [0, 255]
-    * g - green color value in range [0, 255]
-    * b - blue colover value in range [0, 255]
+    *   @param left: the left bound of the rectangle; no points to the left of this will be filled
+    *   @param right: the right bound of the rectangle; no points to the right of this will be filled
+    *   @param top: the upper bound of the rectangle; no points physically above it will be filled
+    *   @param bottom: the lower of the of the rectangle; no points physically below it will be filled
+    *   @param r: red color value in range [0, 255]
+    *   @param g: green color value in range [0, 255]
+    *   @param b: blue colover value in range [0, 255]
     */
     void fillRectangle(int left, int right, int top, int bottom, ubyte r, ubyte g, ubyte b) {
 
@@ -44,21 +54,16 @@ class Rectangle : Shape {
     }
 
     /**
-    * Draws this Rectangle based on the user's clicks. Exactly two mouse
+    * Name: draw
+    * Description: Draws this Rectangle based on the user's clicks. Exactly two mouse
     * clicks are required to draw a Rectangle. The clicks must be opposites 
     * of each other (e.g. bottom left and top right, top left and bottom 
     * right, top right and bottom left, or bottom right and top left).
-    *
-    * Example
-    * --------------------
-    * Shape rec = new Rectangle();
-    * rec.draw();   // Draw filled rectangle upon two mouse clicks
-    *
-    *  Params:
-    *  brushSize - the width and height of each drawn point
-    *  r - red value in range [0, 255]
-    *  g - green value in range [0, 255]
-    *  b - blue value in range [0, 255]
+    * Params:
+    *   @param brushSize: the width and height of each drawn point
+    *   @param r: red value in range [0, 255]
+    *   @param g: green value in range [0, 255]
+    *   @param b: blue value in range [0, 255]
     */
     override void draw(int brushSize, ubyte r, ubyte g, ubyte b) {
 
@@ -114,6 +119,15 @@ class Rectangle : Shape {
         }
     }
 
+    /**
+    * name: drawFromPoints
+    * description: Draws a Rectangle from an array of two points. The points should be opposites
+    * of each other. The Rectangle will drawn filled.
+    * params:
+    *   @param points: Array of points 
+    *   @param r, g, b: red, blue, green color values
+    *   @brushSize: Not used in rectangle
+    */
     override void drawFromPoints(Tuple!(int, int)[] points, ubyte r, ubyte g, ubyte b, int brushSize) {
 
         assert(points.length == 2);
@@ -131,6 +145,13 @@ class Rectangle : Shape {
         fillRectangle(minX, maxX, minY, maxY, r, g, b);
     }
 
+    /**
+    * name: getPoints
+    * description: Gets and returns the points that are needed to draw this Rectangle.
+    * If getPoints is invoked before the Rectangle is drawn, an empty array is
+    * returned.
+    * returns: An array of two integer tuples.
+    */
     override Tuple!(int, int)[] getPoints() {
 
         return this.points;
