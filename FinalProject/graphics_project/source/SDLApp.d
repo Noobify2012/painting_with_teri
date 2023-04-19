@@ -39,17 +39,22 @@ import Line : Line;
 // For printing the key pressed info
 // void PrintKeyInfo( SDL_KeyboardEvent *key );
 
-
-
 class SDLApp{
 
     /// global variable for sdl;
     const SDLSupport ret;
     TCPClient client = new TCPClient();
 
+    /// RGB Values that get passed into drawing functions & methods
+    /// Defaults to white if for some reason your colors are not working 
     ubyte red = 255;
     ubyte green = 255;
     ubyte blue = 255;
+
+    bool erasing = false;
+    auto traffic = new Deque!(Packet);
+    Socket sendSocket;
+    byte[Packet.sizeof] buffer;
 
     Packet inbound;
     bool tear_down = false;
@@ -83,7 +88,7 @@ class SDLApp{
         int color = 1;
         
         int brushSize = 4;
-        bool erasing = false;
+        // bool erasing = false;
         int temp_color = 0;
 
         int prevX = -9999;
@@ -95,9 +100,9 @@ class SDLApp{
         ShapeListener sh = new ShapeListener();
 
         /// Intialize deque for storing traffic to send
-        auto traffic = new Deque!(Packet);
-        Socket sendSocket;
-        byte[Packet.sizeof] buffer;
+        // auto traffic = new Deque!(Packet);
+        // Socket sendSocket;
+        // byte[Packet.sizeof] buffer;
         
         writeln("tear down : " ~ to!string(tear_down));
         
