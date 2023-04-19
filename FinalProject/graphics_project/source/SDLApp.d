@@ -448,10 +448,70 @@ class SDLApp{
                         // ShapeListener sh = new ShapeListener();
 
                         //sh.setRGB(red, green, blue);
+                        //unpack and send first shape listener
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
                         shapeAction = sh.getAction();
                         shapeAction.setColor([cast(int) red, cast(int) green, cast(int) blue]);
                         state.addAction(sh.getAction());
+                        /// unpack the points
+                        int x,y,x2,y2,x3,y3;
+                        for(int i=0; i < shapeAction.getPoints.length; i++) {
+                            for (int j=0; j < 2; j++) {
+                                if(i == 0 && j == 0) {
+                                    x = shapeAction.getPoints[0][0];
+                                } else if (i == 0 && j == 1) {
+                                    y = shapeAction.getPoints[i][1];
+                                } else if (i == 1 && j == 0) {
+                                    x2 = shapeAction.getPoints[i][0];
+                                } else if (i == 1 && j == 1) {
+                                    y2 = shapeAction.getPoints[i][1];
+                                } else if (i == 2 && j == 0) {
+                                    x3 = shapeAction.getPoints[i][0];
+                                } else {
+                                    y3 = shapeAction.getPoints[i][1];
+                                }
+                            }
+                        }
+
+                        /// unpack type
+                        writeln("shape action type: " ~to!string(shapeAction.getActionType()));
+                        int st = 0;
+                        if (shapeAction.getPoints().length == 3) {
+                            st = 3;
+                            //do triangle
+                        } else {
+                            ///circle is shape type 1
+                            if (shapeAction.getActionType() == "circle") {
+                                st = 1;
+                            } else if (shapeAction.getActionType() == "rectangle") {
+                                ///rectangle is shape type 2
+                                st = 2;
+                            } else {
+                                ///line is shape type 4
+                                st = 4;
+                            }
+                        }
+
+                        ///unpack rgb values 
+                        // ubyte redU = *cast(byte*)&red;
+                        // ubyte greenU = *cast(byte*)&green;
+                        // ubyte blueU = *cast(byte*)&blue;
+                        int shapeBrush = 4;
+                        // writeln(shapeAction.getPoints[]);
+                        // writeln(shapeAction.getPoints[0][0]);
+                        // writeln(shapeAction.getPoints[0][1]);
+                        // writeln(shapeAction.getPoints[1][0]);
+                        // writeln(shapeAction.getPoints[1][1]);
+                        if (networked == true) {
+                            Packet shapePacket = mClient.getChangeForServer(x,y,red, green, blue, st, shapeBrush, x2, y2, x3, y3);
+                            client.sendDataToServer(shapePacket);
+                        }
+
+                        //unpack and send second shape listener
+                        shQ.drawShape(&imgSurface, brushSize, red, green, blue);
+                        shapeAction = shQ.getAction();
+                        shapeAction.setColor([cast(int) red, cast(int) green, cast(int) blue]);
+                        state.addAction(shQ.getAction());
                         /// unpack the points
                         int x,y,x2,y2,x3,y3;
                         for(int i=0; i < shapeAction.getPoints.length; i++) {
