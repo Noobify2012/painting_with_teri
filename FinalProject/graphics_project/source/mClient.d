@@ -12,7 +12,7 @@ import core.thread.osthread;
  
 /// Packet
 import Packet : Packet;
-import mserver_copy;
+import mServer_copy;
 
 /**
 * Name: TCPClient
