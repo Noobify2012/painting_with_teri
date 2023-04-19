@@ -761,7 +761,9 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
                         state.undo();
                     } else if (curr.s == 10) {
                         writeln("inbound redo");
-                        redoMethod();
+                        writeln("size of redo: " ~ to!string(state.getRedoStack()));
+                        // redoMethod();
+                        
                         // state.redo();
                     } else {
                         //line

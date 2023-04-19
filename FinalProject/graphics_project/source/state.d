@@ -149,7 +149,12 @@ class State {
             writeln("Redo stack is empty -- No action taken");
         }
     }
+    ulong getRedoStack() {
+    return redoStack.length;
 }
+}
+
+
 
 
 /**
