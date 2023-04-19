@@ -533,7 +533,7 @@ class SDLApp{
                         int st = 0;
                         if (shapeAction.getPoints().length == 3) {
                             st = 3;
-                            //do triangle
+                            ///do triangle, shape type 3 
                         } else {
                             ///circle is shape type 1
                             if (shapeAction.getActionType() == "circle") {
@@ -548,23 +548,23 @@ class SDLApp{
                         }
 
                         int shapeBrush = 4;
+                        ///Send the shape over the network 
                         if (networked == true) {
                             Packet shapePacket = mClient.getChangeForServer(x,y,red, green, blue, st, shapeBrush, x2, y2, x3, y3);
                             client.sendDataToServer(shapePacket);
                         }
+
                     } else if (e.key.keysym.sym == SDLK_u) {
-                        
-                        // 
+                        /// User pressed the u key, they want to undo the last action 
                         if (networked) {
                             Packet undoPack = mClient.getChangeForServer(0,0,0,0,0, -10, 0,0,0,0,0);
                             traffic.push_front(undoPack);
-                            // client.sendDataToServer(undoPack);
                         } else {
                             state.undo();
                         }
+
                     } else if (e.key.keysym.sym == SDLK_r) {
-                        writeln("button redo");
-                        // 
+                        /// User pressed the r key, they want to redo the last action 
                         if (networked) {
                             Packet rePack = mClient.getChangeForServer(0,0,0,0,0, 10, 0,0,0,0,0);
                             traffic.push_front(rePack);
@@ -593,14 +593,11 @@ class SDLApp{
                     networked = false;
                 } else if (received.size() > 0){
                     /// if we have traffic that came in from the server, add it to the surface. 
-                    // drawInbound(received, imgSurface, state);
-                       drawInbound(received, imgSurface);
-
+                    drawInbound(received, imgSurface);
                 }   
             }
             
-            /// Blit the surace (i.e. update the window with another surfaces pixels
-            ///                       by copying those pixels onto the window).
+            /// Blit the surace (i.e. update the window with another surfaces pixels by copying those pixels onto the window).
             SDL_BlitSurface(imgSurface.getSurface(),null,SDL_GetWindowSurface(window),null);
             /// Update the window surface
             SDL_UpdateWindowSurface(window);
@@ -610,9 +607,16 @@ class SDLApp{
         }
         /// Destroy our window
         SDL_DestroyWindow(window);
-    
+
+    /// End main application loop
     }
 
+    /***********************************
+    * Name: colorValueSetter 
+    * Description: Color list with RGB values to iterate through and make the color change. 
+    * Params: 
+    *     colorNum = current color setting 
+    */
     void colorValueSetter(int colorNum) { 
         if (colorNum == 1) {
             /// Set brush color to red
@@ -651,12 +655,12 @@ class SDLApp{
             blue = 136;
         }
     }
-/***********************************
+
+    /***********************************
     * Name: getNewData 
-    * Description: Establishes a new thread with a listener to get all incoming changes when we are networked
-    * Listens for incoming data from the server and adds it to the queue for  inbound traffic to be added to the surface.
- */
-void getNewData() {
+    * Description: Establishes a new thread with a listener to get all incoming changes when we are networked. Listens for incoming data from the server and adds it to the queue for inbound traffic to be added to the surface.
+    */
+    void getNewData() {
         new Thread({
             while (!tear_down) {
                 inbound = client.receiveDataFromServer();
@@ -667,243 +671,225 @@ void getNewData() {
         }).start();
     }
 
-/**
-    * Name: drawInbound 
-    * Description: Adds all networked painting pixels and adds them to the users surface. 
+    /***********************************
+    * Name: drawInbound
+    * Description: Adds all networked painting pixels and adds them to the users surface. Creates a seperate thread and removes all of the packets of pixel changes from the server from the queue and adds them to the surface. 
     * Params:    
         * traffic = Deque of packets from the server that contains pixel changes from the server
         * imgSurface = The users image surface that needs to be updated
-    * Creates a seperate thread and removes all of the packets of pixel changes from the server from the queue and adds them to the surface. 
     */
-void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
-// void drawInbound(Deque!(Packet) traffic, Surface imgSurface, State state) {
-    // auto threads = ThreadBase.getAll(); 
-    // writeln("Number of threads: " ~to!string(threads.length));    
-    
-        // int prevX = -9999;
-        // int prevY = -9999;
+    void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
         new Thread({
             Action nextAct;
             while(traffic.size() > 0) {
+            
+                auto curr = traffic.pop_back();
                 
-                    auto curr = traffic.pop_back();
-                    // writeln("and now here");
-                    //TODO: Fix order
-                    // int brushs = cast(int)(curr.bs & 0xff);
-                    red = cast(char)(curr.r & 0xff);
-                    blue = cast(char)(curr.b & 0xff);
-                    green = cast(char)(curr.g & 0xff);
-                    // writeln("Prevx : " ~ to!string(prevX) ~ " Prevy : " ~ to!string(prevY) ~  " curr.x : " ~ to!string(curr.x) ~  " curr.y : " ~ to!string(curr.y)~  " curr.bs : " ~ to!string(curr.bs) ~  " red : " ~ to!string(red) ~  " green : " ~ to!string(green) ~ " blue : " ~ to!string(blue));     
-                    // writeln("NEW RBG VALS:: " ~ to!string(convertBytetoUnsigned(curr.r))  ~ to!string(convertBytetoUnsigned(curr.g))~ to!string(convertBytetoUnsigned(curr.b)));
-                    // imgSurface.lerp(prevX, prevY, curr.x, curr.y, curr.bs, red, green, blue);
-                    // prevX = curr.x;
-                    // prevY = curr.y;
-                    /// build tuple for drawing network points and adjusting state
-                    Tuple!(int, int)[] shapePoints = buildShape(curr);
-                    /// build color array for state update
-                    int[3] color = buildColor(curr);
-                    string actType;
-                    if (curr.s == 0) {
-                        imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
-                        writeln("i got a pixel");
-                    } else if (curr.s == 1) {
-                        //circle
-                        Circle inboundCircle = new Circle(&imgSurface);
-                        inboundCircle.drawFromPoints(shapePoints, red, green, blue, 4);
-                        nextAct = new Action(shapePoints,color, "circle");
-                        state.addAction(nextAct); 
-                        writeln("i got a circle");
-                    } else if (curr.s == 2) {
-                        //rectangle
-                        Rectangle inboundRec = new Rectangle(&imgSurface);
-                        inboundRec.drawFromPoints(shapePoints, red, green, blue, 4);
-                        nextAct = new Action(shapePoints,color, "rectangle");
-                        state.addAction(nextAct);
-                        writeln("i got a rectangle");
-                    } else if (curr.s == 3) {
-                        //triangle
-                        Triangle inboundTri = new Triangle(&imgSurface);
-                        inboundTri.drawFromPoints(shapePoints, red, green, blue, 4);
-                        nextAct = new Action(shapePoints,color, "triangle");
-                        state.addAction(nextAct);
-                        writeln("i got a triangle");
-                    } else if (curr.s == -10) {
-                        state.undo();
-                    } else if (curr.s == 10) {
-                        writeln("inbound redo");
-                        writeln("size of redo: " ~ to!string(state.getRedoStack()));
-                        // redoMethod();
-                        
-                        // state.redo();
-                    } else {
-                        //line
-                        Line inboundLine = new Line(&imgSurface);
-                        inboundLine.drawFromPoints(shapePoints, red, green, blue, 4);
-                        nextAct = new Action(shapePoints,color, "line");
-                        state.addAction(nextAct);
-                        writeln("i got a line");
-                    } 
-                    // nextAct = null;
+                red = cast(char)(curr.r & 0xff);
+                blue = cast(char)(curr.b & 0xff);
+                green = cast(char)(curr.g & 0xff);
+                
+                /// build tuple for drawing network points and adjusting state
+                Tuple!(int, int)[] shapePoints = buildShape(curr);
+                /// build color array for state update
+                int[3] color = buildColor(curr);
+                string actType;
+                if (curr.s == 0) {
+                    imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
+                    writeln("i got a pixel");
+                } else if (curr.s == 1) {
+                    /// circle
+                    Circle inboundCircle = new Circle(&imgSurface);
+                    inboundCircle.drawFromPoints(shapePoints, red, green, blue, 4);
+                    nextAct = new Action(shapePoints,color, "circle");
+                    state.addAction(nextAct); 
+                    writeln("i got a circle");
+                } else if (curr.s == 2) {
+                    /// rectangle
+                    Rectangle inboundRec = new Rectangle(&imgSurface);
+                    inboundRec.drawFromPoints(shapePoints, red, green, blue, 4);
+                    nextAct = new Action(shapePoints,color, "rectangle");
+                    state.addAction(nextAct);
+                    writeln("i got a rectangle");
+                } else if (curr.s == 3) {
+                    /// triangle
+                    Triangle inboundTri = new Triangle(&imgSurface);
+                    inboundTri.drawFromPoints(shapePoints, red, green, blue, 4);
+                    nextAct = new Action(shapePoints,color, "triangle");
+                    state.addAction(nextAct);
+                    writeln("i got a triangle");
+                } else if (curr.s == -10) {
+                    state.undo();
+                } else if (curr.s == 10) {
+                    writeln("inbound redo");
+                    writeln("size of redo: " ~ to!string(state.getRedoStack()));
+                } else {
+                    /// line
+                    Line inboundLine = new Line(&imgSurface);
+                    inboundLine.drawFromPoints(shapePoints, red, green, blue, 4);
+                    nextAct = new Action(shapePoints,color, "line");
+                    state.addAction(nextAct);
+                    writeln("i got a line");
+                } 
         }}).start();
-
-}
-
-void redoMethod() {
-    state.redo();
-}
-
-Tuple!(int, int)[] buildShape(Packet packet) {
-    Tuple!(int, int)[] points;
-    Tuple!(int, int) point1, point2, point3;
-    point1[0] = packet.x;
-    point1[1] = packet.y;
-    point2[0] = packet.x2;
-    point2[1] = packet.y2;
-    point3[0] = packet.x3;
-    point3[1] = packet.y3;
-    points ~= point1;
-    points ~= point2;
-    if (packet.s == 3) {
-        points ~= point3;
-    }
-    return points; 
-}
-
-int[3] buildColor(Packet packet) {
-    int[3] colors;
-    colors[0] = packet.r;
-    colors[1] = packet.g;
-    colors[2] = packet.b;
-    return colors; 
-}
-
-
-int brushSizeChanger(int curBrush){
-    if (curBrush < 8) {
-        curBrush += 2;
-        writeln(curBrush);
-    }
-    else if (curBrush == 8){
-        curBrush = 12;
-    } else {
-        curBrush = 2;
-    }
-    writeln("Changing to brush size: " , to!string(curBrush));
-    return curBrush;
-}
-
-int colorChanger(int curColor){
-    if (curColor < 6) {
-        writeln("CHANGE COLOR BUTTON PRESSED");
-        curColor++;
-    } else {
-        curColor=1;
-        writeln("CHANGE COLOR BUTTON PRESSED");
     }
 
-    string[6] colorNameArr;
-    colorNameArr = ["Red", "Orange", "Yellow", 
-                              "Green", "Blue", "Violet"];
-    writeln("Changing to color : " , colorNameArr[curColor - 1]);
-    return curColor; 
-}
+    void redoMethod() {
+        state.redo();
+    }
 
-/**
-    Method that activates or deactivates the eraser function. 
-    Accessed by pressing "E" key or by pressing button 3. 
-    **/
-    void eraserToggle(bool eraseBool, int color){
-        int temp_color = 0;
-        /// Activate eraser 
-        if (eraseBool == false) {
-            erasing = true;
-            temp_color = color;
-            color = -1;
-            writeln("You selected: ERASER ACTIVATE");
-        /// Deactivate eraser and restore previous color
+    Tuple!(int, int)[] buildShape(Packet packet) {
+        Tuple!(int, int)[] points;
+        Tuple!(int, int) point1, point2, point3;
+        point1[0] = packet.x;
+        point1[1] = packet.y;
+        point2[0] = packet.x2;
+        point2[1] = packet.y2;
+        point3[0] = packet.x3;
+        point3[1] = packet.y3;
+        points ~= point1;
+        points ~= point2;
+        if (packet.s == 3) {
+            points ~= point3;
+        }
+        return points; 
+    }
+
+    int[3] buildColor(Packet packet) {
+        int[3] colors;
+        colors[0] = packet.r;
+        colors[1] = packet.g;
+        colors[2] = packet.b;
+        return colors; 
+    }
+
+
+    int brushSizeChanger(int curBrush){
+        if (curBrush < 8) {
+            curBrush += 2;
+            writeln(curBrush);
+        }
+        else if (curBrush == 8){
+            curBrush = 12;
         } else {
-            erasing = false;
-            color = temp_color;
-            writeln("You selected: ERASER DEACTIVATE");
+            curBrush = 2;
         }
+        writeln("Changing to brush size: " , to!string(curBrush));
+        return curBrush;
     }
 
-void createMenu(Surface imgSurface){
- /// **Tech debt: Create variables for window size so they can be changed proportionally**
-        /// **Tech debt: Move menu creation into its own function**
-        ///Draw bottom bar of menu skeleton
-        menuBarSetup(imgSurface);
-        ///Setting up brush size button display (Button 1)
-        button1Setup(imgSurface);
-        ///Setting up color button display (Button 2)
-        button2Setup(imgSurface);
-        ///Setting up eraser button display (Button 3)
-        button3Setup(imgSurface);
-        ///Setting up shape button display (Button 4)
-        button4Setup(imgSurface);
-        ///Setting up undo button display (Button 5)
-        button5Setup(imgSurface);
-        ///Setting up redo button display (Button 6)
-        button6Setup(imgSurface);
-}
-
-
-void menuBarSetup(Surface imgSurface){
-    int b1;
-        for(b1 = 1; b1 <= 640; b1++){
-             imgSurface.lerp(b1 - 1, 50, b1, 50, 2, 255, 255, 255);  
+    int colorChanger(int curColor){
+        if (curColor < 6) {
+            writeln("CHANGE COLOR BUTTON PRESSED");
+            curColor++;
+        } else {
+            curColor=1;
+            writeln("CHANGE COLOR BUTTON PRESSED");
         }
 
-    ///Draw divider bars for menu skeleton 
-    int h1;
-    int h2 = 640/6;
-    int h3;
-    ///There needs to be 5 dividers, this is h1
-    for (h1 = 1; h1 <= 5; h1++){
-        int divX = h1 * h2;
-        ///The dividers each need to be 50 pixels tall. that is h3
-        for (h3 = 0; h3 < 50; h3++){
-            imgSurface.lerp(divX - 1, h3, divX, h3+1, 2, 255, 255, 255);
-        }
+        string[6] colorNameArr;
+        colorNameArr = ["Red", "Orange", "Yellow", 
+                                "Green", "Blue", "Violet"];
+        writeln("Changing to color : " , colorNameArr[curColor - 1]);
+        return curColor; 
     }
-}
 
-void button1Setup(Surface imgSurface){
-  int bs;
-        int bsStart = 15;
-        int bs1;
-        for (bs = 1; bs <= 5; bs++){
-            for(bs1 = 0; bs1 <= bs * 2; bs1++){
-            imgSurface.lerp(bsStart, 8 + 2 * bs, bsStart, 40 - 2 * bs, bs * 2, 255, 255, 255);
+    /**
+        Method that activates or deactivates the eraser function. 
+        Accessed by pressing "E" key or by pressing button 3. 
+        **/
+        void eraserToggle(bool eraseBool, int color){
+            int temp_color = 0;
+            /// Activate eraser 
+            if (eraseBool == false) {
+                erasing = true;
+                temp_color = color;
+                color = -1;
+                writeln("You selected: ERASER ACTIVATE");
+            /// Deactivate eraser and restore previous color
+            } else {
+                erasing = false;
+                color = temp_color;
+                writeln("You selected: ERASER DEACTIVATE");
             }
-        bsStart += bs * 4 + 6;
         }
-}
 
-void button2Setup(Surface imgSurface){
-    int cn;
-    int cn1;
-    int cnStart = 112;
-    for (cn = 1; cn <= 6; cn++){
-        colorValueSetter(cn);
-        for (cn1 = 0; cn1 < 12; cn1++){
-            cnStart++;
-            imgSurface.lerp(cnStart, 8, cnStart, 40, 1, red, green, blue);
-        }
-    cnStart += 4;
+    void createMenu(Surface imgSurface){
+    /// **Tech debt: Create variables for window size so they can be changed proportionally**
+            /// **Tech debt: Move menu creation into its own function**
+            ///Draw bottom bar of menu skeleton
+            menuBarSetup(imgSurface);
+            ///Setting up brush size button display (Button 1)
+            button1Setup(imgSurface);
+            ///Setting up color button display (Button 2)
+            button2Setup(imgSurface);
+            ///Setting up eraser button display (Button 3)
+            button3Setup(imgSurface);
+            ///Setting up shape button display (Button 4)
+            button4Setup(imgSurface);
+            ///Setting up undo button display (Button 5)
+            button5Setup(imgSurface);
+            ///Setting up redo button display (Button 6)
+            button6Setup(imgSurface);
     }
-}
 
-void button3Setup(Surface imgSurface){
-    imgSurface.lerp(240, 40, 290, 40, 2, 224, 125, 19);
-    imgSurface.lerp(230, 20, 275, 8, 1, 255, 255, 255);
-    imgSurface.lerp(230, 20, 240, 40, 1, 255, 255, 255);
-    imgSurface.lerp(275, 8, 285, 28, 1, 255, 255, 255);
-    imgSurface.lerp(243, 17, 253, 37, 1, 255, 255, 255);
-    imgSurface.lerp(240, 40, 285, 28, 1, 255, 255, 255);
-}
 
-void button4Setup(Surface imgSurface){
+    void menuBarSetup(Surface imgSurface){
+        int b1;
+            for(b1 = 1; b1 <= 640; b1++){
+                imgSurface.lerp(b1 - 1, 50, b1, 50, 2, 255, 255, 255);  
+            }
+
+        ///Draw divider bars for menu skeleton 
+        int h1;
+        int h2 = 640/6;
+        int h3;
+        ///There needs to be 5 dividers, this is h1
+        for (h1 = 1; h1 <= 5; h1++){
+            int divX = h1 * h2;
+            ///The dividers each need to be 50 pixels tall. that is h3
+            for (h3 = 0; h3 < 50; h3++){
+                imgSurface.lerp(divX - 1, h3, divX, h3+1, 2, 255, 255, 255);
+            }
+        }
+    }
+
+    void button1Setup(Surface imgSurface){
+    int bs;
+            int bsStart = 15;
+            int bs1;
+            for (bs = 1; bs <= 5; bs++){
+                for(bs1 = 0; bs1 <= bs * 2; bs1++){
+                imgSurface.lerp(bsStart, 8 + 2 * bs, bsStart, 40 - 2 * bs, bs * 2, 255, 255, 255);
+                }
+            bsStart += bs * 4 + 6;
+            }
+    }
+
+    void button2Setup(Surface imgSurface){
+        int cn;
+        int cn1;
+        int cnStart = 112;
+        for (cn = 1; cn <= 6; cn++){
+            colorValueSetter(cn);
+            for (cn1 = 0; cn1 < 12; cn1++){
+                cnStart++;
+                imgSurface.lerp(cnStart, 8, cnStart, 40, 1, red, green, blue);
+            }
+        cnStart += 4;
+        }
+    }
+
+    void button3Setup(Surface imgSurface){
+        imgSurface.lerp(240, 40, 290, 40, 2, 224, 125, 19);
+        imgSurface.lerp(230, 20, 275, 8, 1, 255, 255, 255);
+        imgSurface.lerp(230, 20, 240, 40, 1, 255, 255, 255);
+        imgSurface.lerp(275, 8, 285, 28, 1, 255, 255, 255);
+        imgSurface.lerp(243, 17, 253, 37, 1, 255, 255, 255);
+        imgSurface.lerp(240, 40, 285, 28, 1, 255, 255, 255);
+    }
+
+    void button4Setup(Surface imgSurface){
         ///Horizontal line across button 4 
         int s1;
         int sStart = 320;

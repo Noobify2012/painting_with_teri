@@ -739,6 +739,69 @@ Defaults to white if for some reason your colors are not working
 </li><li class="ddoc_member">
   <div class="ddoc_member_header">
   <div class="ddoc_header_anchor">
+  <a href="#SDLApp.colorValueSetter" id="SDLApp.colorValueSetter"><code class="code">colorValueSetter</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SDLApp.colorValueSetter"></span>void <code class="code">colorValueSetter</code>(int <code class="code">colorNum</code>);
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Name:</span>
+<code class="code">colorValueSetter</code>
+
+  </p>
+</div>
+<div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Description:</span>
+Color list with RGB values to iterate through and make the color change.
+
+  </p>
+</div>
+<div class="ddoc_params">
+  <h4>Parameters</h4>
+  <table cellspacing="0" cellpadding="5" border="0" class="graybox">
+    <tbody>
+      <tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">int <code class="code">colorNum</code></em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      current color setting
+    </p>
+  </div>
+</td>
+</tr>
+
+    </tbody>
+  </table>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
   <a href="#SDLApp.getNewData" id="SDLApp.getNewData"><code class="code">getNewData</code></a>
 </div>
 </div><div class="ddoc_decl">
@@ -768,8 +831,7 @@ Defaults to white if for some reason your colors are not working
 <div class="ddoc_section">
   <p class="para">
     <span class="ddoc_section_h">Description:</span>
-Establishes a new thread with a listener to get all incoming changes when we are networked
- Listens for incoming data from the server and adds it to the queue for  inbound traffic to be added to the surface.
+Establishes a new thread with a listener to get all incoming changes when we are networked. Listens for incoming data from the server and adds it to the queue for inbound traffic to be added to the surface.
   </p>
 </div>
 
@@ -809,7 +871,7 @@ Establishes a new thread with a listener to get all incoming changes when we are
 <div class="ddoc_section">
   <p class="para">
     <span class="ddoc_section_h">Description:</span>
-Adds all networked painting pixels and adds them to the users surface.
+Adds all networked painting pixels and adds them to the users surface. Creates a seperate thread and removes all of the packets of pixel changes from the server from the queue and adds them to the surface.
 
   </p>
 </div>
@@ -841,7 +903,6 @@ Adds all networked painting pixels and adds them to the users surface.
   <div class="ddoc_param_desc">
     <p class="para">
       The users image surface that needs to be updated
- Creates a seperate thread and removes all of the packets of pixel changes from the server from the queue and adds them to the surface.
     </p>
   </div>
 </td>
@@ -880,7 +941,7 @@ Adds all networked painting pixels and adds them to the users surface.
   <div class="ddoc_summary">
   <p class="para">
     Method that activates or deactivates the eraser function.
-    Accessed by pressing "E" key or by pressing button 3.
+        Accessed by pressing "E" key or by pressing button 3.
   </p>
 </div>
 
