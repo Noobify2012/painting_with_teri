@@ -487,13 +487,18 @@ class SDLApp{
                             client.sendDataToServer(shapePacket);
                         }
                     } else if (e.key.keysym.sym == SDLK_u) {
-                        Packet undoPack = mClient.getChangeForServer(0,0,0,0,0, -10, 0,0,0,0,0);
-                        client.sendDataToServer(undoPack);
+                        
                         state.undo();
+                        if (networked) {
+                            Packet undoPack = mClient.getChangeForServer(0,0,0,0,0, -10, 0,0,0,0,0);
+                            client.sendDataToServer(undoPack);
+                        }
                     } else if (e.key.keysym.sym == SDLK_r) {
-                        Packet rePack = mClient.getChangeForServer(0,0,0,0,0, 10, 0,0,0,0,0);
-                        client.sendDataToServer(rePack);
                         state.redo();
+                        if (networked) {
+                            Packet rePack = mClient.getChangeForServer(0,0,0,0,0, 10, 0,0,0,0,0);
+                            client.sendDataToServer(rePack);
+                        }
                     }
                 }
             }
