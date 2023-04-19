@@ -62,6 +62,7 @@ class SDLApp{
     bool tear_down = false;
     auto received = new Deque!(Packet);
     Action shapeAction;
+    ShapeListener shQ;
 
 
     /**
@@ -259,7 +260,7 @@ class SDLApp{
                         }
 
                         /// Send the selected shape to the ShapeListener so the user can draw it. 
-                        ShapeListener shQ = new ShapeListener(quadrant, brushSize);
+                        shQ = new ShapeListener(quadrant, brushSize);
                        // shQ.setRGB(red, green, blue);
                         shQ.drawShape(&imgSurface, brush, red, green, blue);
                     }
@@ -513,28 +514,28 @@ class SDLApp{
                         shapeAction.setColor([cast(int) red, cast(int) green, cast(int) blue]);
                         state.addAction(shQ.getAction());
                         /// unpack the points
-                        int x,y,x2,y2,x3,y3;
+                        int xx,yy,xx2,yy2,xx3,yy3;
                         for(int i=0; i < shapeAction.getPoints.length; i++) {
                             for (int j=0; j < 2; j++) {
                                 if(i == 0 && j == 0) {
-                                    x = shapeAction.getPoints[0][0];
+                                    xx = shapeAction.getPoints[0][0];
                                 } else if (i == 0 && j == 1) {
-                                    y = shapeAction.getPoints[i][1];
+                                    yy = shapeAction.getPoints[i][1];
                                 } else if (i == 1 && j == 0) {
-                                    x2 = shapeAction.getPoints[i][0];
+                                    xx2 = shapeAction.getPoints[i][0];
                                 } else if (i == 1 && j == 1) {
-                                    y2 = shapeAction.getPoints[i][1];
+                                    yy2 = shapeAction.getPoints[i][1];
                                 } else if (i == 2 && j == 0) {
-                                    x3 = shapeAction.getPoints[i][0];
+                                    xx3 = shapeAction.getPoints[i][0];
                                 } else {
-                                    y3 = shapeAction.getPoints[i][1];
+                                    yy3 = shapeAction.getPoints[i][1];
                                 }
                             }
                         }
 
                         /// unpack type
                         writeln("shape action type: " ~to!string(shapeAction.getActionType()));
-                        int st = 0;
+                        st = 0;
                         if (shapeAction.getPoints().length == 3) {
                             st = 3;
                             //do triangle
@@ -555,7 +556,7 @@ class SDLApp{
                         // ubyte redU = *cast(byte*)&red;
                         // ubyte greenU = *cast(byte*)&green;
                         // ubyte blueU = *cast(byte*)&blue;
-                        int shapeBrush = 4;
+                        shapeBrush = 4;
                         // writeln(shapeAction.getPoints[]);
                         // writeln(shapeAction.getPoints[0][0]);
                         // writeln(shapeAction.getPoints[0][1]);
