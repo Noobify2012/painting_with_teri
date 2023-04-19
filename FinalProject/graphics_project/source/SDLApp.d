@@ -721,7 +721,10 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
             
                 // prevX = curr.x;
                 // prevY = curr.y;
+                Action nextAct;
                 Tuple!(int, int)[] shapePoints = buildShape(curr);
+                int[3] color = buildColor(curr);
+                string actType;
                 if (curr.s == 0) {
                     imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
                     writeln("i got a pixel");
@@ -729,16 +732,22 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
                     //circle
                     Circle inboundCircle = new Circle(&imgSurface);
                     inboundCircle.drawFromPoints(shapePoints, red, green, blue, 4);
+                    nextAct = new Action(shapePoints,color, "circle");
+                    state.addAction(nextAct); 
                     writeln("i got a circle");
                 } else if (curr.s == 2) {
                     //rectangle
                     Rectangle inboundRec = new Rectangle(&imgSurface);
                     inboundRec.drawFromPoints(shapePoints, red, green, blue, 4);
+                    nextAct = new Action(shapePoints,color, "rectangle");
+                    state.addAction(nextAct);
                     writeln("i got a rectangle");
                 } else if (curr.s == 3) {
                     //triangle
                     Triangle inboundTri = new Triangle(&imgSurface);
                     inboundTri.drawFromPoints(shapePoints, red, green, blue, 4);
+                    nextAct = new Action(shapePoints,color, "triangle");
+                    state.addAction(nextAct);
                     writeln("i got a triangle");
                 } else if (curr.s == -10) {
                     state.undo();
@@ -769,6 +778,14 @@ Tuple!(int, int)[] buildShape(Packet packet) {
         points ~= point3;
     }
     return points; 
+}
+
+int[3] buildColor(Packet packet) {
+    int[3] colors;
+    colors[0] = packet.r;
+    colors[1] = packet.g;
+    colors[2] = packet.b;
+    return colors; 
 }
 
 
