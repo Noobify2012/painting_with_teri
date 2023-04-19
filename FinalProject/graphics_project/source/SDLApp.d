@@ -762,7 +762,7 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
                         state.addAction(nextAct);
                         writeln("i got a line");
                     } 
-                    nextAct = null;
+                    // nextAct = null;
         }}).start();
 
 }
