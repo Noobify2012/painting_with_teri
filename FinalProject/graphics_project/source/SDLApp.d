@@ -510,40 +510,40 @@ class SDLApp{
 
                         //unpack and send second shape listener
                         shQ.drawShape(&imgSurface, brushSize, red, green, blue);
-                        shapeAction = shQ.getAction();
-                        shapeAction.setColor([cast(int) red, cast(int) green, cast(int) blue]);
+                        shapeQAction = shQ.getAction();
+                        shapeQAction.setColor([cast(int) red, cast(int) green, cast(int) blue]);
                         state.addAction(shQ.getAction());
                         /// unpack the points
                         int xx,yy,xx2,yy2,xx3,yy3;
-                        for(int i=0; i < shapeAction.getPoints.length; i++) {
+                        for(int i=0; i < shapeQAction.getPoints.length; i++) {
                             for (int j=0; j < 2; j++) {
                                 if(i == 0 && j == 0) {
-                                    xx = shapeAction.getPoints[0][0];
+                                    xx = shapeQAction.getPoints[0][0];
                                 } else if (i == 0 && j == 1) {
-                                    yy = shapeAction.getPoints[i][1];
+                                    yy = shapeQAction.getPoints[i][1];
                                 } else if (i == 1 && j == 0) {
-                                    xx2 = shapeAction.getPoints[i][0];
+                                    xx2 = shapeQAction.getPoints[i][0];
                                 } else if (i == 1 && j == 1) {
-                                    yy2 = shapeAction.getPoints[i][1];
+                                    yy2 = shapeQAction.getPoints[i][1];
                                 } else if (i == 2 && j == 0) {
-                                    xx3 = shapeAction.getPoints[i][0];
+                                    xx3 = shapeQAction.getPoints[i][0];
                                 } else {
-                                    yy3 = shapeAction.getPoints[i][1];
+                                    yy3 = shapeQAction.getPoints[i][1];
                                 }
                             }
                         }
 
                         /// unpack type
-                        writeln("shape action type: " ~to!string(shapeAction.getActionType()));
+                        writeln("shape action type: " ~to!string(shapeQAction.getActionType()));
                         st = 0;
-                        if (shapeAction.getPoints().length == 3) {
+                        if (shapeQAction.getPoints().length == 3) {
                             st = 3;
                             //do triangle
                         } else {
                             ///circle is shape type 1
-                            if (shapeAction.getActionType() == "circle") {
+                            if (shapeQAction.getActionType() == "circle") {
                                 st = 1;
-                            } else if (shapeAction.getActionType() == "rectangle") {
+                            } else if (shapeQAction.getActionType() == "rectangle") {
                                 ///rectangle is shape type 2
                                 st = 2;
                             } else {
@@ -563,8 +563,8 @@ class SDLApp{
                         // writeln(shapeAction.getPoints[1][0]);
                         // writeln(shapeAction.getPoints[1][1]);
                         if (networked == true) {
-                            Packet shapePacket = mClient.getChangeForServer(x,y,red, green, blue, st, shapeBrush, x2, y2, x3, y3);
-                            client.sendDataToServer(shapePacket);
+                            Packet shapeQPacket = mClient.getChangeForServer(xx,yy,red, green, blue, st, shapeBrush, xx2, yy2, xx3, yy3);
+                            client.sendDataToServer(shapeQPacket);
                         }
                     } else if (e.key.keysym.sym == SDLK_u) {
                         Packet undoPack = mClient.getChangeForServer(0,0,0,0,0, -10, 0,0,0,0,0);
