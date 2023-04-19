@@ -1,5 +1,5 @@
-// After starting server (rdmd server.d)
-// then start as many clients as you like with "rdmd client.d"
+/// After starting server (rdmd server.d)
+/// then start as many clients as you like with "rdmd client.d"
 
 import std.socket;
 import std.stdio;
@@ -13,7 +13,7 @@ import core.thread.osthread;
 /// Packet
 import Packet : Packet;
 
-/**
+/***********************************
 * Name: TCPClient
 * Description: The purpose of the TCPClient class is to connect to a server and send messages.
 */
@@ -25,24 +25,26 @@ class TCPClient{
     ushort port;
     // Deque incoming;
 
-
-	/**
-    Name: TCPClient Constructor
-    Description: 
+	/***********************************
+    * Name: TCPClient Constructor 
     */
 	this(){
         // auto incoming = new Deque!(Packet);
 	}
 
-	/**
-    Name: TCPClient Destructor
-    Description: Closes client socket
+	/***********************************
+    * Name: TCPClient Destructor
+    * Description: Closes client socket
     */ 
 	~this(){
 		// Close the socket
 		mSocket.close();
 	}
 
+    /***********************************
+    * Name: init
+    * Description: initiates a new client and attempts to create a socket to connect to. Opens a client thread to send/receive data from. 
+    */
     void init() {
         host = getServerAddress();
         port = getServerPort();
@@ -52,38 +54,33 @@ class TCPClient{
 		/// Create a socket for connecting to a server
 		/// Note: AddressFamily.INET tells us we are using IPv4 Internet protocol
 		/// Note: SOCK_STREAM (SocketType.STREAM) creates a TCP Socket
-		///       If you want UDPClient and UDPServer use 'SOCK_DGRAM' (SocketType.DGRAM)
+		///       If you want UDPClient and UDPServer use 'SOCK_DGRAM(SocketType.DGRAM)
         /// Attempt to create socket
 		mSocket = new Socket(AddressFamily.INET, SocketType.STREAM);
 
 		/// Socket needs an 'endpoint', so we determine where we are going to connect to.
-		/// NOTE: It's possible the port number is in use if you are not
-		///       able to connect. Try another one.
+		/// NOTE: It's possible the port number is in use if you are not able to connect. Try another one.
 		mSocket.connect(new InternetAddress(host, port));
 		writeln("Client conncted to server");
-		// Our client waits until we receive at least one message
-		// confirming that we are connected
-		// This will be something like "Hello friend\0"
+		/// Our client waits until we receive at least one message confirming that we are connected. This will be something like "Hello friend\0"
 		byte[Packet.sizeof] buffer;
 		auto received = mSocket.receive(buffer);
 		writeln("On Connect: ", buffer[0 .. received]);
         writeln(">");
     }
 
-	// Purpose here is to run the client thread to constantly send data to the server.
-	// This is your 'main' application code.
-	// 
-	// In order to make life a little easier, I will also spin up a new thread that constantly
-	// receives data from the server.
+	/// Purpose here is to run the client thread to constantly send data to the server.
+	/// This is your 'main' application code. 
+	/// In order to make life a little easier, I will also spin up a new thread that constantly receives data from the server.
 	Packet run(Packet packet) {
 		writeln("Preparing to run client");
 		writeln("(me)",mSocket.localAddress(),"<---->",mSocket.remoteAddress(),"(server)");
-		// Buffer of data to send out
-		// Choose '80' bytes of information to be sent/received
+		/// Buffer of data to send out
+		/// Choose '80' bytes of information to be sent/received
 
 		bool clientRunning=true;
 		
-		// Spin up the new thread that will just take in data from the server
+		/// Spin up the new thread that will just take in data from the server
             new Thread({
                         inbound = receiveDataFromServer();
                     }).start();
@@ -92,47 +89,50 @@ class TCPClient{
 		writeln(">");
 		while(clientRunning){
 		    sendDataToServer(packet);
-
-            // foreach(line; stdin.byLine){
-			// 	write(">");
-			// 	// Send the packet of information
-			// 	mSocket.send(line);
-			// }
-				// Now we'll immedietely block and await data from the server
 		}
         return inbound;
 
 	}
 
+    /***********************************
+    * Name: sendDataToServer
+    * Description: Sends the packet to the server as bytes. 
+    * Params:
+    *    packet = the packet you want to send to the server
+    */ 
     void sendDataToServer(Packet packet) {
         mSocket.send(packet.GetPacketAsBytes);
     }
 
+    /***********************************
+    * Name: closeSocket
+    * Description: Closes the client socket. 
+    */ 
     void closeSocket() {
         mSocket.close();
     }
 
-
-
-	/// Purpose of this function is to receive data from the server as it is broadcast out.
+    /***********************************
+    * Name: receiveDataFromServer
+    * Description: Receive data from the server as it is broadcast out.
+    * Returns: a packet containing the data that is received from the server 
+    */ 
 	Packet receiveDataFromServer(){
 		while(true){	
-			// Note: It's important to recreate or 'zero out' the buffer so that you do not
-			// 			 get previous data leftover in the buffer.
+			/// Note: It's important to recreate or 'zero out' the buffer so that you do not get previous data leftover in the buffer.
 			byte[Packet.sizeof] buffer;
             auto fromServer = buffer[0 .. mSocket.receive(buffer)];
             writeln("buffer length    :", buffer.length);
             writeln("fromServer (raw bytes): ",fromServer);
             writeln();
 
-            /// Format the packet. Note, I am doing this in a very
-            /// verbosoe manner so you can see each step.
+            /// Format the packet. Note, I am doing this in a very verbose manner so you can see each step.
             Packet formattedPacket;
             byte[16] field0        = fromServer[0 .. 16].dup;
             formattedPacket.user = cast(char[])(field0);
             writeln("Server echos back user: ", formattedPacket.user);
 
-                    /// Get some of the fields
+            /// Get some of the fields
             byte[4] field1 = fromServer[16 .. 20].dup;
             byte[4] field2 = fromServer[20 .. 24].dup;
             byte[4] field3 = fromServer[24 .. 28].dup;
@@ -172,31 +172,34 @@ class TCPClient{
             
             write(">");
             return formattedPacket;
-
 		}
 	}
-	
 }
 
-/**
-    * Name: getChangeForServer 
-    * Description: takes pixel changes and packs them up into a packet to send the server. 
-    * Params:    
-        * @param xPos: x-coordinate of pixel, yPos: y-coordinate of pixel
-        * @param blueVal: rgb blue value, greenVal: rgb green value, redVal: rgb red value
-        * @param brushSize: integer value of the size of the brush that is currently being used
-    * Turns the changes in pixel colors on the current users surface into a packet to send to other networked users. 
-    */
+/***********************************
+* Name: getChangeForServer 
+* Description: takes pixel changes and packs them up into a packet to send the server. 
+* Params:    
+    * xPos = x-coordinate of pixel
+    * yPos = y-coordinate of pixel
+    * redVal = rgb red value
+    * greenVal = rgb green value
+    * blueVal = rgb blue value
+    * shape = the shape you want to send
+    * brushSize = integer value of the size of the brush that is currently being used
+    * x2Pos = x of second point 
+    * y2Pos = y of second point 
+    * x3Pos = x of third point 
+    * y3Pos = y of third point 
+* Returns: A packet that holds the changes in pixel colors on the current user's surface to send to other networked users. 
+*/
 Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyte blueVal, int shape, int brushSize, int x2Pos, int y2Pos, int x3Pos, int y3Pos) {
     Packet data;
-		// The 'with' statement allows us to access an object
-		// (i.e. member variables and member functions)
-		// in a slightly more convenient way
+		/// The 'with' statement allows us to access an object (i.e. member variables and member functions) in a slightly more convenient way
 
 		with (data) {
 			user = "clientName\0";
-			// Just some 'dummy' data for now
-			// that the 'client' will continuously send
+			/// Just some 'dummy' data for now that the 'client' will continuously send
 			x = xPos;
 			y = yPos;
 			r = *cast(byte*)&redVal;
@@ -214,10 +217,11 @@ Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyt
     return data;
 }
 
-/**
+/***********************************
     * Name: getServerAddress 
     * Description: Prompts the user for a IP address to try and connect to for a painting party.  
     * Turns the changes in pixel colors on the current users surface into a packet to send to other networked users. 
+    * Returns: the user's server address that a client can connect to. 
     */
 string getServerAddress() {
     /// Ask user what server they want to use
@@ -244,41 +248,40 @@ string getServerAddress() {
     return user_addr;
 }
 
-
+/***********************************
+    * Name: getServerAddress 
+    * Description: Prompts the user for a IP address to try and connect to for a painting party.  
+    * Turns the changes in pixel colors on the current users surface into a packet to send to other networked users. 
+    * Returns: the user's server address that a client can connect to. 
+    */
 ushort getServerPort() {
-    //ask user what port they want to use if not the default
+    /// ask user what port they want to use if not the default
     auto user_port = 50002;
-    //bool used to loop until we have a good port
+    /// bool used to loop until we have a good port
     bool good_port = false;
     while(!good_port){
         writeln("what port would you like to connect to? press enter for default(50002)");
-        // get input
+        /// get input
         string user_in = readln;
-        //string off carriage return and other nonsense
+        /// string off carriage return and other nonsense
         user_in = strip(user_in);
-        // writeln(user_in.length);
-        //check if the user either gave an empty string or requested their own port
+        /// writeln(user_in.length);
+        /// check if the user either gave an empty string or requested their own port
         if (((user_in == "") | isNumeric(user_in))) {
             good_port = true;
-            //check if port is numeric
+            /// check if port is numeric
             if (isNumeric(user_in)){
-                //if numeric, is it a legal port number
+                /// if numeric, is it a legal port number
                 if ((to!int(user_in) >= 0) & (to!int(user_in) <= 65535)) {
-                    //legal, set to return variable
+                    /// legal, set to return variable
                     user_port = to!int(user_in);
                 } else {
-                    //illegal port loop again
+                    /// illegal port loop again
                     good_port = false;
                 }
             }
         }
     }
-    //convert to proper data type before returning
+    /// convert to proper data type before returning
     return to!ushort(user_port);
 }
-
-// Entry point to client
-// void main(){
-// 	TCPClient client = new TCPClient();
-// 	client.run();
-// }

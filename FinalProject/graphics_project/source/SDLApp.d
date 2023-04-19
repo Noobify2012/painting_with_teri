@@ -115,13 +115,11 @@ class SDLApp{
 
         Action act = new Action([], [red, green, blue], "stroke");
         brush = 2;
-        // SDL_EnableUNICODE( 1 );
-
-        /// Main application loop that will run until a quit event has occurred.
-        /// This is the 'main graphics loop'
-
-        
-
+   
+        /***********************************
+        * runApplication is the main application loop that will run until a
+        * quit event has occurred. This is the 'main graphics loop'.
+        */
         while(runApplication){
             SDL_Event e;
             /// Handle events
@@ -674,11 +672,11 @@ class SDLApp{
             blue = 136;
         }
     }
-/**
+/***********************************
     * Name: getNewData 
     * Description: Establishes a new thread with a listener to get all incoming changes when we are networked
-    * Listens for incoming data from the server and adds it to the queue for inbound traffic to be added to the surface.
-    */
+    * Listens for incoming data from the server and adds it to the queue for  inbound traffic to be added to the surface.
+ */
 void getNewData() {
         new Thread({
             while (!tear_down) {

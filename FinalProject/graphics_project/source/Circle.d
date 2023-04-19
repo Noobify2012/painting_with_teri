@@ -36,11 +36,11 @@ class Circle : Shape {
     * Name: fillCircle
     * Description: Helper for 'draw' function that fills the Circle based on user-chosen points.
     * Params:
-    *   @param midpoint: the midpoint of this Circle
-    *   @param radius: the radius of this Circle
-    *   @param r: red color value in range [0, 255]
-    *   @param g: green color value in range [0, 255]
-    *   @param b: blue colover value in range [0, 255]
+    *   midpoint = the midpoint of this Circle
+    *   radius =the radius of this Circle
+    *   r =red color value in range [0, 255]
+    *   g = green color value in range [0, 255]
+    *   b = blue colover value in range [0, 255]
     */
     void fillCircle(Tuple!(int, int) midpoint, int radius, ubyte r, ubyte g, ubyte b) {
 
@@ -64,10 +64,10 @@ class Circle : Shape {
     * Description: Draws this Circle based on the user's clicks. Exactly two mouse
     * clicks are required to draw a Circle. The clicks represent the Circle's diameter.
     * Params:
-    *   @param brushSize: not used.
-    *   @param r: red value in range [0, 255]
-    *   @param g: green value in range [0, 255]
-    *   @param b: blue value in range [0, 255]
+    *   brushSize = not used.
+    *   r = red value in range [0, 255]
+    *   g = green value in range [0, 255]
+    *   b = blue value in range [0, 255]
     */
     override void draw(int brushSize, ubyte r, ubyte g, ubyte b) {
 

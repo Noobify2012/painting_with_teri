@@ -20,13 +20,14 @@ class DrawingUtility {
 
   }
 
-  /**
-  Name: GetPixelColorAt
-  Description: Determines DSL color of pixel at point
-  Params: 
-    x, y: point coordinates
-    imgSurface: SDL surface
-  Returns: color of pixel
+  /***********************************
+  * Name: GetPixelColorAt
+  * Description: Determines DSL color of pixel at point
+  * Params: 
+  *    x = x coordinate of point 
+  *    y = y coordinate of point 
+  *    imgSurface =  SDL surface
+  * Returns: color of pixel
   */
   SDL_Color getPixelColorAt(int x, int y, SDL_Surface* imgSurface) {
 
@@ -49,37 +50,40 @@ class DrawingUtility {
     return color;
   }
 
-  /**
-  Name: IsSameColor
-  Description: Determines whether two colors are the same
-  Params: 
-    c1, c2: color1 and color2
-  Returns:  True if colors are the same
-            False if not
+  /***********************************
+  * Name: IsSameColor
+  * Description: Determines whether two colors are the same
+  * Params: 
+  *    c1 = color1
+  *    c2 = color2
+  * Returns:  True if colors are the same, False if not
   */
   bool isSameColor(SDL_Color c1, SDL_Color c2) {
     return c1.r == c2.r && c1.g == c2.g && c1.b == c1.b;
   }
 
-  /**
-  Name: IsSamePoint
-  Description: Determines whether two points are the same
-  Params: 
-    p1, p2: (x, y) coords of point1 and point2
-  Returns:  True if points have the same x and y vals,
-            False if not
+  /***********************************
+  * Name: IsSamePoint
+  * Description: Determines whether two points are the same
+  * Params: 
+  *    p1 = (x, y) coords of point1
+  *    p2 = (x, y) coords of point2
+  * Returns:  True if points have the same x and y vals, False if not
   */
   bool isSamePoint(Tuple!(int, int) p1, Tuple!(int, int) p2) {
     return p1[0] == p2[0] && p1[1] == p2[1];
   }
 
-  /**
-  Name: DFS
-  Description: Performs depth-first search algorithm and fills in pixels as they're visited
-  Params: 
-    x, y: point coordinates,
-    *surf: surface to draw on,
-    r, g, b: rgb values of point
+  /***********************************
+  * Name: dfs
+  * Description: Performs depth-first search algorithm and fills in pixels as they're visited
+  * Params: 
+  *    x = x coordinate of point 
+  *    y = y coordinate of point 
+  *    surf = surface to draw on,
+  *    r = rgb red value of line 
+  *    g = rgb green value of line 
+  *    b = rgb blue value of line 
   */
   void dfs(int x, int y, Surface *surf, ubyte r, ubyte g, ubyte b) {
 

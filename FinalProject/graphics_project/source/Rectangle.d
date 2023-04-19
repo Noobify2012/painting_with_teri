@@ -36,13 +36,13 @@ class Rectangle : Shape {
     * Name: fillRectangle
     * Description: Helper for 'draw' function that fills rectangle based on user-chosen points.
     * Params:
-    *   @param left: the left bound of the rectangle; no points to the left of this will be filled
-    *   @param right: the right bound of the rectangle; no points to the right of this will be filled
-    *   @param top: the upper bound of the rectangle; no points physically above it will be filled
-    *   @param bottom: the lower of the of the rectangle; no points physically below it will be filled
-    *   @param r: red color value in range [0, 255]
-    *   @param g: green color value in range [0, 255]
-    *   @param b: blue colover value in range [0, 255]
+    *   left = the left bound of the rectangle; no points to the left of this will be filled
+    *   right = the right bound of the rectangle; no points to the right of this will be filled
+    *   top = the upper bound of the rectangle; no points physically above it will be filled
+    *   bottom = the lower of the of the rectangle; no points physically below it will be filled
+    *   r = red color value in range [0, 255]
+    *   g = green color value in range [0, 255]
+    *   b = blue colover value in range [0, 255]
     */
     void fillRectangle(int left, int right, int top, int bottom, ubyte r, ubyte g, ubyte b) {
 
@@ -60,10 +60,10 @@ class Rectangle : Shape {
     * of each other (e.g. bottom left and top right, top left and bottom 
     * right, top right and bottom left, or bottom right and top left).
     * Params:
-    *   @param brushSize: the width and height of each drawn point
-    *   @param r: red value in range [0, 255]
-    *   @param g: green value in range [0, 255]
-    *   @param b: blue value in range [0, 255]
+    *   brushSize = the width and height of each drawn point
+    *   r = red value in range [0, 255]
+    *   g = green value in range [0, 255]
+    *   b = blue value in range [0, 255]
     */
     override void draw(int brushSize, ubyte r, ubyte g, ubyte b) {
 

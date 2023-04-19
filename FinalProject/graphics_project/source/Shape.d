@@ -18,8 +18,10 @@ abstract class Shape {
     * registered from the user. Usually, a shape requires at least two and 
     * at most three clicks. All shapes will be drawn filled in.
     * Params:
-    *   @param brushSize: size of the paintbrush
-    *   @param r, g, b: the color value representing this Shape
+    *   brushSize = size of the paintbrush
+    *   r = red value of the color representing this Shape
+    *   g = green value of the color representing this Shape
+    *   b = blue value of the color representing this Shape
     */
     abstract void draw(int brushSize, ubyte r, ubyte g, ubyte b);
 
@@ -28,9 +30,11 @@ abstract class Shape {
     * Description: Draws a Shape from a series of points entered as parameters. The Shape
     * will be drawn filled in.
     * Params:
-    *   @param points: A minimal list of points needed to draw this Shape
-    *   @param r, g, b: the color value representing this Shape
-    *   @param brushSize: size of the paintbrush
+    *   points = A minimal list of points needed to draw this Shape
+    *   r = red value of the color representing this Shape
+    *   g = green value of the color representing this Shape
+    *   b = blue value of the color representing this Shape
+    *   brushSize = size of the paintbrush
     */
     abstract void drawFromPoints(Tuple!(int, int)[] points, ubyte r, ubyte g, ubyte b, int brushSize);
 
