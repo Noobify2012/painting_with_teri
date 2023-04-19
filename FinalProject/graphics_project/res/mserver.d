@@ -36,6 +36,8 @@ class TCPServer{
 				uint[] 			mCurrentMessageToSend;
 				// auto reflect = new Deque!(Packet);  // I think this is supposed to replace mServerData
 
+				auto instructions = new Deque!(Packet);
+
 				/**
 				/// Get server public address
 				Address serverAddr = test_addr.find();
@@ -116,6 +118,8 @@ class TCPServer{
 						writeln("Friends on server = ",mClientsConnectedToServer.length);
 						// Let's send our new client friend a welcome message
 						newClientSocket.send("Hello friend\0");
+						sendInstructions(newClientSocket);
+
 
 						// Now we'll spawn a new thread for the client that
 						// has recently joined.
@@ -198,6 +202,8 @@ class TCPServer{
 						p.x3 = f10;
 						p.y3 = f11;
 
+						instructions.push_back(p);
+
 
 						// Store data that we receive in our server.
 						// We append the buffer to the end of our server
@@ -237,6 +243,15 @@ class TCPServer{
 						}
 					}
 				}
+
+				void sendInstructions(Socket newClient) {
+					auto newClientInstructions = instructions;
+					while(newClientInstructions.size > 0) {
+						newClient.send(newClientInstructions.pop_front().GetPacketAsBytes());
+					}
+
+				}
+		
 	bool getServerCommands(bool commandBool) {
 		/// Ask user what server they want to use
 		bool goodCom = false;

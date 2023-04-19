@@ -315,15 +315,15 @@ class SDLApp{
                             // Check if the client is networked
                             if(networked == true) {
                                 Packet packet;
-                                packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue, 0, brushSize,0,0,0,0);
+                                // packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue, 0, brushSize,0,0,0,0);
                                 //if client networked then make sure that the next packet to send isn't equal to the last one(no sequential duplicate packets).
-                                if (traffic.size() > 0 ) {
-                                    if (packet != traffic.back() ) {
-                                        traffic.push_front(packet);
-                                    }
-                                } else {
-                                    traffic.push_front(packet);
-                                }
+                                // if (traffic.size() > 0 ) {
+                                //     if (packet != traffic.back() ) {
+                                //         traffic.push_front(packet);
+                                //     }
+                                // } else {
+                                //     traffic.push_front(packet);
+                                // }
                             // }
                             }
                         }
@@ -333,7 +333,13 @@ class SDLApp{
                     /// --This is also imposing bounds for drawing lines - the xPos & yPos limitations
                     /// keep you from overflowing pixels
                     if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 50 && prevY > 51) {
-                        imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                        Packet linePacket = mClient.getChangeForServer(prevX, prevY, red, green, blue, 4, brushSize, xPos, yPos,0,0);
+                        Line newLine = new Line(&imgSurface);
+                        newLine.drawFromPoints(buildShape(linePacket), red, green, blue, brushSize);
+                        // imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+                        if (networked == true) {
+                            client.sendDataToServer(linePacket);
+                        }
                          writeln("are we hitting lerp?");
                     }
                     prevX = xPos;
@@ -480,8 +486,12 @@ class SDLApp{
                             client.sendDataToServer(shapePacket);
                         }
                     } else if (e.key.keysym.sym == SDLK_u) {
+                        Packet undoPack = mClient.getChangeForServer(0,0,0,0,0, -10, 0,0,0,0,0);
+                        client.sendDataToServer(undoPack);
                         state.undo();
                     } else if (e.key.keysym.sym == SDLK_r) {
+                        Packet rePack = mClient.getChangeForServer(0,0,0,0,0, 10, 0,0,0,0,0);
+                        client.sendDataToServer(rePack);
                         state.redo();
                     }
                 }
@@ -505,7 +515,7 @@ class SDLApp{
                 // } else if (received.size() > 0 && !tear_down){
                 } else if (received.size() > 0){
                     // if we have traffic that came in from the server, add it to the surface. 
-                    drawInbound(received, imgSurface);
+                    drawInbound(received, imgSurface, state);
                 } // else if (cast(int)shapeAction.getPoints.length != 0) {
                 //     // int x1, x2, x3, y1, y2, y3;
                 //     // for (int i = 0; i < shapeAction.getPoints.length; i++) {
@@ -590,7 +600,7 @@ void getNewData() {
         * @param imgSurface: The users image surface that needs to be updated
     * Creates a seperate thread and removes all of the packets of pixel changes from the server from the queue and adds them to the surface. 
     */
-void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
+void drawInbound(Deque!(Packet) traffic, Surface imgSurface, State state) {
     // auto threads = ThreadBase.getAll(); 
     // writeln("Number of threads: " ~to!string(threads.length));    
     
@@ -631,12 +641,16 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
                     Triangle inboundTri = new Triangle(&imgSurface);
                     inboundTri.drawFromPoints(shapePoints, red, green, blue, 4);
                     writeln("i got a triangle");
-                } else {
+                } else if (curr.s == 4) {
                     //line
                     Line inboundLine = new Line(&imgSurface);
                     inboundLine.drawFromPoints(shapePoints, red, green, blue, 4);
                     writeln("i got a line");
-                }        
+                } else if (curr.s == -10) {
+                    state.undo();
+                } else if (curr.s == 10) {
+                    state.redo();
+                }
         }}).start();
 
 }
