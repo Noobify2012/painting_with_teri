@@ -60,6 +60,7 @@ class SDLApp{
     bool tear_down = false;
     auto received = new Deque!(Packet);
     Action shapeAction;
+    State state;
 
     /**
     Starts when you run the application and ends automatically 
@@ -95,7 +96,7 @@ class SDLApp{
         int prevX = -9999;
         int prevY = -9999;
 
-        State state = new State(&imgSurface);
+        state = new State(&imgSurface);
 
         DrawingUtility du = new DrawingUtility();
         ShapeListener sh = new ShapeListener();
