@@ -740,9 +740,9 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
                     inboundTri.drawFromPoints(shapePoints, red, green, blue, 4);
                     writeln("i got a triangle");
                 } else if (curr.s == -10) {
-                    // state.undo();
+                    state.undo();
                 } else if (curr.s == 10) {
-                    // state.redo();
+                    state.redo();
                 } else {
                     //line
                     Line inboundLine = new Line(&imgSurface);
