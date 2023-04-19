@@ -61,7 +61,7 @@ class SDLApp{
     Packet inbound;
     bool tear_down = false;
     auto received = new Deque!(Packet);
-    Action shapeAction;
+    Action shapeAction, shapeQAction;
     ShapeListener shQ;
 
 
@@ -507,7 +507,7 @@ class SDLApp{
                             Packet shapePacket = mClient.getChangeForServer(x,y,red, green, blue, st, shapeBrush, x2, y2, x3, y3);
                             client.sendDataToServer(shapePacket);
                         }
-
+                        // auto shapeQAction = new Action();
                         //unpack and send second shape listener
                         shQ.drawShape(&imgSurface, brushSize, red, green, blue);
                         shapeQAction = shQ.getAction();
