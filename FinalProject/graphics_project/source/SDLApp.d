@@ -722,7 +722,9 @@ void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {
                 // prevX = curr.x;
                 // prevY = curr.y;
                 Action nextAct;
+                /// build tuple for drawing network points and adjusting state
                 Tuple!(int, int)[] shapePoints = buildShape(curr);
+                /// build color array for state update
                 int[3] color = buildColor(curr);
                 string actType;
                 if (curr.s == 0) {
