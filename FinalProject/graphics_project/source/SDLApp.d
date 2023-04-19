@@ -511,65 +511,65 @@ class SDLApp{
                         }
                         // auto shapeQAction = new Action();
                         //unpack and send second shape listener
-                        shQ.drawShape(&imgSurface, brushSize, red, green, blue);
-                        shapeQAction = shQ.getAction();
-                        shapeQAction.setColor([cast(int) red, cast(int) green, cast(int) blue]);
-                        state.addAction(shQ.getAction());
-                        /// unpack the points
-                        int xx,yy,xx2,yy2,xx3,yy3;
-                        for(int i=0; i < shapeQAction.getPoints.length; i++) {
-                            for (int j=0; j < 2; j++) {
-                                if(i == 0 && j == 0) {
-                                    xx = shapeQAction.getPoints[0][0];
-                                } else if (i == 0 && j == 1) {
-                                    yy = shapeQAction.getPoints[i][1];
-                                } else if (i == 1 && j == 0) {
-                                    xx2 = shapeQAction.getPoints[i][0];
-                                } else if (i == 1 && j == 1) {
-                                    yy2 = shapeQAction.getPoints[i][1];
-                                } else if (i == 2 && j == 0) {
-                                    xx3 = shapeQAction.getPoints[i][0];
-                                } else {
-                                    yy3 = shapeQAction.getPoints[i][1];
-                                }
-                            }
-                        }
+                        // shQ.drawShape(&imgSurface, brushSize, red, green, blue);
+                        // shapeQAction = shQ.getAction();
+                        // shapeQAction.setColor([cast(int) red, cast(int) green, cast(int) blue]);
+                        // state.addAction(shQ.getAction());
+                        // /// unpack the points
+                        // int xx,yy,xx2,yy2,xx3,yy3;
+                        // for(int i=0; i < shapeQAction.getPoints.length; i++) {
+                        //     for (int j=0; j < 2; j++) {
+                        //         if(i == 0 && j == 0) {
+                        //             xx = shapeQAction.getPoints[0][0];
+                        //         } else if (i == 0 && j == 1) {
+                        //             yy = shapeQAction.getPoints[i][1];
+                        //         } else if (i == 1 && j == 0) {
+                        //             xx2 = shapeQAction.getPoints[i][0];
+                        //         } else if (i == 1 && j == 1) {
+                        //             yy2 = shapeQAction.getPoints[i][1];
+                        //         } else if (i == 2 && j == 0) {
+                        //             xx3 = shapeQAction.getPoints[i][0];
+                        //         } else {
+                        //             yy3 = shapeQAction.getPoints[i][1];
+                        //         }
+                        //     }
+                        // }
 
-                        /// unpack type
-                        writeln("shape action type: " ~to!string(shapeQAction.getActionType()));
-                        st = 0;
-                        if (shapeQAction.getPoints().length == 3) {
-                            st = 3;
-                            //do triangle
-                        } else {
-                            ///circle is shape type 1
-                            if (shapeQAction.getActionType() == "circle") {
-                                st = 1;
-                            } else if (shapeQAction.getActionType() == "rectangle") {
-                                ///rectangle is shape type 2
-                                st = 2;
-                            } else {
-                                ///line is shape type 4
-                                st = 4;
-                            }
-                        }
+                        // /// unpack type
+                        // writeln("shape action type: " ~to!string(shapeQAction.getActionType()));
+                        // st = 0;
+                        // if (shapeQAction.getPoints().length == 3) {
+                        //     st = 3;
+                        //     //do triangle
+                        // } else {
+                        //     ///circle is shape type 1
+                        //     if (shapeQAction.getActionType() == "circle") {
+                        //         st = 1;
+                        //     } else if (shapeQAction.getActionType() == "rectangle") {
+                        //         ///rectangle is shape type 2
+                        //         st = 2;
+                        //     } else {
+                        //         ///line is shape type 4
+                        //         st = 4;
+                        //     }
+                        // }
 
-                        ///unpack rgb values 
-                        // ubyte redU = *cast(byte*)&red;
-                        // ubyte greenU = *cast(byte*)&green;
-                        // ubyte blueU = *cast(byte*)&blue;
-                        shapeBrush = 4;
-                        // writeln(shapeAction.getPoints[]);
-                        // writeln(shapeAction.getPoints[0][0]);
-                        // writeln(shapeAction.getPoints[0][1]);
-                        // writeln(shapeAction.getPoints[1][0]);
-                        // writeln(shapeAction.getPoints[1][1]);
-                        if (networked == true) {
-                            Packet shapeQPacket = mClient.getChangeForServer(xx,yy,red, green, blue, st, shapeBrush, xx2, yy2, xx3, yy3);
-                            traffic.push_front(shapeQPacket);
-                            writeln("sending shapeQpacket traffic");
-                            client.sendDataToServer(shapeQPacket);
-                        }
+                        // ///unpack rgb values 
+                        // // ubyte redU = *cast(byte*)&red;
+                        // // ubyte greenU = *cast(byte*)&green;
+                        // // ubyte blueU = *cast(byte*)&blue;
+                        // shapeBrush = 4;
+                        // // writeln(shapeAction.getPoints[]);
+                        // // writeln(shapeAction.getPoints[0][0]);
+                        // // writeln(shapeAction.getPoints[0][1]);
+                        // // writeln(shapeAction.getPoints[1][0]);
+                        // // writeln(shapeAction.getPoints[1][1]);
+                        // if (networked == true) {
+                        //     Packet shapeQPacket = mClient.getChangeForServer(xx,yy,red, green, blue, st, shapeBrush, xx2, yy2, xx3, yy3);
+                        //     traffic.push_front(shapeQPacket);
+                        //     writeln("sending shapeQpacket traffic");
+                        //     client.sendDataToServer(shapeQPacket);
+                        // }
                     } else if (e.key.keysym.sym == SDLK_u) {
                         Packet undoPack = mClient.getChangeForServer(0,0,0,0,0, -10, 0,0,0,0,0);
                         client.sendDataToServer(undoPack);
