@@ -11,24 +11,29 @@ import Shape : Shape;
 import SDL_Surfaces;
 
 /**
-* A Rectangle is a Shape. It is filled, has four sides, and four right corners.
-* Two points are needed to draw a Rectangle.
+/***********************************
+* Name: Rectangle 
+* Descripton: A 4-sided shape, needs 2 points to be drawn.
 */
 class Rectangle : Shape {
 
     Surface* surf;
     Tuple!(int, int)[] points;
 
-    /**
-    * Constructor. A Rectangle requires a Surface to draw on.
+   /***********************************
+    * Name: constructor
+    * Description: takes the surface to put Rectangle on 
+    * Params:
+    *    surf = the surface we need to draw on 
     */
     this(Surface* surf) {
 
         this.surf = surf;
     }
 
-    /**
-    * Destructor.
+    /***********************************
+    * Name: Destructor
+    * Description: default destructor 
     */
     ~this() {}
 
@@ -53,12 +58,9 @@ class Rectangle : Shape {
         }
     }
 
-    /**
+    /***********************************
     * Name: draw
-    * Description: Draws this Rectangle based on the user's clicks. Exactly two mouse
-    * clicks are required to draw a Rectangle. The clicks must be opposites 
-    * of each other (e.g. bottom left and top right, top left and bottom 
-    * right, top right and bottom left, or bottom right and top left).
+    * Description: Draws this Rectangle based on the user's clicks. Exactly two mouse clicks are required to draw a Rectangle. The clicks must be opposites of each other (e.g. bottom left and top right, top left and bottom right, top right and bottom left, or bottom right and top left).
     * Params:
     *   brushSize = the width and height of each drawn point
     *   r = red value in range [0, 255]
@@ -67,19 +69,19 @@ class Rectangle : Shape {
     */
     override void draw(int brushSize, ubyte r, ubyte g, ubyte b) {
 
-        // Need two points for opposing mouse clicks
+        /// Need two points for opposing mouse clicks
         int numPoints = 0, numPointsNeeded = 2;
 
-        // Create 4 points to later use lerp on
+        /// Create 4 points to later use lerp on
         Tuple!(int, int) p1, p2, p3, p4;
 
-        // Begin loop to register clicks
+        /// Begin loop to register clicks
         while (numPoints < numPointsNeeded) {
             SDL_Event e;
 
             while (SDL_PollEvent(&e) != 0) {
                 if (e.type == SDL_QUIT) {
-                    return;    // EXIT_SUCCESS if quit is registered
+                    return;    /// EXIT_SUCCESS if quit is registered
                 } else if (e.type == SDL_MOUSEBUTTONDOWN) {
                     if (numPoints == 0) {
                         p1 = tuple(e.button.x, e.button.y);
@@ -90,70 +92,68 @@ class Rectangle : Shape {
                 }
             }
         }
-        //Check that rectangle drawing doesn't overlap menu bounds 
+        ///Check that rectangle drawing doesn't overlap menu bounds 
         if((p1[1] < 50) || (p3[1] < 50)){
             writeln("Try again, rectangle set to overlap menu");
         }
-        //Draw the rectangle 
+        ///Draw the rectangle 
         else {
-            // Declare remaining outstanding points
+            /// Declare remaining outstanding points
             p2 = tuple(p3[0], p1[1]);
             p4 = tuple(p1[0], p3[1]);
 
             points ~= p1;
             points ~= p3;
 
-            // Declare remaining outstanding points
+            /// Declare remaining outstanding points
             p2 = tuple(p3[0], p1[1]);
             p4 = tuple(p1[0], p3[1]);
 
-            // Find left, right, top and bottom most points to iterate over
+            /// Find left, right, top and bottom most points to iterate over
             int minX = min(p1[0], p3[0]);
             int maxX = max(p1[0], p3[0]);
 
             int minY = min(p1[1], p3[1]);
             int maxY = max(p1[1], p3[1]);
 
-            // Fill rectangle
+            /// Fill rectangle
             fillRectangle(minX, maxX, minY, maxY, r, g, b);
         }
     }
 
-    /**
-    * name: drawFromPoints
-    * description: Draws a Rectangle from an array of two points. The points should be opposites
-    * of each other. The Rectangle will drawn filled.
-    * params:
-    *   @param points: Array of points 
-    *   @param r, g, b: red, blue, green color values
-    *   @brushSize: Not used in rectangle
+    /***********************************
+    * Name: drawFromPoints
+    * Description: Draws a Rectangle from an array of two points. The points should be opposites of each other. The Rectangle will drawn filled.
+    * Params:
+    *   points = Array of points 
+    *   r = rgb red value of line 
+    *   g = rgb green value of line 
+    *   b = rgb blue value of line 
+    *   brushSize = the width of line (not used in rectangle)
     */
     override void drawFromPoints(Tuple!(int, int)[] points, ubyte r, ubyte g, ubyte b, int brushSize) {
-
+    
         assert(points.length == 2);
 
         Tuple!(int, int) p1 = points[0], p3 = points[1], p2 = tuple(p3[0], p1[1]), p4 = tuple(p1[0], p3[1]);
 
-        // Find left, right, top and bottom most points to iterate over
+        /// Find left, right, top and bottom most points to iterate over
         int minX = min(p1[0], p3[0]);
         int maxX = max(p1[0], p3[0]);
 
         int minY = min(p1[1], p3[1]);
         int maxY = max(p1[1], p3[1]);
 
-        // Fill rectangle
+        /// Fill rectangle
         fillRectangle(minX, maxX, minY, maxY, r, g, b);
     }
 
-    /**
-    * name: getPoints
-    * description: Gets and returns the points that are needed to draw this Rectangle.
-    * If getPoints is invoked before the Rectangle is drawn, an empty array is
-    * returned.
-    * returns: An array of two integer tuples.
+    /***********************************
+    * Name: getPoints
+    * Description: Gets and returns the points that are needed to draw this Rectangle. If getPoints is invoked before the Rectangle is drawn, an empty array is returned.
+    * Returns: An array of two integer tuples.
     */
     override Tuple!(int, int)[] getPoints() {
-
         return this.points;
     }
 

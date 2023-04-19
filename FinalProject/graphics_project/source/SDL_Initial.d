@@ -5,14 +5,15 @@ import std.string;
 import bindbc.sdl;
 import loader = bindbc.loader.sharedlib;
 
-/**
-Name: SDLInit
-Description: Class loads and initializes SDL libraries.
+
+/***********************************
+* Name: SDLInit 
+* Descripton: Sets up the working environment and loads the necessary libraries.
 */
 class SDLInit{
-    /**
-    SDLInit Constructor
-    Load the SDL libraries from bindbc-sdl
+    /***********************************
+    Name: SDLInit Constructor
+    Description: Load the SDL libraries from bindbc-sdl
     on the appropriate operating system
      */
     this(){
@@ -50,11 +51,9 @@ class SDLInit{
         }
     }
 
-    /**
-    SDLInit Destructor
-    At the module level, when we terminate, we make sure to
-    terminate SDL, which is initialized at the start of the application.
-    shared static
+    /***********************************
+    * Name: Destructor
+    * Description: At the module level, when we terminate, we make sure to terminate SDL, which is initialized at the start of the application 
     */
     ~this(){
         /// Quit the SDL Application

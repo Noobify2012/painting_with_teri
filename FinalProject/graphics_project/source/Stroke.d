@@ -1,13 +1,26 @@
 import Point : Point;
 import std.typecons;
 
+
+/***********************************
+* Name: Stroke
+* Descripton: This is an array of points that is used to create a smooth stroke. 
+*/
 class Stroke {
 
     Point[] constituentPoints;
     Point[] underlyingPoints;
 
+    /***********************************
+    * Name: constructor
+    * Description: default constructor 
+    */
     this() {}
 
+    /***********************************
+    * Name: Destructor
+    * Description: default destructor 
+    */
     ~this() {}
 
     /**

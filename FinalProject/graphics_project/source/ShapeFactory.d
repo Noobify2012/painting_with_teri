@@ -12,9 +12,23 @@ import Rectangle : Rectangle;
 import Circle : Circle;
 import Triangle : Triangle;
 
+
+/***********************************
+* Name: ShapeFactory
+* Descripton: This is a design pattern that outputs the appropriate shape based on the type of shape that is being created. It just helps to organize the files better. 
+*/
 class ShapeFactory {
 
+    /***********************************
+    * Name: constructor
+    * Description: default constructor 
+    */
     this() {}
+
+    /***********************************
+    * Name: Destructor
+    * Description: default destructor 
+    */
     ~this() {}
 
     Shape createShape(string sh, Surface *surf) {

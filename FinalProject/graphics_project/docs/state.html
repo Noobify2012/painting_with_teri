@@ -510,6 +510,157 @@
       <article class="module">
         <h1 class="module_name">state</h1>
         <section id="module_content">
+<section class="section ddoc_module_members_section">
+  <div class="ddoc_module_members">
+    <ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#State" id="State"><code class="code">State</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="State"></span>class <code class="code">State</code>;
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Name:</span>
+<code class="code">State</code>
+
+  </p>
+</div>
+<div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Descripton:</span>
+This is the current undo and redo stack, accessed for local and networked undo and redo. Holds all previous actions by users.
+  </p>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    Test: Checks for the surface to be initialized to black, draws diagonal Line
+ and checks that intervening points have changed color
+
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code">SDLInit app = <span class="keyword">new</span> SDLInit();
+Surface s = <span class="keyword">new</span> Surface(0,640,480,32,0,0,0,0);
+<span class="psymbol">State</span> sta = <span class="keyword">new</span> <span class="psymbol">State</span>(&amp;s);
+Action a1 = <span class="keyword">new</span> Action([tuple(1,1), tuple(3,3)], [32,128,255], <span class="string_literal">"rectangle"</span>);
+<span class="comment">/// Check that undo and redo stack sizes are 0
+</span><span class="keyword">assert</span>( sta.undoStack.length == 0, <span class="string_literal">"Initial undo stack length &lt;&gt;0"</span>);
+<span class="keyword">assert</span>( sta.redoStack.length == 0, <span class="string_literal">"Initial redo stack length &lt;&gt;0"</span>);
+<span class="comment">/// Add action to state and check it increases undo stack by 1
+</span>sta.addAction(a1);
+<span class="keyword">assert</span>(	sta.undoStack.length == 1, <span class="string_literal">"Undo stack after adding 1 &lt;&gt;1"</span>);
+<span class="comment">/// Undo action and check it decreases undo stack and increases redo stack by 1
+</span>sta.undo();
+<span class="keyword">assert</span>( sta.undoStack.length == 0, <span class="string_literal">"After undo, undo stack length &lt;&gt;0"</span>);
+<span class="keyword">assert</span>( sta.redoStack.length == 1, <span class="string_literal">"After undo, redo stack length &lt;&gt;1"</span>);
+<span class="comment">/// Redo action and check it increases undo stack and decreases redo stack by 1
+</span>sta.redo();
+<span class="keyword">assert</span>( sta.undoStack.length == 1, <span class="string_literal">"Initial undo stack length &lt;&gt;1"</span>);
+<span class="keyword">assert</span>( sta.redoStack.length == 0, <span class="string_literal">"Initial redo stack length &lt;&gt;0"</span>);
+
+<span class="comment">/// Check that what's been added, removed, and re-added to undo stack is a1
+</span><span class="keyword">assert</span>( sta.undoStack[0] == a1, <span class="string_literal">"a1 not in undo stack"</span>);
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+<ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#State.this" id="State.this"><code class="code">this</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="State.this"></span>this(Surface* <code class="code">surf</code>);
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Name:</span>
+constructor
+
+  </p>
+</div>
+<div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Description:</span>
+Makes a new state
+
+  </p>
+</div>
+<div class="ddoc_params">
+  <h4>Parameters</h4>
+  <table cellspacing="0" cellpadding="5" border="0" class="graybox">
+    <tbody>
+      <tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">Surface* <code class="code">surf</code></em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      the surface we need to draw on
+    </p>
+  </div>
+</td>
+</tr>
+
+    </tbody>
+  </table>
+</div>
+
+</section>
+
+</div>
+
+</li>
+</ul>
+
+</div>
+
+</li>
+</ul>
+  </div>
+</section>
 </section>
       </article>
     </div>

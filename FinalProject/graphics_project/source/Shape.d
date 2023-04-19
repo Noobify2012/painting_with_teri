@@ -6,9 +6,10 @@ import loader = bindbc.loader.sharedlib;
 import SDL_Surfaces :Surface;
 import SDL_Initial :SDLInit;
 
-/**
-* A Shape is a geometric representation of colored pixels.
-* The abstract Shape class must be inherited by concrete child classes.
+
+/***********************************
+* Name: Shape 
+* Descripton: A Shape is a geometric representation of colored pixels. The abstract Shape class must be inherited by concrete child classes.
 */
 abstract class Shape {
 

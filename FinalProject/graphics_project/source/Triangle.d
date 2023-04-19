@@ -12,6 +12,11 @@ import SDL_Initial :SDLInit;
 import Shape : Shape;
 import SDL_Surfaces;
 
+
+/***********************************
+* Name: Triangle 
+* Descripton: A shape which takes three points and returns a filled triangle shape on the surface. 
+*/
 class Triangle : Shape {
 
     Surface* surf;
@@ -21,6 +26,10 @@ class Triangle : Shape {
         this.surf = surf;
     }
 
+    /***********************************
+    * Name: Destructor
+    * Description: default destructor 
+    */
     ~this() {}
 
     bool isLine(Tuple!(int, int) p1, Tuple!(int, int) p2, Tuple!(int, int) p3, int brushSize, ubyte r, ubyte g, ubyte b) {

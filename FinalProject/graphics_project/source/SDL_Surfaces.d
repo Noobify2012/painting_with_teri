@@ -10,11 +10,10 @@ import bindbc.sdl;
 import loader = bindbc.loader.sharedlib;
 
 
-/**
+/***********************************
 * Name: Surface 
-* Description: Surface class creates an SDL surface on which to draw and includes drawing methods
+* Descripton: creates an SDL surface on which to draw and includes drawing methods
 */
-
 class Surface{
     uint flags;
     int width;
@@ -26,7 +25,7 @@ class Surface{
     uint Amask;
     SDL_Surface* imgSurface;
 
-    /**
+    /***********************************
     * Name: Surface Constructor 
     * Description: constructs surface of given size and color
     * Params: 
@@ -54,6 +53,10 @@ class Surface{
 
     }
 
+    /***********************************
+    * Name: Destructor
+    * Description: free the surface
+    */
     ~this(){
         /// Free a surface...
         scope(exit) {
@@ -102,6 +105,9 @@ class Surface{
     /***********************************
     * Name: PixelAt 
     * Description: Method for getting the RGB values of the pixel passed in
+    * Params: 
+    *    xPos = the x coordinate 
+    *    yPos = the y coordinate 
     * Returns: array of rgb values for given pixel
     */
     int[] PixelAt(int xPos, int yPos){
@@ -128,9 +134,8 @@ class Surface{
         * redVal = red value on rgb scale
         * greenVal = green value on rgb scale
         * blueVal = blue value on rgb scale
-        
-    Reference: https://www.redblobgames.com/grids/line-drawing.html
     */
+    /// [Reference] (https://www.redblobgames.com/grids/line-drawing.html)
     void lerp(int x1, int y1, int x2, int y2, int brushSize, ubyte redVal, ubyte greenVal, ubyte blueVal) {
         
         int numPoints = getNumPoints(x1, y1, x2, y2);

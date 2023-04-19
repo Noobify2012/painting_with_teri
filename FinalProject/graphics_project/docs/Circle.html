@@ -535,9 +535,17 @@
 </div>
 <div class="ddoc_decl">
   <section class="section ddoc_sections">
-  <div class="ddoc_summary">
+  <div class="ddoc_section">
   <p class="para">
-    A <code class="code">Circle</code> is a Shape. It is filled, and is drawn by forming an equation from user clicks.
+    <span class="ddoc_section_h">Name:</span>
+<code class="code">Circle</code>
+
+  </p>
+</div>
+<div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Descripton:</span>
+A <code class="code">Circle</code> is a Shape. It is filled, and is drawn by forming an equation from user clicks.
  Two points are needed to draw a <code class="code">Circle</code>.
   </p>
 </div>
@@ -618,10 +626,41 @@ s.PixelAt(13,13)[2] == 0, <span class="string_literal">"error rgb value at 13,13
 </div>
 <div class="ddoc_decl">
   <section class="section ddoc_sections">
-  <div class="ddoc_summary">
+  <div class="ddoc_section">
   <p class="para">
-    Constructor. A Circle requires a Surface to draw on.
+    <span class="ddoc_section_h">Name:</span>
+constructor
+
   </p>
+</div>
+<div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Description:</span>
+takes the surface to put Circle on
+
+  </p>
+</div>
+<div class="ddoc_params">
+  <h4>Parameters</h4>
+  <table cellspacing="0" cellpadding="5" border="0" class="graybox">
+    <tbody>
+      <tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">Surface* <code class="code">surf</code></em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      the surface we need to draw on
+    </p>
+  </div>
+</td>
+</tr>
+
+    </tbody>
+  </table>
 </div>
 
 </section>
@@ -779,8 +818,7 @@ Helper for 'draw' function that fills the Circle based on user-chosen points.
 <div class="ddoc_section">
   <p class="para">
     <span class="ddoc_section_h">Description:</span>
-Draws this Circle based on the user's clicks. Exactly two mouse
- clicks are required to <code class="code">draw</code> a Circle. The clicks represent the Circle's diameter.
+Draws this Circle based on the user's clicks. Exactly two mouse clicks are required to <code class="code">draw</code> a Circle. The clicks represent the Circle's diameter.
 
   </p>
 </div>
@@ -875,16 +913,97 @@ Draws this Circle based on the user's clicks. Exactly two mouse
 </div>
 <div class="ddoc_decl">
   <section class="section ddoc_sections">
-  <div class="ddoc_summary">
+  <div class="ddoc_section">
   <p class="para">
-    name: <code class="code">drawFromPoints</code>
- description: Draws a Circle from an array of two <code class="code">points</code>. The <code class="code">points</code> should represent
- the Circle's diameter. The Circle will be drawn filled.
- params:
-   @param <code class="code">points</code>: Array of <code class="code">points</code>
-   @param <code class="code">r</code>, <code class="code">g</code>, <code class="code">b</code>: red, blue, green color values
-   @<code class="code">brushSize</code>: Not used in Circle
+    <span class="ddoc_section_h">Name:</span>
+<code class="code">drawFromPoints</code>
+
   </p>
+</div>
+<div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Description:</span>
+Draws a Circle from an array of two <code class="code">points</code>. The <code class="code">points</code> should represent the Circle's diameter. The Circle will be drawn filled.
+
+  </p>
+</div>
+<div class="ddoc_params">
+  <h4>Parameters</h4>
+  <table cellspacing="0" cellpadding="5" border="0" class="graybox">
+    <tbody>
+      <tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">Tuple!(int, int)[] <code class="code">points</code></em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      Array of <code class="code">points</code>
+    </p>
+  </div>
+</td>
+</tr>
+<tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">ubyte <code class="code">r</code></em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      red color value
+    </p>
+  </div>
+</td>
+</tr>
+<tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">ubyte <code class="code">g</code></em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      green color value
+    </p>
+  </div>
+</td>
+</tr>
+<tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">ubyte <code class="code">b</code></em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      blue color value
+    </p>
+  </div>
+</td>
+</tr>
+<tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">int <code class="code">brushSize</code></em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      Not used in Circle
+    </p>
+  </div>
+</td>
+</tr>
+
+    </tbody>
+  </table>
 </div>
 
 </section>
@@ -913,13 +1032,24 @@ Draws this Circle based on the user's clicks. Exactly two mouse
 </div>
 <div class="ddoc_decl">
   <section class="section ddoc_sections">
-  <div class="ddoc_summary">
+  <div class="ddoc_section">
   <p class="para">
-    name: <code class="code">getPoints</code>
- description: Gets and returns the points that are needed to draw this Circle.
- If <code class="code">getPoints</code> is invoked before the Circle is drawn, an empty array is
- returned.
- returns: An array of two integer tuples.
+    <span class="ddoc_section_h">Name:</span>
+<code class="code">getPoints</code>
+
+  </p>
+</div>
+<div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Description:</span>
+Gets and returns the points that are needed to draw this Circle. If <code class="code">getPoints</code> is invoked before the Circle is drawn, an empty array is returned.
+
+  </p>
+</div>
+<div class="ddoc_returns">
+  <h4>Return Value</h4>
+  <p class="para">
+    An array of two integer tuples.
   </p>
 </div>
 

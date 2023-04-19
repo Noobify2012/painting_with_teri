@@ -20,21 +20,34 @@ import ShapeFactory : ShapeFactory;
 import state;
 import Action : Action;
 
+/***********************************
+* Name: ShapeListener 
+* Descripton: A shapelistener decides which shape to draw and calls that shape's draw methods.
+*/
 class ShapeListener {
   string quadrant; 
 
   Action action;
 
-  this() {
-  }
+  /***********************************
+    * Name: constructor
+    * Description: default constructor 
+    */
+  this() {}
 
+/***********************************
+    * Name: constructor
+    * Description: Alternative constructor to take a shape type, not in use 
+    */
   this(string quad){
     quadrant = quad;
   }
 
-  ~this() {
-
-  }
+  /***********************************
+    * Name: Destructor
+    * Description: default destructor 
+    */
+  ~this() {}
 
   Action getAction() {
     

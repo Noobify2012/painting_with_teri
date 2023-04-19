@@ -510,6 +510,82 @@
       <article class="module">
         <h1 class="module_name">Triangle</h1>
         <section id="module_content">
+<section class="section ddoc_module_members_section">
+  <div class="ddoc_module_members">
+    <ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#Triangle" id="Triangle"><code class="code">Triangle</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="Triangle"></span>class <code class="code">Triangle</code>: <span class="ddoc_psuper_symbol">Shape.Shape</span>;
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Name:</span>
+<code class="code">Triangle</code>
+
+  </p>
+</div>
+<div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Descripton:</span>
+A shape which takes three points and returns a filled triangle shape on the surface.
+  </p>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    Test: Checks for the surface to be initialized to black, draw red triangle
+ Ensure interior points are red, exterior remain black
+
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code">SDLInit app = <span class="keyword">new</span> SDLInit();
+Surface s = <span class="keyword">new</span> Surface(0,640,480,32,0,0,0,0);
+<span class="psymbol">Triangle</span> tri = <span class="keyword">new</span> <span class="psymbol">Triangle</span>(&amp;s);
+tri.drawFromPoints([tuple(1, 1), tuple(1,30), tuple(30,30)], 255, 128, 32, 1);
+<span class="comment">/// Check leftmost edge
+</span><span class="keyword">assert</span>(	s.PixelAt(1,30)[0] == 255 &amp;&amp;
+s.PixelAt(1,30)[1] == 128 &amp;&amp;
+s.PixelAt(1,30)[2] == 32, <span class="string_literal">"error rgb value at 1,30 is wrong!"</span>);
+<span class="comment">/// Check that external pixel close to line is still red
+</span><span class="keyword">assert</span>(	s.PixelAt(3,1)[0] == 0 &amp;&amp;
+s.PixelAt(3,1)[1] == 0 &amp;&amp;
+s.PixelAt(3,1)[2] == 0, <span class="string_literal">"error rgb value at 3,1 is wrong!"</span>);
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+
+</div>
+
+</li>
+</ul>
+  </div>
+</section>
 </section>
       </article>
     </div>

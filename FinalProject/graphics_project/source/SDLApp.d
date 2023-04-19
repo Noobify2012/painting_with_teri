@@ -11,34 +11,34 @@ import std.typecons;
 import std.random;
 import core.thread.threadbase;
 
-
-
 /// Load the SDL2 library
 import bindbc.sdl;
 import bindbc.sdl.image;
-
 import loader = bindbc.loader.sharedlib;
 import SDL_Surfaces :Surface;
 import SDL_Initial :SDLInit;
-// #include SDL.h;
-// include <SDL2/SDL.h>
+
+/// Networking imports 
 import test_client;
 import Packet : Packet;
 import Deque : Deque;
 import test_addr;
-import shape_listener;
-import drawing_utilities;
 import mClient;
+import shape_listener;
 import Action : Action;
 import state;
 
+/// Import shape classes 
+import drawing_utilities;
 import Rectangle : Rectangle;
 import Triangle : Triangle; 
 import Circle : Circle;
 import Line : Line;
-// For printing the key pressed info
-// void PrintKeyInfo( SDL_KeyboardEvent *key );
 
+/***********************************
+* Name: SDLApp 
+* Descripton: the main access to the application's running loop. This holds all the working methods of the window. 
+*/
 class SDLApp{
 
     /// global variable for sdl;
@@ -47,9 +47,9 @@ class SDLApp{
 
     /// RGB Values that get passed into drawing functions & methods
     /// Defaults to white if for some reason your colors are not working 
-    ubyte red = 255;
-    ubyte green = 255;
-    ubyte blue = 255;
+    ubyte red = 255; ///ditto
+    ubyte green = 255; ///ditto
+    ubyte blue = 255; ///ditto 
 
     bool erasing = false;
     auto traffic = new Deque!(Packet);
@@ -75,6 +75,7 @@ class SDLApp{
             640,
             480,
             SDL_WINDOW_SHOWN);
+
         /// Load the bitmap surface
         Surface imgSurface = new Surface(0,640,480,32,0,0,0,0);
 
@@ -84,36 +85,43 @@ class SDLApp{
         /// Drawing flag for determining if we are 'drawing'
         bool drawing = false;
 
+        /// Networking defaults 
         bool change = false;
-        bool networked = false;
-        ///Defaults
-        int brush = 1;
-        int color = 1;
-        int brushSize = 4;
-        // bool erasing = false;
-        //left in but should be removed for new erasing method
-        int temp_color = 0;
-        int prevX = -9999;
-        int prevY = -9999;
+        bool networked = false; ///ditto 
 
+        /// Default brush
+        int brush = 1;
+
+        /// Default color 
+        int color = 1;
+
+        /// Default brushsize 
+        int brushSize = 4;
+
+        /// For erasing function 
+        int temp_color = 0;
+
+        /// User isn't currently drawing 
+        int prevX = -9999;
+        int prevY = -9999;///ditto 
+
+        /// Create a blank state 
         state = new State(&imgSurface);
 
+        /// Create drawing and shape capabilities 
         DrawingUtility du = new DrawingUtility();
-        ShapeListener sh = new ShapeListener();
+        ShapeListener sh = new ShapeListener(); ///Ditto 
 
-        /// Intialize deque for storing traffic to send
-        // auto traffic = new Deque!(Packet);
-        // Socket sendSocket;
-        // byte[Packet.sizeof] buffer;
-        
-        // writeln("tear down : " ~ to!string(tear_down));
-        
+        /// Open a socket for networking 
         Socket recieveSocket;
-        // Deque traffic = new Deque!Packet;
 
+        /// Create the menu interface, draw it on the screen on launch 
         createMenu(imgSurface);
 
+        /// Test action to add to state 
         Action act = new Action([], [red, green, blue], "stroke");
+        
+        ///Default brush size
         brush = 2;
    
         /***********************************
@@ -123,10 +131,7 @@ class SDLApp{
         while(runApplication){
             SDL_Event e;
             /// Handle events
-            /// Events are pushed into an 'event queue' internally in SDL, and then
-            /// handled one at a time within this loop for as many events have
-            /// been pushed into the internal SDL queue. Thus, we poll until there
-            /// are '0' events or a NULL event is returned.
+            /// NOTE: Events are pushed into an 'event queue' internally in SDL, and then handled one at a time within this loop for as many events have been pushed into the internal SDL queue. Thus, we poll until there are '0' events or a NULL event is returned.
             while(SDL_PollEvent(&e) !=0){
 
                 if(e.type == SDL_QUIT){
@@ -140,33 +145,33 @@ class SDLApp{
 
 
                     ///**BEGIN MENU BUTTON SELECTOR**
-                    ///Button one: change brush size 
+                    /// Button one: change brush size 
                     if (yPos < 50 && xPos < h2){
-                        // writeln("button1: Change brush size");
+                        /// writeln("button1: Change brush size");
 
                         if (xPos > 10 && xPos < 18){
-                            // writeln("Brush Size 2");
+                            /// writeln("Brush Size 2");
                             brush = 2;
                         } 
                         else if (xPos > 20 && xPos < 29){
-                            // writeln("Brush Size 4");
+                            /// writeln("Brush Size 4");
                             brush = 4;
                         }
                         else if (xPos > 30 && xPos < 45){
-                            // writeln("Brush Size 6");
+                            /// writeln("Brush Size 6");
                             brush = 6;
                         }
                         else if (xPos > 50 && xPos < 65){
-                            // writeln("Brush Size 8");
+                            /// writeln("Brush Size 8");
                             brush = 8;
                         }
                         else if (xPos > 69 && xPos < 89){
-                            // writeln("Brush Size 12");
+                            /// writeln("Brush Size 12");
                             brush = 12;
                         }
                     }
 
-                    //Button two: change brush color                     
+                    /// Button two: change brush color                     
                     if(yPos < 50 && xPos > h2 && xPos < h2 * 2){
                         if(erasing == true){
                             writeln("ERASER: Deactivated");
@@ -196,8 +201,6 @@ class SDLApp{
                             color = 6;
                         }
                     }
-                        
-                    // }s
 
                     /// Based on color selected, update the RGB values using colorValueSetter
                     if (color == 1 && !erasing) {
@@ -224,22 +227,13 @@ class SDLApp{
                         green = 0;
                         blue = 0;
                     }
-                    //Button three:
-                    //**TECH DEBT: pull this out into a separate function. Code is duplicate of key presses 
+
+                    /// Button three:
+                    // /**TECH DEBT: pull this out into a separate function. Code is duplicate of key presses 
                     if(yPos < 50 && xPos > h2 * 2 + 1 && xPos < h2 * 3){
-                        // writeln("button3: Toggle Eraser");
-                        // if (erasing == false) {
-                        //     erasing = true;
-                        //     temp_color = color;
-                        //     color = -1;
-                        //     writeln("eraser active, value of temp_color: ", to!string(temp_color));
-                        // } else {
-                        //     erasing = false;
-                        //     color = temp_color;
-                        //     writeln("Changing to color : " , to!string(color));
-                        // }
                         eraserToggle(erasing, color);
                     }
+
                     ///Button four: Shape Activator 
                     ///Splits the 4 quadrants of B4 into shape assignments  
                     if(yPos < 50 && xPos > h2 * 3 + 1 && xPos < h2 * 4){
@@ -276,6 +270,7 @@ class SDLApp{
                         // ShapeListener sh = new ShapeListener(quadrant);
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
 
+                        /// Add the shape to the stack and unpack it 
                         shapeAction = sh.getAction();
                         shapeAction.setColor([cast(int) red, cast(int) green, cast(int) blue]);
                         state.addAction(sh.getAction());
@@ -305,25 +300,27 @@ class SDLApp{
                         writeln("shape action type: " ~to!string(shapeAction.getActionType()));
                         int st = 0;
                         if (shapeAction.getPoints().length == 3) {
+                            ///do triangle
+                            /// Triangle is shape type 3
                             st = 3;
-                            //do triangle
                         } else {
-                            ///circle is shape type 1
+                            /// circle is shape type 1
                             if (shapeAction.getActionType() == "circle") {
                                 st = 1;
                             } else if (shapeAction.getActionType() == "rectangle") {
-                                ///rectangle is shape type 2
+                                /// rectangle is shape type 2
                                 st = 2;
                             } else {
-                                ///line is shape type 4
+                                /// line is shape type 4
                                 st = 4;
                             }
                         }
 
-                        ///unpack rgb values 
+                        //unpack rgb values 
                         // ubyte redU = *cast(byte*)&red;
                         // ubyte greenU = *cast(byte*)&green;
                         // ubyte blueU = *cast(byte*)&blue;
+
                         int shapeBrush = 4;
                         // writeln(shapeAction.getPoints[]);
                         // writeln(shapeAction.getPoints[0][0]);
@@ -334,13 +331,13 @@ class SDLApp{
                             Packet shapePacket = mClient.getChangeForServer(x,y,red, green, blue, st, shapeBrush, x2, y2, x3, y3);
                             client.sendDataToServer(shapePacket);
                         }
-                        /// Send the selected shape to the ShapeListener so the user can draw it. 
+                        // Send the selected shape to the ShapeListener so the user can draw it. 
                         // ShapeListener shQ = new ShapeListener(quadrant, brushSize);
                         // // shQ.setRGB(red, green, blue);
                         // shQ.drawShape(&imgSurface, brush, red, green, blue);
                     }
 
-                    ///Button five: UNDO --- INCOMING: dependency: implement undo/redo
+                    ///Button five: UNDO 
                     if(yPos < 50 && xPos > h2 * 4 + 1 && xPos < h2 * 5){
                         writeln("You selected: UNDO");
                         state.undo();
@@ -349,7 +346,7 @@ class SDLApp{
                             client.sendDataToServer(undoPack);
                         }
                     }
-                    ///Button six: REDO --- INCOMING: Dependency: implement undo/redo 
+                    ///Button six: REDO
                     if(yPos < 50 && xPos > h2 * 5 + 1 && xPos < h2 * 6){
                         writeln("You selected: REDO");
                         state.redo();
@@ -358,27 +355,30 @@ class SDLApp{
                             client.sendDataToServer(rePack);
                         }
                     }
-                    //END MENU BUTTON SELECTOR 
+                    /// **END MENU BUTTON SELECTOR**
 
+                /// The user has released the mouse, not currently clicking or drawing. 
                 }else if(e.type == SDL_MOUSEBUTTONUP){
                     if (drawing) {
+                        /// Add the completed line to the stack 
                         act.setColor([cast(int) red, cast(int) green, cast(int) blue]);
                         state.addAction(act);
-
                         act = new Action([], [red, green, blue], "stroke");
                     }
                     drawing=false;
                     prevX = -9999;
                     prevY = -9999;
+
+                /// The user is currently drawing a line or shape. 
                 } else if(e.type == SDL_MOUSEMOTION && drawing) {
                     /// Get position of the mouse when drawing
                     int xPos = e.button.x;
                     int yPos = e.button.y;
 
+                    /// Add point to the stack 
                     act.addPoint(tuple(xPos, yPos));
                     /// Loop through and update specific pixels
-                    // NOTE: No bounds checking performed --
-                    //       think about how you might fix this :)
+                    /// NOTE: this seems like it is repetitive code, we use both variables but could probably refactor to use just one of these. 
                     if (brush == 2) {
                         brushSize = 2;
                     } else if (brush == 4) {
@@ -392,11 +392,10 @@ class SDLApp{
                     }
 
                     /// Change brush:
-                    //**Tech Debt: Change color without having to draw first**
                     for(int w=-brushSize; w < brushSize; w++){
                         for(int h=-brushSize; h < brushSize; h++){
                             if (color == 1 && !erasing) {
-                                // Set brush color to red
+                                /// Set brush color to red
                                 colorValueSetter(1);
 
                             } else if (color == 2 && !erasing) {
@@ -424,96 +423,72 @@ class SDLApp{
                                 red = 0;
                                 green = 0;
                                 blue = 0;
-                                // imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, 0, 0, 0);
                             }
+
                             /// Send change from user to deque
                             if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 52 && prevY > 52)
+                                /// Make sure user is within the window and not on the menu space 
                                 imgSurface.UpdateSurfacePixel(xPos+w,yPos+h, red, green, blue);
                             
-                            // Check if the client is networked
+                            /// Check if the client is networked
                             if(networked == true) {
                                 Packet packet;
-                                // packet = mClient.getChangeForServer(xPos+w,yPos+h, red, green, blue, 0, brushSize,0,0,0,0);
-                                //if client networked then make sure that the next packet to send isn't equal to the last one(no sequential duplicate packets).
-                                // if (traffic.size() > 0 ) {
-                                //     if (packet != traffic.back() ) {
-                                //         traffic.push_front(packet);
-                                //     }
-                                // } else {
-                                //     traffic.push_front(packet);
-                                // }
-                            // }
                             }
                         }
                     }
 
                     /// This is where we draw the line!
-                    /// --This is also imposing bounds for drawing lines - the xPos & yPos limitations
-                    /// keep you from overflowing pixels
+                    /// --This is also imposing bounds for drawing lines - the xPos & yPos limitations keep you from overflowing pixels
                     if (prevX > -9999 && xPos > 1 && xPos < 637 && yPos > 50 && prevY > 51) {
+                        /// Create a packet to send over server 
                         Packet linePacket = mClient.getChangeForServer(prevX, prevY, red, green, blue, 4, brushSize, xPos, yPos,0,0);
+
+                        /// Add all points into the line 
                         Line newLine = new Line(&imgSurface);
+
+                        ///Draw/build the line 
                         newLine.drawFromPoints(buildShape(linePacket), red, green, blue, brushSize);
+
+                        /// Actually display the line on your surface 
                         imgSurface.lerp(prevX, prevY, xPos, yPos, brushSize, red, green, blue);
+
+                        /// Send packet to the server traffic 
                         if (networked == true) {
-                            // client.sendDataToServer(linePacket);
                             traffic.push_front(linePacket);
                         }
-                         writeln("are we hitting lerp?");
+                        // writeln("are we hitting lerp?");
                     }
+                    /// Reset the x and y values
                     prevX = xPos;
                     prevY = yPos;
-                    /// If keyboard is pressed check for change event
-
-                } else if(e.type == SDL_KEYDOWN) { // Listener for button down - not in use yet
-                    // writeln()
-                    // PrintKeyInfo( &e.key );
-                    // printf( ", Name: %s", SDL_GetKeyName( key.keysym.sym ) );
-                    // if (e.key.keysym.sym == SDLK_b) {
-                    //     // printf("Changing brush size");
-
-                    // }
-                    // printf( cast(string)(e.key.keysym.sym) , " key pressed ");
-                    // printf( SDL_GetKeyNamse (e.key.keysym.sym ) , " key pressed ");
+                    
+                /// If keyboard is pressed check for change event
+                } else if(e.type == SDL_KEYDOWN) { 
+                    /// Listener for key being currently pressed - not currently in use. 
 
                 } else if(e.type == SDL_KEYUP) {
                     printf("key released: ");
                     //, to!string(e.key.keysym.sym));
+
                     if (e.key.keysym.sym == SDLK_b){
-                        //For each key press, cycle through the 3 brush sizes. 
+                        /// User pressed letter b, cycle through the 3 brush sizes and update on each press. 
                         brush = brushSizeChanger(brush);
 
                     } else if (e.key.keysym.sym == SDLK_c) {
-                        /// Change color
-                        // if (color < 3) {
-                        //     color++;
-                        // } else {
-                        //     color=1;
-                        // }
-                        
-                        //writeln("Changing to color : " , to!string(color));
+                        ///User pressed letter c, cycle through the colors and update on each press. 
                         color = colorChanger(color);
-                        writeln("CHANGE COLOR KEYs PRESSED");
+                        writeln("CHANGE COLOR KEY PRESSED");
 
 
                     } else if (e.key.keysym.sym == SDLK_e) {
-                        //Activate Eraser 
-                        // if (erasing == false) {
-                        //     erasing = true;
-                        //     temp_color = color;
-                        //     color = -1;
-                        //     writeln("eraser active, value of temp_color: ", to!string(temp_color));
-                        // } else {
-                        //     erasing = false;
-                        //     color = temp_color;
-                        //     writeln("Changing to color : " , to!string(color));
-                        // }
+                        /// User pressed letter e, either activate or deactivate the eraser. 
                         writeln("E");
                         eraserToggle(erasing, color);
 
                     } else if (e.key.keysym.sym == SDLK_n) {
-                        /// When you press the n key, you want to join a network 
+                        /// User pressed the n key, begin process to join a network 
                         if (networked == false) {
+                            /// Create a new client listener. 
                             client.init();
                             getNewData();
                             writeln("started new listener");
@@ -523,18 +498,15 @@ class SDLApp{
                         }
 
                      } else if (e.key.keysym.sym == SDLK_s) {
-                        /// This is where we draw the shape when prompted!
-                        /// When you press the S key, you activate shape listener 
+                        /// User pressed the s key, create a new shape listener and draw the shape when they select one. 
                         writeln("Drawing shape");
                         writeln("Type 'r' for rectangle", "\nType 'c' for circle", 
                                 "\nType 'l' for line", "\nType 'r' for rectangle");
-                        // ShapeListener sh = new ShapeListener();
-                        // sh.setRGB(red, green, blue);
+                       
                         sh.drawShape(&imgSurface, brushSize, red, green, blue);
                         shapeAction = sh.getAction();
                         shapeAction.setColor([cast(int) red, cast(int) green, cast(int) blue]);
                         state.addAction(sh.getAction());
-
 
                         /// unpack the points
                         int x,y,x2,y2,x3,y3;
@@ -699,8 +671,8 @@ void getNewData() {
     * Name: drawInbound 
     * Description: Adds all networked painting pixels and adds them to the users surface. 
     * Params:    
-        * @param traffic: Deque of packets from the server that contains pixel changes from the server
-        * @param imgSurface: The users image surface that needs to be updated
+        * traffic = Deque of packets from the server that contains pixel changes from the server
+        * imgSurface = The users image surface that needs to be updated
     * Creates a seperate thread and removes all of the packets of pixel changes from the server from the queue and adds them to the surface. 
     */
 void drawInbound(Deque!(Packet) traffic, Surface imgSurface) {

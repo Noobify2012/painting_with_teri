@@ -27,15 +27,16 @@ class TCPClient{
 
 	/***********************************
     * Name: TCPClient Constructor 
+    * Description: Default constructor
     */
 	this(){
         // auto incoming = new Deque!(Packet);
 	}
 
 	/***********************************
-    * Name: TCPClient Destructor
-    * Description: Closes client socket
-    */ 
+    * Name: Destructor
+    * Description: Close the socket on close 
+    */
 	~this(){
 		// Close the socket
 		mSocket.close();

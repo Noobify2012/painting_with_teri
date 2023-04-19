@@ -510,6 +510,461 @@
       <article class="module">
         <h1 class="module_name">SDLApp</h1>
         <section id="module_content">
+<section class="section ddoc_module_members_section">
+  <div class="ddoc_module_members">
+    <ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SDLApp" id="SDLApp"><code class="code">SDLApp</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SDLApp"></span>class <code class="code">SDLApp</code>;
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Name:</span>
+<code class="code">SDLApp</code>
+
+  </p>
+</div>
+<div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Descripton:</span>
+the main access to the application's running loop. This holds all the working methods of the window.
+  </p>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    Test: Checks for the surface to be initialized to black RGB values or 0,0,0
+
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code">SDLInit app = <span class="keyword">new</span> SDLInit();
+Surface s = <span class="keyword">new</span> Surface(0,640,480,32,0,0,0,0);
+<span class="comment">/// Parse values of new data struct
+</span><span class="keyword">assert</span>(	s.PixelAt(1,1)[0] == 0 &amp;&amp;
+s.PixelAt(1,1)[1] == 0 &amp;&amp;
+s.PixelAt(1,1)[2] == 0, <span class="string_literal">"error bgr value at x,y is wrong!"</span>);
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div><div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    Test: Checks for the surface to be initialized to black, change the pixel color of 1,1 to blue
+
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code">SDLInit app = <span class="keyword">new</span> SDLInit();
+Surface s = <span class="keyword">new</span> Surface(0,640,480,32,0,0,0,0);
+s.UpdateSurfacePixel(1,1, 255, 128, 32);
+<span class="comment">/// Parse values of new data struct
+</span><span class="keyword">assert</span>(	s.PixelAt(1,1)[0] == 255 &amp;&amp;
+s.PixelAt(1,1)[1] == 128 &amp;&amp;
+s.PixelAt(1,1)[2] == 32, <span class="string_literal">"error bgr value at x,y is wrong!"</span>);
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div><div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    Test: Checks for the surface to be initialized to black, change the pixel color of 1,1 to blue, verify its blue,
+change it to red, ensure that the color of 1,1 is now red
+
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code">SDLInit app = <span class="keyword">new</span> SDLInit();
+Surface s = <span class="keyword">new</span> Surface(0,640,480,32,0,0,0,0);
+s.UpdateSurfacePixel(1,1, 255, 128, 32);
+<span class="comment">/// Parse values of new data struct
+</span><span class="keyword">assert</span>(	s.PixelAt(1,1)[0] == 255 &amp;&amp;
+s.PixelAt(1,1)[1] == 128 &amp;&amp;
+s.PixelAt(1,1)[2] == 32, <span class="string_literal">"error bgr value at x,y is wrong!"</span>);
+<span class="comment">/// Change the color of the pixel and make sure the change takes
+</span>s.UpdateSurfacePixel(1,1, 32, 128, 255);
+<span class="comment">/// Parse values of new data struct
+</span><span class="keyword">assert</span>(	s.PixelAt(1,1)[0] == 32 &amp;&amp;
+s.PixelAt(1,1)[1] == 128 &amp;&amp;
+s.PixelAt(1,1)[2] == 255, <span class="string_literal">"error bgr value at x,y is wrong!"</span>);
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+<ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SDLApp.ret" id="SDLApp.ret"><code class="code">ret</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SDLApp.ret"></span>const SDLSupport <code class="code">ret</code>;
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    global variable for sdl;
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SDLApp.red" id="SDLApp.red"><code class="code">red</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SDLApp.red"></span>ubyte <code class="code">red</code>;
+<br>
+<span class="ddoc_anchor" id="SDLApp.green"></span>ubyte <code class="code">green</code>;
+<br>
+<span class="ddoc_anchor" id="SDLApp.blue"></span>ubyte <code class="code">blue</code>;
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    RGB Values that get passed into drawing functions &amp; methods
+Defaults to white if for some reason your colors are not working
+
+  </p>
+</div>
+<div class="ddoc_description">
+  <h4>Discussion</h4>
+  <p class="para">
+    ditto
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SDLApp.MainApplicationLoop" id="SDLApp.MainApplicationLoop"><code class="code">MainApplicationLoop</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SDLApp.MainApplicationLoop"></span>void <code class="code">MainApplicationLoop</code>();
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Starts when you run the application and ends automatically
+    when you destroy the window. This is the main loop which
+    runs all of the primary app functionality.
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SDLApp.getNewData" id="SDLApp.getNewData"><code class="code">getNewData</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SDLApp.getNewData"></span>void <code class="code">getNewData</code>();
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Name:</span>
+<code class="code">getNewData</code>
+
+  </p>
+</div>
+<div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Description:</span>
+Establishes a new thread with a listener to get all incoming changes when we are networked
+ Listens for incoming data from the server and adds it to the queue for  inbound traffic to be added to the surface.
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SDLApp.drawInbound" id="SDLApp.drawInbound"><code class="code">drawInbound</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SDLApp.drawInbound"></span>void <code class="code">drawInbound</code>(Deque!Packet <code class="code">traffic</code>, Surface <code class="code">imgSurface</code>);
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Name:</span>
+<code class="code">drawInbound</code>
+
+  </p>
+</div>
+<div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Description:</span>
+Adds all networked painting pixels and adds them to the users surface.
+
+  </p>
+</div>
+<div class="ddoc_params">
+  <h4>Parameters</h4>
+  <table cellspacing="0" cellpadding="5" border="0" class="graybox">
+    <tbody>
+      <tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">Deque!Packet <code class="code">traffic</code></em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      Deque of packets from the server that contains pixel changes from the server
+    </p>
+  </div>
+</td>
+</tr>
+<tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">Surface <code class="code">imgSurface</code></em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      The users image surface that needs to be updated
+ Creates a seperate thread and removes all of the packets of pixel changes from the server from the queue and adds them to the surface.
+    </p>
+  </div>
+</td>
+</tr>
+
+    </tbody>
+  </table>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SDLApp.eraserToggle" id="SDLApp.eraserToggle"><code class="code">eraserToggle</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SDLApp.eraserToggle"></span>void <code class="code">eraserToggle</code>(bool <code class="code">eraseBool</code>, int <code class="code">color</code>);
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Method that activates or deactivates the eraser function.
+    Accessed by pressing "E" key or by pressing button 3.
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SDLApp.button5Setup" id="SDLApp.button5Setup"><code class="code">button5Setup</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SDLApp.button5Setup"></span>void <code class="code">button5Setup</code>(Surface <code class="code">imgSurface</code>);
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Sets up the Undo button,
+    this method draws a red undo or go back arrow
+    which points to the left.
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SDLApp.button6Setup" id="SDLApp.button6Setup"><code class="code">button6Setup</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SDLApp.button6Setup"></span>void <code class="code">button6Setup</code>(Surface <code class="code">imgSurface</code>);
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Sets up the Redo button,
+    this method draws a blue redo or go forward arrow
+    which points to the right.
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li>
+</ul>
+
+</div>
+
+</li>
+</ul>
+  </div>
+</section>
 </section>
       </article>
     </div>

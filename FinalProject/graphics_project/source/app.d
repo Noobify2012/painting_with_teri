@@ -10,10 +10,18 @@
 import SDLApp : SDLApp;
 import SDL_Initial: SDLInit;
 
-/// Entry point to program
+/**
+* Name: main 
+* Description: Entry point to program.
+*/
 void main()
 {
-	SDLInit newSDL = new SDLInit();  /// Initializes SDL
-	SDLApp myApp = new SDLApp;  /// Creates paint application
-	myApp.MainApplicationLoop();  /// Runs application
+	/// Initialize SDL
+	SDLInit newSDL = new SDLInit();  
+
+	/// Create paint application
+	SDLApp myApp = new SDLApp;  
+
+	/// Run application
+	myApp.MainApplicationLoop();  
 }

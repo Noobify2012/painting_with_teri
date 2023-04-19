@@ -12,10 +12,18 @@ Description: Class contains utility methods to help with drawing
 */
 class DrawingUtility {
 
+  /***********************************
+  * Name: constructor
+  * Description: default constructor 
+  */
   this() {
 
   }
 
+  /***********************************
+  * Name: Destructor
+  * Description: default destructor 
+  */
   ~this() {
 
   }
@@ -30,7 +38,7 @@ class DrawingUtility {
   * Returns: color of pixel
   */
   SDL_Color getPixelColorAt(int x, int y, SDL_Surface* imgSurface) {
-
+    /// Make sure the point is actually within the window 
     assert((x >= 0 && x <= 640) && (y >= 0 && y <= 480));
 
     /// When we modify pixels, we need to lock the surface first

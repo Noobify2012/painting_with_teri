@@ -11,8 +11,9 @@ import SDL_Initial :SDLInit;
 import Shape : Shape;
 import SDL_Surfaces;
 
-/**
-* A Circle is a Shape. It is filled, and is drawn by forming an equation from user clicks.
+/***********************************
+* Name: Circle 
+* Descripton: A Circle is a Shape. It is filled, and is drawn by forming an equation from user clicks.
 * Two points are needed to draw a Circle.
 */
 class Circle : Shape {
@@ -20,15 +21,19 @@ class Circle : Shape {
     Surface* surf;
     Tuple!(int, int)[] points;
 
-    /**
-    * Constructor. A Circle requires a Surface to draw on.
+    /***********************************
+    * Name: constructor
+    * Description: takes the surface to put Circle on 
+    * Params:
+    *    surf = the surface we need to draw on 
     */
     this(Surface* surf) {
         this.surf = surf;
     }
 
-    /**
-    * Destructor.
+    /***********************************
+    * Name: Destructor
+    * Description: default destructor 
     */
     ~this() {}
 
@@ -37,8 +42,8 @@ class Circle : Shape {
     * Description: Helper for 'draw' function that fills the Circle based on user-chosen points.
     * Params:
     *   midpoint = the midpoint of this Circle
-    *   radius =the radius of this Circle
-    *   r =red color value in range [0, 255]
+    *   radius = the radius of this Circle
+    *   r = red color value in range [0, 255]
     *   g = green color value in range [0, 255]
     *   b = blue colover value in range [0, 255]
     */
@@ -61,8 +66,7 @@ class Circle : Shape {
 
     /**
     * Name: draw
-    * Description: Draws this Circle based on the user's clicks. Exactly two mouse
-    * clicks are required to draw a Circle. The clicks represent the Circle's diameter.
+    * Description: Draws this Circle based on the user's clicks. Exactly two mouse clicks are required to draw a Circle. The clicks represent the Circle's diameter.
     * Params:
     *   brushSize = not used.
     *   r = red value in range [0, 255]
@@ -71,15 +75,15 @@ class Circle : Shape {
     */
     override void draw(int brushSize, ubyte r, ubyte g, ubyte b) {
 
-        // The two points required represent the circle's diameter
-        // The midpoint of the circle is the midpoint of the line formed from the two points
+        /// The two points required represent the circle's diameter
+        /// The midpoint of the circle is the midpoint of the line formed from the two points
         int numPoints = 0, numPointsNeeded = 2;
 
-        // Create 2 points representing diameter
-        // Also create tuple to hold midpoint
+        /// Create 2 points representing diameter
+        /// Also create tuple to hold midpoint
         Tuple!(int, int) p1, p2, midpoint;
 
-        // Begin loop to register clicks
+        /// Begin loop to register clicks
         while (numPoints < numPointsNeeded) {
             SDL_Event e;
 
@@ -100,28 +104,29 @@ class Circle : Shape {
         points ~= p1;
         points ~= p2;
 
-        //Stops the shape from drawing if you try to draw within the menu bounds 
+        /// Stops the shape from drawing if you try to draw within the menu bounds 
         if((p1[1] < 50) || (p2[1] < 50)){
             writeln("Try again, circle set to overlap menu");
         }
         else{ 
-            // Find circle radius and midpoint
+            /// Find circle radius and midpoint
             int radius = cast(int) sqrt(cast(float) ((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]))) / 2;
             midpoint = tuple(cast(int) ((p1[0] + p2[0]) / 2), cast(int) ((p1[1] + p2[1]) / 2));
 
-            // Fill points in circle
+            /// Fill points in circle
             fillCircle(midpoint, radius, r, g, b);
         }
     }
 
     /**
-    * name: drawFromPoints
-    * description: Draws a Circle from an array of two points. The points should represent
-    * the Circle's diameter. The Circle will be drawn filled.
-    * params:
-    *   @param points: Array of points 
-    *   @param r, g, b: red, blue, green color values
-    *   @brushSize: Not used in Circle
+    * Name: drawFromPoints
+    * Description: Draws a Circle from an array of two points. The points should represent the Circle's diameter. The Circle will be drawn filled.
+    * Params:
+    *    points = Array of points 
+    *    r = red color value 
+    *    g = green color value
+    *    b = blue color value
+    *    brushSize = Not used in Circle
     */
     override void drawFromPoints(Tuple!(int, int)[] points, ubyte r, ubyte g, ubyte b, int brushSize) {
 
@@ -136,14 +141,11 @@ class Circle : Shape {
     }
 
     /**
-    * name: getPoints
-    * description: Gets and returns the points that are needed to draw this Circle.
-    * If getPoints is invoked before the Circle is drawn, an empty array is
-    * returned.
-    * returns: An array of two integer tuples.
+    * Name: getPoints
+    * Description: Gets and returns the points that are needed to draw this Circle. If getPoints is invoked before the Circle is drawn, an empty array is returned.
+    * Returns: An array of two integer tuples.
     */
     override Tuple!(int, int)[] getPoints() {
-
         return this.points;
     }
 

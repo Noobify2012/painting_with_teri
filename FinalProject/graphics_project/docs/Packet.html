@@ -564,6 +564,30 @@ the byte order need not be flipped.
         <p class="para">
           <code class="code">
             <span class="ddoc_anchor" id="Packet.user"></span>char[16] <code class="code">user</code>;
+<br>
+<span class="ddoc_anchor" id="Packet.x"></span>int <code class="code">x</code>;
+<br>
+<span class="ddoc_anchor" id="Packet.y"></span>int <code class="code">y</code>;
+<br>
+<span class="ddoc_anchor" id="Packet.r"></span>byte <code class="code">r</code>;
+<br>
+<span class="ddoc_anchor" id="Packet.g"></span>byte <code class="code">g</code>;
+<br>
+<span class="ddoc_anchor" id="Packet.b"></span>byte <code class="code">b</code>;
+<br>
+<span class="ddoc_anchor" id="Packet.s"></span>int <code class="code">s</code>;
+<br>
+<span class="ddoc_anchor" id="Packet.bs"></span>int <code class="code">bs</code>;
+<br>
+<span class="ddoc_anchor" id="Packet.x2"></span>int <code class="code">x2</code>;
+<br>
+<span class="ddoc_anchor" id="Packet.y2"></span>int <code class="code">y2</code>;
+<br>
+<span class="ddoc_anchor" id="Packet.x3"></span>int <code class="code">x3</code>;
+<br>
+<span class="ddoc_anchor" id="Packet.y3"></span>int <code class="code">y3</code>;
+<br>
+<span class="ddoc_anchor" id="Packet.message"></span>char[64] <code class="code">message</code>;
 
           </code>
         </p>
@@ -573,22 +597,9 @@ the byte order need not be flipped.
 </div>
 <div class="ddoc_decl">
   <section class="section ddoc_sections">
-  <div class="ddoc_section">
+  <div class="ddoc_summary">
   <p class="para">
-    <span class="ddoc_section_h">NOTE:</span>
-Packets usually consist of a 'header'
-that otherwise tells us some information
-about the packet. Maybe the first byte
-indicates the format of the information.
-Maybe the next byte(s) indicate the length
-of the message. This way the server and
-client know how much information to work
-with.
-For this example, I have a 'fixed-size' Packet
-for simplicity -- effectively cramming every
-piece of information I can think of.
-<br><br>
-Perhaps a unique identifier
+    Items that can be added to the packet
   </p>
 </div>
 
@@ -618,16 +629,7 @@ Perhaps a unique identifier
 </div>
 <div class="ddoc_decl">
   <section class="section ddoc_sections">
-  <div class="ddoc_summary">
-  <p class="para">
-    Purpose of this function is to pack a bunch of
-bytes into an array for 'serialization' or otherwise
-ability to send back and forth across a server, or for
-otherwise saving to disk.
-
-  </p>
-</div>
-<div class="ddoc_section">
+  <div class="ddoc_section">
   <p class="para">
     <span class="ddoc_section_h">Name:</span>
 <code class="code">GetPacketAsBytes</code>
@@ -637,17 +639,14 @@ otherwise saving to disk.
 <div class="ddoc_section">
   <p class="para">
     <span class="ddoc_section_h">Description:</span>
-Purpose of this function is to pack a bunch of
-	bytes into an array for 'serialization' or otherwise
-	ability to send back and forth across a server, or for
-	otherwise saving to disk.
+Pack a bunch of bytes into an array for 'serialization' or otherwise ability to send back and forth across a server, or for otherwise saving to disk.
 
   </p>
 </div>
 <div class="ddoc_returns">
   <h4>Return Value</h4>
   <p class="para">
-    Payload, packet with bytes of color data for each pixel TODO: confirm
+    Payload, packet with bytes of color data for each pixel
   </p>
 </div>
 

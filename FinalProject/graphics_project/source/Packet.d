@@ -10,45 +10,26 @@ import core.stdc.string;
 ///       i.e. some number. If that number is expected (e.g. 12345678), then
 ///       the byte order need not be flipped.
 struct Packet{
-	/// NOTE: Packets usually consist of a 'header'
-	///   	 that otherwise tells us some information
-	///  	 about the packet. Maybe the first byte
-	/// 	 	 indicates the format of the information.
-	/// 		 Maybe the next byte(s) indicate the length
-	/// 		 of the message. This way the server and
-	/// 		 client know how much information to work
-	/// 		 with.
-	/// For this example, I have a 'fixed-size' Packet
-	/// for simplicity -- effectively cramming every
-	/// piece of information I can think of.
+	/** Items that can be added to the packet */
+	char[16] user;  
+    int x;///ditto
+    int y;///ditto
+    byte r;///ditto
+    byte g;///ditto
+    byte b;///ditto
+	int s;///ditto
+	int bs;///ditto
+	int x2;///ditto
+	int y2;///ditto
+	int x3;///ditto
+	int y3;///ditto
+    char[64] message; ///ditto
 
-	char[16] user;  /// Perhaps a unique identifier 
-    int x;
-    int y;
-    byte r;
-    byte g;
-    byte b;
-	int s;
-	int bs;
-	int x2;
-	int y2;
-	int x3;
-	int y3;
-    char[64] message; // for debugging
-	// ushort port;
-
-	/// Purpose of this function is to pack a bunch of
-    /// bytes into an array for 'serialization' or otherwise
-	/// ability to send back and forth across a server, or for
-	/// otherwise saving to disk.	
 
 	/** 
 	* Name: GetPacketAsBytes
-	* Description: Purpose of this function is to pack a bunch of
-	*	bytes into an array for 'serialization' or otherwise
-	*	ability to send back and forth across a server, or for
-	*	otherwise saving to disk.	
-	* Returns: Payload, packet with bytes of color data for each pixel TODO: confirm
+	* Description: Pack a bunch of bytes into an array for 'serialization' or otherwise ability to send back and forth across a server, or for otherwise saving to disk.	
+	* Returns: Payload, packet with bytes of color data for each pixel
 	*/
     char[Packet.sizeof] GetPacketAsBytes(){
 		user = "test user\0";

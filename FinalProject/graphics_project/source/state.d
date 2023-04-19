@@ -15,6 +15,11 @@ import Rectangle : Rectangle;
 import Line : Line;
 import Triangle : Triangle;
 
+
+/***********************************
+* Name: State
+* Descripton: This is the current undo and redo stack, accessed for local and networked undo and redo. Holds all previous actions by users. 
+*/
 class State {
 
     Action[] undoStack;
@@ -22,12 +27,22 @@ class State {
     int undoPosition, redoPosition;
     Surface *surf;
 
+    /***********************************
+    * Name: constructor
+    * Description: Makes a new state  
+    * Params:
+    *    surf = the surface we need to draw on 
+    */
     this(Surface *surf) {
         this.undoPosition = -1;
         this.redoPosition = -1;
         this.surf = surf;
     }
 
+    /***********************************
+    * Name: Destructor
+    * Description: default destructor 
+    */
     ~this() {}
 
     void addAction(Action act) {
