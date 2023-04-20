@@ -316,25 +316,12 @@ class SDLApp{
                             }
                         }
 
-                        //unpack rgb values 
-                        // ubyte redU = *cast(byte*)&red;
-                        // ubyte greenU = *cast(byte*)&green;
-                        // ubyte blueU = *cast(byte*)&blue;
-
                         int shapeBrush = 4;
-                        // writeln(shapeAction.getPoints[]);
-                        // writeln(shapeAction.getPoints[0][0]);
-                        // writeln(shapeAction.getPoints[0][1]);
-                        // writeln(shapeAction.getPoints[1][0]);
-                        // writeln(shapeAction.getPoints[1][1]);
                         if (networked == true) {
                             Packet shapePacket = mClient.getChangeForServer(x,y,red, green, blue, st, shapeBrush, x2, y2, x3, y3);
                             client.sendDataToServer(shapePacket);
                         }
-                        // Send the selected shape to the ShapeListener so the user can draw it. 
-                        // ShapeListener shQ = new ShapeListener(quadrant, brushSize);
-                        // // shQ.setRGB(red, green, blue);
-                        // shQ.drawShape(&imgSurface, brush, red, green, blue);
+
                     }
 
                     ///Button five: UNDO 
