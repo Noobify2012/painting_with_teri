@@ -98,13 +98,7 @@ class TCPServer{
 					writeln("Awaiting client connections");
 
 					while(serverIsRunning){
-						// if(e.type == SDL_KEYUP) {
-						// 	if (e.key.keysym.sym == SDLK_q) {
-						// 		serverIsRunning = false;
-						
-						// 	}
 
-						// }
 						// The servers job now is to just accept connections
 						writeln("Waiting to accept more connections");
 						/// accept is a blocking call.
@@ -151,59 +145,21 @@ class TCPServer{
 				Description: returns test data so we can tell if the server is running 
 				and we enter the loop where the client thread would start
 				*/
-				// void mockRun(){
-				// 	// SDL_Event e;
-				// 	// bool serverIsRunning=true;
-				// 	writeln("Awaiting client connections");
+				int mockRun(){
+					// SDL_Event e;
+					// bool serverIsRunning=true;
+					int output = 0;
+					writeln("Awaiting client connections");
 
-				// 	while(serverIsRunning){
-				// 		// if(e.type == SDL_KEYUP) {
-				// 		// 	if (e.key.keysym.sym == SDLK_q) {
-				// 		// 		serverIsRunning = false;
-						
-				// 		// 	}
+					while(serverIsRunning){
 
-				// 		// }
-				// 		// The servers job now is to just accept connections
-				// 		writeln("Waiting to accept more connections");
-				// 		/// accept is a blocking call.
-				// 		auto newClientSocket = mListeningSocket.accept();
-				// 		// After a new connection is accepted, let's confirm.
-				// 		writeln("Hey, a new client joined!");
-				// 		writeln("(me)",newClientSocket.localAddress(),"<---->",newClientSocket.remoteAddress(),"(client)");
-				// 		// Now pragmatically what we'll do, is spawn a new
-				// 		// thread to handle the work we want to do.
-				// 		// Per one client connection, we will create a new thread
-				// 		// in which the server will relay messages to clients.
-				// 		mClientsConnectedToServer ~= newClientSocket;
-				// 		// Set the current client to have '0' total messages received.
-				// 		// NOTE: You may not want to start from '0' here if you do not
-				// 		//       want to send a client the whole history.
-				// 		mCurrentMessageToSend ~= 0;
-
-				// 		writeln("Friends on server = ",mClientsConnectedToServer.length);
-				// 		// Let's send our new client friend a welcome message
-				// 		newClientSocket.send("Hello friend\0");
-				// 		sendInstructions(newClientSocket);
-
-
-				// 		// Now we'll spawn a new thread for the client that
-				// 		// has recently joined.
-				// 		// The server will now be running multiple threads and
-				// 		// handling a chat here with clients.
-				// 		//
-				// 		// NOTE: The index sent indicates the connection in our data structures,
-				// 		//       this can be useful to identify different clients.
-				// 		new Thread({
-				// 				clientLoop(newClientSocket);
-				// 			}).start();
-
-				// 		// After our new thread has spawned, our server will now resume 
-				// 		// listening for more client connections to accept.
-				// 		// serverIsRunning = getServerCommands(serverIsRunning);
-				// 		writeln("have a checked for a command?");
-				// 	}	
-				// }
+						/// The servers job now is to just accept connections
+						writeln("Got inside mockRun loop");
+						output = 1;
+						serverIsRunning = false;
+					}	
+					return output;
+				}
 
 				// Function to spawn from a new thread for the client.
 				// The purpose is to listen for data sent from the client 
@@ -292,19 +248,21 @@ class TCPServer{
 									
 				}
 
-				/// The purpose of this function is to broadcast
-				/// messages to all of the clients that are currently
-				/// connected.
+				/**
+				Name: broadcastToAllClients
+				Description: The purpose of this function is to broadcast
+				messages to all of the clients that are currently
+				connected.
+				*/
 				void broadcastToAllClients(){
 					writeln("Broadcasting to :", mClientsConnectedToServer.length);
 					foreach(idx,serverToClient; mClientsConnectedToServer){
-						// Send whatever the latest data was to all the 
-						// clients.
+						/// Send whatever the latest data was to all the clients.
 						while(mCurrentMessageToSend[idx] <= mServerData.length-1){
 							byte[Packet.sizeof] msg = mServerData[mCurrentMessageToSend[idx]];
 							serverToClient.send(msg);	
-							// Important to increment the message only after sending
-							// the previous message to as many clients as exist.
+							/// Important to increment the message only after sending
+							/// the previous message to as many clients as exist.
 							mCurrentMessageToSend[idx]++;
 						}
 					}
@@ -318,28 +276,47 @@ class TCPServer{
 
 				}
 		
-	bool getServerCommands(bool commandBool) {
-		/// Ask user what server they want to use
-		bool goodCom = false;
-		bool running = true;
-		// string user_addr = "localhost";
-		while (!goodCom){
-			writeln("Enter a command:");
-			/// Get input
-			string user_input = readln;
-			/// Trim off carriage return
-			user_input = user_input.strip;
-			/// Validate input(check if characters are either an int or .)
-			// string ip_regex = "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$";
-			if (std.uni.toLower(user_input) == "quit") {
-				goodCom = true;
-				running = false;						
-			} else {
-				writeln("Invalid command, please try again");
-			}
-		}
-		return running;
-		/// Return input as string formatted as ###.###.###.###
-	}
+				
+				bool getServerCommands(bool commandBool) {
+					/// Ask user what server they want to use
+					bool goodCom = false;
+					bool running = true;
+					// string user_addr = "localhost";
+					while (!goodCom){
+						writeln("Enter a command:");
+						/// Get input
+						string user_input = readln;
+						/// Trim off carriage return
+						user_input = user_input.strip;
+						/// Validate input(check if characters are either an int or .)
+						// string ip_regex = "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$";
+						if (std.uni.toLower(user_input) == "quit") {
+							goodCom = true;
+							running = false;						
+						} else {
+							writeln("Invalid command, please try again");
+						}
+					}
+					return running;
+					/// Return input as string formatted as ###.###.###.###
+				}
 
+				void end(){
+					serverIsRunning = false;
+					writeln("got to server end");
+					mListeningSocket.close();
+				}
+
+}
+
+
+@("Server test")
+unittest{
+
+    /// Create server & client with specified address
+    TCPServer ser = new TCPServer("localhost", 50003);
+	int returned = ser.mockRun();
+	ser.end();
+    assert(returned == 1, "Server run loop");         
+    
 }

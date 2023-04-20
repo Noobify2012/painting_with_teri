@@ -24,6 +24,7 @@ class TCPClient{
     Packet inbound;
     string host;
     ushort port;
+    bool clientRunning;
     // Deque incoming;
 
 
@@ -44,9 +45,9 @@ class TCPClient{
 		mSocket.close();
 	}
 
-    void init() {
-        host = getServerAddress();
-        port = getServerPort();
+    void init(string host = getServerAddress(), ushort port = getServerPort()) {
+        // host = getServerAddress();
+        // port = getServerPort();
         writeln("Starting client...attempt to create socket");
         writeln("Host: "~host);
         writeln("Port: "~to!string(port));
@@ -67,24 +68,25 @@ class TCPClient{
 		// This will be something like "Hello friend\0"
 		byte[Packet.sizeof] buffer;
 		auto received = mSocket.receive(buffer);
+        clientRunning = true;
 		writeln("On Connect: ", buffer[0 .. received]);
         writeln(">");
     }
 
-	// Purpose here is to run the client thread to constantly send data to the server.
-	// This is your 'main' application code.
-	// 
-	// In order to make life a little easier, I will also spin up a new thread that constantly
-	// receives data from the server.
+	/**
+    Name: run
+    Description: Purpose here is to run the client thread to constantly send data to the server.
+	This is your 'main' application code.
+	In order to make life a little easier, I will also spin up a new thread that constantly
+	receives data from the server.
+    */
 	Packet run(Packet packet) {
 		writeln("Preparing to run client");
 		writeln("(me)",mSocket.localAddress(),"<---->",mSocket.remoteAddress(),"(server)");
-		// Buffer of data to send out
-		// Choose '80' bytes of information to be sent/received
 
-		bool clientRunning=true;
+		// bool clientRunning=true;
 		
-		// Spin up the new thread that will just take in data from the server
+		/// Spin up the new thread that will just take in data from the server
             new Thread({
                         inbound = receiveDataFromServer();
                     }).start();
@@ -93,16 +95,26 @@ class TCPClient{
 		writeln(">");
 		while(clientRunning){
 		    sendDataToServer(packet);
-
-            // foreach(line; stdin.byLine){
-			// 	write(">");
-			// 	// Send the packet of information
-			// 	mSocket.send(line);
-			// }
-				// Now we'll immedietely block and await data from the server
 		}
         return inbound;
+	}
 
+	/**
+    Name: mockRun
+    Description: Purpose here is to run the client thread to constantly send data to the server.
+	This is your 'main' application code.
+	In order to make life a little easier, I will also spin up a new thread that constantly
+	receives data from the server.
+    */
+	int mockRun() {
+		writeln("Made it inside Client mockRun loop");
+        int output = 0;
+	
+		writeln(">");
+		while(clientRunning){
+		    output = 1;
+		}
+        return output;
 	}
 
     void sendDataToServer(Packet packet) {
@@ -186,7 +198,7 @@ class TCPClient{
         * @param xPos: x-coordinate of pixel, yPos: y-coordinate of pixel
         * @param blueVal: rgb blue value, greenVal: rgb green value, redVal: rgb red value
         * @param brushSize: integer value of the size of the brush that is currently being used
-    * Turns the changes in pixel colors on the current users surface into a packet to send to other networked users. 
+    * Returns: the changes in pixel colors on the current users surface into a packet to send to other networked users. 
     */
 Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyte blueVal, int shape, int brushSize, int x2Pos, int y2Pos, int x3Pos, int y3Pos) {
     Packet data;
@@ -219,6 +231,7 @@ Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyt
     * Name: getServerAddress 
     * Description: Prompts the user for a IP address to try and connect to for a painting party.  
     * Turns the changes in pixel colors on the current users surface into a packet to send to other networked users. 
+    * Returns: string of address
     */
 string getServerAddress() {
     /// Ask user what server they want to use
@@ -246,12 +259,9 @@ string getServerAddress() {
 }
 
 /**
-*  Name: GetPixelColorAt
-*  Description: Determines DSL color of pixel at point
-*  Params: 
-*    x, y: point coordinates
-*    imgSurface: SDL surface
-*  Returns: color of pixel
+*  Name: getServerPort
+*  Description: Determines gets server port from user input
+*  Returns: port number
 */
 ushort getServerPort() {
     /// ask user what port they want to use if not the default
@@ -295,11 +305,11 @@ unittest{
     ubyte red = 255;
     ubyte green = 128;
     ubyte blue = 32;
-    Packet pack = getChangeForServer(1,2, red, green, blue, 0, 4,0,0,0,0);
+    Packet pack = getChangeForServer(1,2, red, green, blue, 3, 4,5,6,7,8);
 
 
     /// Create server & client with specified address
-    TCPServer ser = new TCPServer("localhost", 50003);
+    TCPServer ser = new TCPServer("localhost", 50005);
 	TCPClient cl = new TCPClient;
     Packet received;
     /// Run server & initialize client on server address
@@ -310,20 +320,39 @@ unittest{
     }).start();
   
     while (serverRunning) {
-        cl.init("localhost", 50003);
+        cl.init("localhost", 50005);
         writeln("Test: Client initialized");
     
 
         cl.sendDataToServer(pack);
         writeln("Test: Sent data to server");
-        received = cl.receiveDataFromServer();
-        writeln("Test: Received data from server");
+        received = cl.run(pack);
+        // writeln("Test: Client running");
+        // received = cl.receiveDataFromServer();
+        // writeln("Test: Received data from server");
         cl.closeSocket();
         writeln("Test: Client socket closed");
         // ser.end();
         writeln("received.x: ", received.x);
 
+        assert(received.x == 1, "Outbound and inbound packet.x are different");         
+        assert(received.y3 == 8, "Outbound and inbound packet.y3 are different");         
     }
-    assert(received.x == 1, "Outbound and inbound packets are different");         
-    
+    // ser.end();
+    ser.mListeningSocket.close();
+    serverRunning = false;
 }
+
+// @("Client test")
+// unittest{
+//     TCPClient cl = new TCPClient;
+//     writeln("client test");
+//     cl.init("localhost", 50004);
+//     writeln("Test: Client initialized");
+//     int returned = cl.mockRun(); 
+//     writeln("Test: mock run");
+//     cl.closeSocket();
+
+//     assert(returned == 1, "Client run loop not reached");         
+    
+// }
