@@ -47,9 +47,9 @@ class TCPClient{
     * Name: init
     * Description: initiates a new client and attempts to create a socket to connect to. Opens a client thread to send/receive data from. 
     */
-    void init() {
-        host = getServerAddress();
-        port = getServerPort();
+    void init(string host = getServerAddress(), ushort port = getServerPort) {
+        // host = getServerAddress();
+        // port = getServerPort();
         writeln("Starting client...attempt to create socket");
         writeln("Host: "~host);
         writeln("Port: "~to!string(port));
