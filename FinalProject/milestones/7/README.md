@@ -13,12 +13,22 @@
 
 Platform: Apple Macbook Pro M1
 
+required software:
+DMD
+Dub
+SDL2
+
 Navigating to the directory to run the client and server : 
 In order to access the code for the client and server you will need 2 terminal windows. 
 
 Starting the Client: 
-In the client window, navigate to the graphics project directory located in FinalProject/graphics_project. Run command 'dub' to load dependencies. If error message
-'linker exited with status 1' encountered, run command 'export MACOSX_DEPLOYMENT_TARGET=11' and then run 'dub' again. 
+In the client window, navigate to the graphics project directory located in FinalProject/graphics_project. 
+
+For running on a Mac:
+Run command 'dub' to load dependencies. If error message 'linker exited with status 1' encountered, run command 'export MACOSX_DEPLOYMENT_TARGET=11' and then run 'dub' again.
+
+For running on a windows or Linux machine:
+From the graphics_project directory, simply run the command: dub run
 
 Starting a painting party
 When the SDL window appears, press 'n' to start to connect the client to the server. You will then have to switch back to the terminal window. In that window, you will be prompted
