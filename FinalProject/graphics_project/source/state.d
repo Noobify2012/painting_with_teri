@@ -86,22 +86,22 @@ class State {
             if (aType == "circle") {
                 /// Undo a circle 
                 Shape circle = new Circle(surf);
-                circle.drawFromPoints(pts, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 4);
+                circle.drawFromPoints(pts, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 12);
 
             } else if (aType == "rectangle") {
                 /// Undo a rectangle 
                 Shape rect = new Rectangle(surf);
-                rect.drawFromPoints(pts, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 4);
+                rect.drawFromPoints(pts, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 12);
 
             } else if (aType == "triangle") {
                 /// Undo a triangle 
                 Shape tri = new Triangle(surf);
-                tri.drawFromPoints(pts, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 4);
+                tri.drawFromPoints(pts, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 12);
 
             } else if (aType == "line") {
                 /// Undo a line 
                 Shape lin = new Line(surf);
-                lin.drawFromPoints(pts, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 4);
+                lin.drawFromPoints(pts, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 12);
                 
             } else if (aType == "stroke") {
                 /// Undo a drawn stroke 
@@ -113,7 +113,7 @@ class State {
                     while (currentPoint < pts.length) {
                         Tuple!(int, int)[] ptsTuple = [pts[currentPoint], pts[currentPoint - 1]];
 
-                        lin.drawFromPoints(ptsTuple, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 4);
+                        lin.drawFromPoints(ptsTuple, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 12);
                         currentPoint++;
                     }
                 }
