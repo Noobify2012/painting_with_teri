@@ -135,7 +135,7 @@ class TCPServer{
 						// After our new thread has spawned, our server will now resume 
 						// listening for more client connections to accept.
 						// serverIsRunning = getServerCommands(serverIsRunning);
-						writeln("have a checked for a command?");
+						// writeln("have a checked for a command?");
 					}	
 				}
 
@@ -230,7 +230,7 @@ class TCPServer{
 				/// messages to all of the clients that are currently
 				/// connected.
 				void broadcastToAllClients(){
-					writeln("Broadcasting to :", mClientsConnectedToServer.length);
+					// writeln("Broadcasting to :", mClientsConnectedToServer.length);
 					foreach(idx,serverToClient; mClientsConnectedToServer){
 						// Send whatever the latest data was to all the 
 						// clients.

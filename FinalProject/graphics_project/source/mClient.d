@@ -23,6 +23,7 @@ class TCPClient{
     Packet inbound;
     string host;
     ushort port;
+    bool goodConnect = false;
     // Deque incoming;
 
 	/***********************************
@@ -52,16 +53,18 @@ class TCPClient{
         writeln("Starting client...attempt to create socket");
         writeln("Host: "~host);
         writeln("Port: "~to!string(port));
-		/// Create a socket for connecting to a server
-		/// Note: AddressFamily.INET tells us we are using IPv4 Internet protocol
-		/// Note: SOCK_STREAM (SocketType.STREAM) creates a TCP Socket
-		///       If you want UDPClient and UDPServer use 'SOCK_DGRAM(SocketType.DGRAM)
+        /// Create a socket for connecting to a server
+        /// Note: AddressFamily.INET tells us we are using IPv4 Internet protocol
+        /// Note: SOCK_STREAM (SocketType.STREAM) creates a TCP Socket
+        ///       If you want UDPClient and UDPServer use 'SOCK_DGRAM(SocketType.DGRAM)
         /// Attempt to create socket
-		mSocket = new Socket(AddressFamily.INET, SocketType.STREAM);
+        mSocket = new Socket(AddressFamily.INET, SocketType.STREAM);
 
-		/// Socket needs an 'endpoint', so we determine where we are going to connect to.
-		/// NOTE: It's possible the port number is in use if you are not able to connect. Try another one.
-		mSocket.connect(new InternetAddress(host, port));
+        /// Socket needs an 'endpoint', so we determine where we are going to connect to.
+        /// NOTE: It's possible the port number is in use if you are not able to connect. Try another one.
+        
+        mSocket.connect(new InternetAddress(host, port));
+            
 		writeln("Client conncted to server");
 		/// Our client waits until we receive at least one message confirming that we are connected. This will be something like "Hello friend\0"
 		byte[Packet.sizeof] buffer;
@@ -123,15 +126,15 @@ class TCPClient{
 			/// Note: It's important to recreate or 'zero out' the buffer so that you do not get previous data leftover in the buffer.
 			byte[Packet.sizeof] buffer;
             auto fromServer = buffer[0 .. mSocket.receive(buffer)];
-            writeln("buffer length    :", buffer.length);
-            writeln("fromServer (raw bytes): ",fromServer);
-            writeln();
+            // writeln("buffer length    :", buffer.length);
+            // writeln("fromServer (raw bytes): ",fromServer);
+            // writeln();
 
             /// Format the packet. Note, I am doing this in a very verbose manner so you can see each step.
             Packet formattedPacket;
             byte[16] field0        = fromServer[0 .. 16].dup;
             formattedPacket.user = cast(char[])(field0);
-            writeln("Server echos back user: ", formattedPacket.user);
+            // writeln("Server echos back user: ", formattedPacket.user);
 
             /// Get some of the fields
             byte[4] field1 = fromServer[16 .. 20].dup;
@@ -171,7 +174,7 @@ class TCPClient{
             formattedPacket.x3 = f10;
             formattedPacket.y3 = f11;
             
-            write(">");
+            // write(">");
             return formattedPacket;
 		}
 	}

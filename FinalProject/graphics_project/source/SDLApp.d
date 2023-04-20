@@ -467,7 +467,7 @@ class SDLApp{
                     /// Listener for key being currently pressed - not currently in use. 
 
                 } else if(e.type == SDL_KEYUP) {
-                    printf("key released: ");
+                    // printf("key released: ");
                     //, to!string(e.key.keysym.sym));
 
                     if (e.key.keysym.sym == SDLK_b){
@@ -482,7 +482,7 @@ class SDLApp{
 
                     } else if (e.key.keysym.sym == SDLK_e) {
                         /// User pressed letter e, either activate or deactivate the eraser. 
-                        writeln("E");
+                        // writeln("E");
                         eraserToggle(erasing, color);
 
                     } else if (e.key.keysym.sym == SDLK_n) {
@@ -529,7 +529,7 @@ class SDLApp{
                         }
 
                         /// unpack type
-                        writeln("shape action type: " ~to!string(shapeAction.getActionType()));
+                        // writeln("shape action type: " ~to!string(shapeAction.getActionType()));
                         int st = 0;
                         if (shapeAction.getPoints().length == 3) {
                             st = 3;
@@ -580,7 +580,7 @@ class SDLApp{
             ///if we have turned networking on, check if there is traffic and that we are not in the tear down process. 
             if (networked == true) {
                 if (traffic.size > 0 && !tear_down) {
-                    writeln(">");
+                    // writeln(">");
                     ///send traffic to the server
                     client.sendDataToServer(traffic.pop_back);
                 } else if (tear_down) {
@@ -666,7 +666,7 @@ class SDLApp{
                 inbound = client.receiveDataFromServer();
                 // writeln("inbound x: " ~ to!string(inbound.x) ~ " inbound y: " ~ to!string(inbound.y)~ " inbound shape: " ~ to!string(inbound.s));
                 received.push_front(inbound);
-                writeln("Size of Received: " ~to!string(received.size()));
+                // writeln("Size of Received: " ~to!string(received.size()));
             } 
         }).start();
     }
@@ -696,32 +696,32 @@ class SDLApp{
                 string actType;
                 if (curr.s == 0) {
                     imgSurface.UpdateSurfacePixel(curr.x, curr.y, curr.r, curr.g, curr.b);
-                    writeln("i got a pixel");
+                    // writeln("i got a pixel");
                 } else if (curr.s == 1) {
                     /// circle
                     Circle inboundCircle = new Circle(&imgSurface);
                     inboundCircle.drawFromPoints(shapePoints, red, green, blue, curr.bs);
                     nextAct = new Action(shapePoints,color, "circle");
                     state.addAction(nextAct); 
-                    writeln("i got a circle");
+                    // writeln("i got a circle");
                 } else if (curr.s == 2) {
                     /// rectangle
                     Rectangle inboundRec = new Rectangle(&imgSurface);
                     inboundRec.drawFromPoints(shapePoints, red, green, blue, curr.bs);
                     nextAct = new Action(shapePoints,color, "rectangle");
                     state.addAction(nextAct);
-                    writeln("i got a rectangle");
+                    // writeln("i got a rectangle");
                 } else if (curr.s == 3) {
                     /// triangle
                     Triangle inboundTri = new Triangle(&imgSurface);
                     inboundTri.drawFromPoints(shapePoints, red, green, blue, curr.bs);
                     nextAct = new Action(shapePoints,color, "triangle");
                     state.addAction(nextAct);
-                    writeln("i got a triangle");
+                    // writeln("i got a triangle");
                 } else if (curr.s == -10) {
                     state.undo();
                 } else if (curr.s == 10) {
-                    writeln("inbound redo");
+                    // writeln("inbound redo");
                     writeln("size of redo: " ~ to!string(state.getRedoStack()));
                 } else {
                     /// line
@@ -729,7 +729,7 @@ class SDLApp{
                     inboundLine.drawFromPoints(shapePoints, red, green, blue, curr.bs);
                     nextAct = new Action(shapePoints,color, "line");
                     state.addAction(nextAct);
-                    writeln("i got a line");
+                    // writeln("i got a line");
                 } 
         }}).start();
     }
