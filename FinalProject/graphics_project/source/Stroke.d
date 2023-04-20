@@ -23,21 +23,21 @@ class Stroke {
     */
     ~this() {}
 
-    /**
-    *   Returns all points that constitute a stroke as an array of Points.
-    *
-    *   return: array of Points
+ 
+    /***********************************
+    * Name: getConstituentPoints 
+    * Description: Get the array of points that constitute a stroke  
+    * Returns: array of points in stroke
     */
     Point[] getConstituentPoints() {
 
         return this.constituentPoints;
     }
 
-    /**
-    *   Returns all points that originally occupied the space this Stroke has
-    *   drawn over.
-    *
-    *   return: array of Points
+    /***********************************
+    * Name: getUnderlyingPoints 
+    * Description: Returns all points that originally occupied the space this stroke has drawn over.
+    * Returns: array of underlying points 
     */
     Point[] getUnderlyingPoints() {
 

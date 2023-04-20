@@ -37,7 +37,12 @@ Address find(){
     //  byte[Packet.sizeof] buffer;
     //  auto received = socket.receive(buffer);s
 }
-///Find a randomly selected port, check if it is avaialbe and if so return the port number else, find another one
+
+/***********************************
+* Name: findPort
+* Description: Find a randomly selected port, check if it is available and if so return the port number; else, find another one
+* Returns: Available port number 
+*/
 ushort findPort() {
     ushort port = 1;
 
@@ -61,7 +66,6 @@ ushort findPort() {
         }
         
     }
-
     //grab a random port from that list and return it
     return port;
 }

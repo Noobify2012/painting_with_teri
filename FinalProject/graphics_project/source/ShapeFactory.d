@@ -31,6 +31,15 @@ class ShapeFactory {
     */
     ~this() {}
 
+   
+    /***********************************
+    * Name: createShape
+    * Description: based on the shape being passed in, export to correct shape class to make an object 
+    * Params:
+    *    sh = type of shape being passed to class 
+    *    surf = surface to draw the shape on
+    * Returns: the shape that is created from its class constructor 
+    */
     Shape createShape(string sh, Surface *surf) {
 
         Shape outputShape;

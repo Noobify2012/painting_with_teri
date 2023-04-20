@@ -20,12 +20,10 @@ import Packet : Packet;
 //TODO: method to recieve color changes from server
 //
 
-/**
-Name: Initialize
-Description: Method to create a socket connection to the server
-Inputs: none
-Returns: A socket that is connected to the server
-Notes: Catches the exception if the client failes to connect, loops infinitly if a connection can't be made.
+/***********************************
+* Name: Initialize
+* Description: Method to create a socket connection to the server; Catches the  exception if the client fails to connect, loops infinitely if a connection can't be made.
+* Returns: A socket that is connected to the server
 */
 Socket initialize() {
 	writeln("Starting client...attempt to create socket");
@@ -67,78 +65,13 @@ Socket initialize() {
     return socket;
 }
 
-//     // Buffer of data to send out
-//     byte[Packet.sizeof] buffer;
-//     auto received = socket.receive(buffer);
-
-//     writeln("On Connect: ", buffer[0 .. received]);
-// 	write(">");
-
-//     // auto changes = Array!Packet;
-//     //TODO: set up array to story Packets needing to be sent out
-
-//     //TODO: while not sending data we should be listening and updating
-
-//     foreach(line; stdin.byLine){  = mClient line 61, do the same obfuscation that we do in SDL_App 26
-//         // sendChangeToServer(8,5,49,50,51);
-//         // Packet data;
-// 		// // The 'with' statement allows us to access an object
-// 		// // (i.e. member variables and member functions)
-// 		// // in a slightly more convenient way
-// 		// with (data){
-// 		// 	user = "clientName\0";
-// 		// 	// Just some 'dummy' data for now
-// 		// 	// that the 'client' will continuously send
-// 		// 	x = 7;
-// 		// 	y = 5;
-// 		// 	r = 49;
-// 		// 	g = 50;
-// 		// 	b = 51;
-// 		// 	message = "test\0";
-// 		// }
-// 		// // Send the packet of information
-//         // socket.send(data.GetPacketAsBytes());
-// 		// Now we'll immedietely block and await data from the server
-// 		// Shows you some useful debug information
-// 		auto fromServer = buffer[0 .. socket.receive(buffer)];
-// 		writeln("sizeof fromServer:",fromServer.length);
-// 		writeln("sizeof Packet    :", Packet.sizeof);
-// 		writeln("buffer length    :", buffer.length);
-// 		writeln("fromServer (raw bytes): ",fromServer);
-// 		writeln();
-
-
-// 		// Format the packet. Note, I am doing this in a very
-// 		// verbosoe manner so you can see each step.
-// 		Packet formattedPacket;
-// 		byte[16] field0        = fromServer[0 .. 16].dup;
-// 		formattedPacket.user = cast(char[])(field0);
-//         writeln("Server echos back user: ", formattedPacket.user);
-
-// 		// Get some of the fields
-// 		byte[4] field1        = fromServer[16 .. 20].dup;
-// 		byte[4] field2        = fromServer[20 .. 24].dup;
-// 		int f1 = *cast(int*)&field1;
-// 		int f2 = *cast(int*)&field2;
-// 		formattedPacket.x = f1;
-// 		formattedPacket.y = f2;
-
-// 		writeln("what is field1(x): ",formattedPacket.x);
-// 		writeln("what is field2(y): ",formattedPacket.y);
-// 		// NOTE: You may want to explore std.bitmanip, if you
-// 		//       have different endian machines.
-// //		int value = peek!(int,Endian.littleEndian)(field1);
-
-// 		write(">");
-//     }
-// }
-
-// Socket listenerInit (Socket listener) {
-//     Address listenAddr = test_addr.find();
-// 	string[] listen = to!string(listenAddr).split(":");
-// }
-
-
+/***********************************
+* Name: sendConnectionHandshake
+* Description: When the connection is made, send the packet and make sure you can receive it 
+* Params: 
+*   socket = A socket that is connected to the server
+* Returns: a packet of bytes 
+*/
 byte[Packet.sizeof] sendConnectionHandshake(Socket socket) {
     byte[Packet.sizeof] buffer;
     auto received = socket.receive(buffer);
@@ -148,10 +81,25 @@ byte[Packet.sizeof] sendConnectionHandshake(Socket socket) {
     return buffer;
 }
 
+/***********************************
+* Name: sendToServer
+* Description: send your packet to the server as a collection of bytes 
+* Params: 
+*    packet = packet of data to make into bytes 
+*    socket = A socket that is connected to the server
+*/
 void sendToServer(Packet packet, Socket socket) {
     socket.send(packet.GetPacketAsBytes());
 }
 
+/***********************************
+* Name: receiveFromServer 
+* Description: When a packet comes over the server, get it and open it up into bytes 
+* Params: 
+*    socket = A socket that is connected to the server
+*    buffer = a buffer that can hold incoming bytes before adding to surface 
+* Returns: a formatted packet of bytes 
+*/
 Packet recieveFromServer(Socket socket, byte[Packet.sizeof] buffer) {
     auto fromServer = buffer[0 .. socket.receive(buffer)];
 		writeln("sizeof fromServer:",fromServer.length);
@@ -161,14 +109,13 @@ Packet recieveFromServer(Socket socket, byte[Packet.sizeof] buffer) {
 		writeln();
 
 
-		// Format the packet. Note, I am doing this in a very
-		// verbosoe manner so you can see each step.
+		/// Format the packet. Note, I am doing this in a very verbose manner so you can see each step.
 		Packet formattedPacket;
 		byte[16] field0        = fromServer[0 .. 16].dup;
 		formattedPacket.user = cast(char[])(field0);
         writeln("Server echos back user: ", formattedPacket.user);
 
-		// Get some of the fields
+		/// Get some of the fields
 		byte[4] field1 = fromServer[16 .. 20].dup;
 		byte[4] field2 = fromServer[20 .. 24].dup;
         byte[4] field3 = fromServer[24 .. 28].dup;
@@ -202,7 +149,17 @@ Packet recieveFromServer(Socket socket, byte[Packet.sizeof] buffer) {
 
 }
 
-
+/***********************************
+* Name: getChangeForServer
+* Description: get the data that you need to add to the server from your surface 
+* Params: 
+*    xPos = the x coordinate to change 
+*    yPos = the y coordinate to change 
+*    redVal = the red RGB value 
+*    blueVal = the blue RGB value 
+*    greenVal = the green RGB value 
+* Returns: a packet of bytes 
+*/
 Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyte blueVal) {
     Packet data;
 		// The 'with' statement allows us to access an object
@@ -246,19 +203,23 @@ Packet getChangeForServer(int xPos, int yPos, ubyte redVal, ubyte greenVal, ubyt
     return data;
 }
 
+/***********************************
+* Name: getServerAddress 
+* Description: When the server is made, provide the address for clients to join 
+* Returns: the address of the server as a string
+*/
 string getServerAddress() {
-    //ask user what server they want to use
+    /// ask user what server they want to use
     bool good_addr = false;
     string user_addr = "localhost";
     while (!good_addr){
         writeln("what server would you like to connect to? If you are the host just press enter, otherwise Please enter the IP address in the following format ###.###.###.###");
-        // get input
+        /// get input
         string user_input = readln;
-        // trim off carriage return
+        /// trim off carriage return
         user_input = user_input.strip;
 
-    //validate input(check if characters are either an int or .)
-    // regex for ip address ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$
+    ///validate input(check if characters are either an int or .) regex for ip address ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$
         string ip_regex = "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$";
         if (auto m = std.regex.matchFirst(user_input, ip_regex)) {
             good_addr = true;
@@ -269,38 +230,44 @@ string getServerAddress() {
             writeln("Invalid IP address recieved");
         }
     }
-    //return input as string formatted as ###.###.###.###
+
+    /// return input as string formatted as ###.###.###.###
     return user_addr;
 }
 
+/***********************************
+* Name: getServerPort
+* Description: When the connection is made, get the port number so client can join 
+* Returns: the port number 
+*/
 ushort getServerPort() {
-    //ask user what port they want to use if not the default
+    /// ask user what port they want to use if not the default
     auto user_port = 50002;
-    //bool used to loop until we have a good port
+    /// bool used to loop until we have a good port
     bool good_port = false;
     while(!good_port){
         writeln("what port would you like to connect to? press enter for default(50002)");
-        // get input
+        /// get input
         string user_in = readln;
-        //string off carriage return and other nonsense
+        /// string off carriage return and other nonsense
         user_in = strip(user_in);
         // writeln(user_in.length);
-        //check if the user either gave an empty string or requested their own port
+        /// check if the user either gave an empty string or requested their own port
         if (((user_in == "") | isNumeric(user_in))) {
             good_port = true;
-            //check if port is numeric
+            /// check if port is numeric
             if (isNumeric(user_in)){
-                //if numeric, is it a legal port number
+                /// if numeric, is it a legal port number
                 if ((to!int(user_in) >= 0) & (to!int(user_in) <= 65535)) {
-                    //legal, set to return variable
+                    /// legal, set to return variable
                     user_port = to!int(user_in);
                 } else {
-                    //illegal port loop again
+                    /// illegal port loop again
                     good_port = false;
                 }
             }
         }
     }
-    //convert to proper data type before returning
+    /// convert to proper data type before returning
     return to!ushort(user_port);
 }

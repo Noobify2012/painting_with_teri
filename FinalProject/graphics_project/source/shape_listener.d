@@ -38,6 +38,8 @@ class ShapeListener {
 /***********************************
     * Name: constructor
     * Description: Alternative constructor to take a shape type, not in use 
+    * Params: 
+    *    quad = the type of shape that would be passed in 
     */
   this(string quad){
     quadrant = quad;
@@ -49,11 +51,24 @@ class ShapeListener {
     */
   ~this() {}
 
+  /***********************************
+    * Name: getAction 
+    * Description: Getter method to get the action 
+    */
   Action getAction() {
-    
     return this.action;
   }
   
+  /***********************************
+    * Name: drawShape 
+    * Description: Draw the shape that is selected in the listener 
+    * Params: 
+    *    surf = the surface to draw the shape on 
+    *    brushSize = the brushSize passed to shape 
+    *    r = the red RGB value 
+    *    g = the green RGB value 
+    *    b = the blue RGB value 
+    */
   void drawShape(Surface* surf, int brushSize, ubyte r, ubyte g, ubyte b) {
 
     DrawingUtility d = new DrawingUtility();

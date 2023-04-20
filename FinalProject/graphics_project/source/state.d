@@ -21,10 +21,16 @@ import Triangle : Triangle;
 * Descripton: This is the current undo and redo stack, accessed for local and networked undo and redo. Holds all previous actions by users. 
 */
 class State {
-
+    ///The stack of completed actions 
     Action[] undoStack;
+
+    /// The stack of popped actions 
     Action[] redoStack;
+
+    ///Pointers for each stack 
     int undoPosition, redoPosition;
+
+    /// The surface the actions are being undone/redone on 
     Surface *surf;
 
     /***********************************
@@ -45,51 +51,63 @@ class State {
     */
     ~this() {}
 
+    /***********************************
+    * Name: addAction
+    * Description: Add the action to the stack and clear the redo stack 
+    * Params: 
+    *    act = the action to add to the stack 
+    */
     void addAction(Action act) {
-
-        // int[] initUndoColor = [0, 0, 0];
-        // Action undoAction = new Action(act.getPoints(), initUndoColor, act.getActionType());
+        
         undoStack ~= act;
 
         redoStack = [];
     }
 
+    /***********************************
+    * Name: undo
+    * Description: Pop the action off the stack and add it to the redo stack. Remove that action from the surface. 
+    */
     void undo() {
 
         if (undoStack.length > 0) {
-            
+            /// Assign the action to be the last action on the stack 
             Action undone = undoStack[undoStack.length - 1];
+
+            /// Remove the action from the stack 
             undoStack = undoStack[0 .. undoStack.length - 1];
             
+            /// Look at what type of action to undo 
             string aType = undone.getActionType();
+
+            /// Get points to undo drawing from 
             Tuple!(int, int)[] pts = undone.getPoints();
 
             if (aType == "circle") {
-
+                /// Undo a circle 
                 Shape circle = new Circle(surf);
                 circle.drawFromPoints(pts, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 4);
 
             } else if (aType == "rectangle") {
-
+                /// Undo a rectangle 
                 Shape rect = new Rectangle(surf);
                 rect.drawFromPoints(pts, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 4);
 
             } else if (aType == "triangle") {
-
+                /// Undo a triangle 
                 Shape tri = new Triangle(surf);
                 tri.drawFromPoints(pts, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 4);
 
             } else if (aType == "line") {
-
+                /// Undo a line 
                 Shape lin = new Line(surf);
                 lin.drawFromPoints(pts, cast(ubyte) 0, cast(ubyte) 0, cast(ubyte) 0, 4);
                 
             } else if (aType == "stroke") {
-
+                /// Undo a drawn stroke 
                 Shape lin = new Line(surf);
 
                 if (pts.length > 1) {
-
                     int currentPoint = 1;
 
                     while (currentPoint < pts.length) {
@@ -100,49 +118,61 @@ class State {
                     }
                 }
             }
-
+            /// Add the action to the redo stack once you undo it 
             redoStack ~= undone;
 
         } else {
-            
+            /// There is nothing to undo
             writeln("Undo stack is empty -- No action taken");
         }
 
+        /// Updated stack sizes 
         writeln(this.undoStack.length, this.redoStack.length);
     }
 
+    /***********************************
+    * Name: redo
+    * Description: Redo the action that you have already undone 
+    */
     void redo() {
         if (redoStack.length > 0) {
-            
+            /// Set redo action as most recent undone action 
             Action redone = redoStack[redoStack.length - 1];
+
+            /// Adjust redo stack to remove the redo action 
             redoStack = redoStack[0 .. redoStack.length - 1];
             
+            /// Look at action to get its type 
             string aType = redone.getActionType();
+
+            /// Get the points to redo the action at 
             Tuple!(int, int)[] pts = redone.getPoints();
+
+            /// Get the color to redo the action in 
             int[] undoColor = redone.getColor();
 
             if (aType == "circle") {
-
+                /// The action was a circle 
                 Shape circle = new Circle(surf);
                 circle.drawFromPoints(pts, cast(ubyte) undoColor[0], cast(ubyte) undoColor[1], cast(ubyte) undoColor[2], 4);
 
             } else if (aType == "rectangle") {
-
+                /// The action was a rectangle 
                 Shape rect = new Rectangle(surf);
                 rect.drawFromPoints(pts, cast(ubyte) undoColor[0], cast(ubyte) undoColor[1], cast(ubyte) undoColor[2], 4);
 
             } else if (aType == "triangle") {
-
+                /// The action was a triangle 
                 Shape tri = new Triangle(surf);
                 tri.drawFromPoints(pts, cast(ubyte) undoColor[0], cast(ubyte) undoColor[1], cast(ubyte) undoColor[2], 4);
 
             } else if (aType == "line") {
-
+                /// The action was a line 
                 Shape lin = new Line(surf);
                 lin.drawFromPoints(pts, cast(ubyte) undoColor[0], cast(ubyte) undoColor[1], cast(ubyte) undoColor[2], 4);
                 
             } else if (aType == "stroke") {
-
+                /// the action was a drawn stroke 
                 Shape lin = new Line(surf);
 
                 if (pts.length > 1) {
@@ -160,17 +190,20 @@ class State {
 
             undoStack ~= redone;
         } else {
-            
+            /// There is nothing undone to redo 
             writeln("Redo stack is empty -- No action taken");
         }
     }
+    
+    /***********************************
+    * Name: getRedoStack 
+    * Description: Get the length of the current redo stack (already undone actions)
+    * Returns: the length of the redo stack 
+    */
     ulong getRedoStack() {
     return redoStack.length;
+    }
 }
-}
-
-
-
 
 /**
 * Test: Checks for the surface to be initialized to black, draws diagonal Line

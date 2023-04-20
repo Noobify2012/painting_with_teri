@@ -22,6 +22,12 @@ class Triangle : Shape {
     Surface* surf;
     Tuple!(int, int)[] points;
 
+    /***********************************
+    * Name: constructor
+    * Description: takes the surface to put Circle on 
+    * Params:
+    *    surf = the surface we need to draw on 
+    */
     this(Surface* surf) {
         this.surf = surf;
     }
@@ -32,6 +38,18 @@ class Triangle : Shape {
     */
     ~this() {}
 
+    /***********************************
+    * Name: isLine 
+    * Description: Look at some points and see if they are on a straight line 
+    * Params: 
+    *    p1 = the first point passed
+    *    p2 = the second point passed
+    *    p3 = the third point passed
+    *    r = red color value in range [0, 255]
+    *    g = green color value in range [0, 255]
+    *    b = blue colover value in range [0, 255]
+    * Returns: Whether the points form a line or not 
+    */
     bool isLine(Tuple!(int, int) p1, Tuple!(int, int) p2, Tuple!(int, int) p3, int brushSize, ubyte r, ubyte g, ubyte b) {
 
         bool isSamePoints = (p1[0] == p2[0] && p1[1] == p2[1]) || (p2[0] == p3[0] && p2[1] == p3[1]) || (p1[0] == p3[0] && p1[1] == p3[1]);
@@ -41,6 +59,18 @@ class Triangle : Shape {
         return isSamePoints || isAligned;
     }
 
+    /***********************************
+    * Name: fillTriangle 
+    * Description: Given three points and an RGB value, draw a filled, colored shape 
+    * Params: 
+    *    p1 = the first point passed
+    *    p2 = the second point passed
+    *    p3 = the third point passed
+    *    brushSize = the brush size currently selected 
+    *    r = red color value in range [0, 255]
+    *    g = green color value in range [0, 255]
+    *    b = blue colover value in range [0, 255]
+    */
     void fillTriangle(Tuple!(int, int) p1, Tuple!(int, int) p2, Tuple!(int, int) p3, int brushSize, ubyte r, ubyte g, ubyte b) {
 
         int top = min(p1[1], p2[1], p3[1]), bottom = max(p1[1], p2[1], p3[1]), 
@@ -58,15 +88,17 @@ class Triangle : Shape {
                 }
             }
         }
-        
-        // if (isLine(p1, p2, p3, brushSize, r, g, b)) {
-
-        //     surf.lerp(p1[0], p1[1], p2[0], p2[1], brushSize, r, g, b);
-        //     surf.lerp(p2[0], p2[1], p3[0], p3[1], brushSize, r, g, b);
-        //     surf.lerp(p1[0], p1[1], p3[0], p3[1], brushSize, r, g, b);
-        // }
     }
 
+    /***********************************
+    * Name: draw 
+    * Description: Draw the lines of a triangle 
+    * Params: 
+    *    brushSize = current size of brush 
+    *    r = red color value in range [0, 255]
+    *    g = green color value in range [0, 255]
+    *    b = blue colover value in range [0, 255]
+    */
     override void draw(int brushSize, ubyte r, ubyte g, ubyte b) {
 
         int numPoints = 0, numPointsNeeded = 3;
@@ -102,12 +134,19 @@ class Triangle : Shape {
             this.points ~= p2;
             this.points ~= p3;
 
-            // int top = min(p1[1], p2[1], p3[1]), bottom = max(p1[1], p2[1], p3[1]), 
-            //     left = min(p1[0], p1[0], p2[0]), right = max(p1[0], p2[0], p3[0]);
             fillTriangle(p1, p2, p3, brushSize, r, g, b);
         }
     }
 
+   /***********************************
+    * Name: drawFromPoints
+    * Description: Draw the lines of a triangle given three coordinates tuples 
+    * Params: 
+    *    points = an array of three coordinate tuples 
+    *    r = red color value in range [0, 255]
+    *    g = green color value in range [0, 255]
+    *    b = blue colover value in range [0, 255]
+    */
     override void drawFromPoints(Tuple!(int, int)[] points, ubyte r, ubyte g, ubyte b, int brushSize) {
 
         assert(points.length == 3);
@@ -115,8 +154,12 @@ class Triangle : Shape {
         fillTriangle(points[0], points[1], points[2], brushSize, r, g, b);
     }
 
+    /***********************************
+    * Name: getPoints 
+    * Description: Get the points of thisx triangle 
+    * Returns: a tuple of the coordinates of the triagle 
+    */
     override Tuple!(int, int)[] getPoints() {
-
         return this.points;
     }
 }

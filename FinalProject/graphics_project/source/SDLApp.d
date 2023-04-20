@@ -734,10 +734,21 @@ class SDLApp{
         }}).start();
     }
 
+    /***********************************
+    * Name: redoMethod
+    * Description: redo the latest action popped from the state. 
+    */
     void redoMethod() {
         state.redo();
     }
 
+    /***********************************
+    * Name: buildShape
+    * Description: Makes a shape that can be drawn from point coordinates. 
+    * Params:    
+        * packet = the packet being sent/received on the server 
+    * Returns: A coordinate tuple array 
+    */
     Tuple!(int, int)[] buildShape(Packet packet) {
         Tuple!(int, int)[] points;
         Tuple!(int, int) point1, point2, point3;
@@ -755,6 +766,13 @@ class SDLApp{
         return points; 
     }
 
+    /***********************************
+    * Name: buildColor 
+    * Description: get a color array from a packet 
+    * Params:    
+        * packet = the packet being sent or received on network 
+    * Returns: an array of RGB values in int
+    */
     int[3] buildColor(Packet packet) {
         int[3] colors;
         colors[0] = packet.r;
@@ -763,7 +781,13 @@ class SDLApp{
         return colors; 
     }
 
-
+    /***********************************
+    * Name: brushSizeChanger
+    * Description: iterate through the available brushes by keystroke 
+    * Params: 
+        * curBrush = the current brush size 
+    * Returns: the new brush size 
+    */
     int brushSizeChanger(int curBrush){
         if (curBrush < 8) {
             curBrush += 2;
@@ -778,63 +802,91 @@ class SDLApp{
         return curBrush;
     }
 
+    /***********************************
+    * Name: colorChanger
+    * Description: iterate through the available colors by keystroke 
+    * Params: 
+        * curColor = the current color 
+    * Returns: the new color value 
+    */
     int colorChanger(int curColor){
         if (curColor < 6) {
-            writeln("CHANGE COLOR BUTTON PRESSED");
+            writeln("CHANGE COLOR KEY PRESSED");
             curColor++;
         } else {
             curColor=1;
-            writeln("CHANGE COLOR BUTTON PRESSED");
+            writeln("CHANGE COLOR KEY PRESSED");
         }
 
+        /// Create an array of names to display color name to the user 
         string[6] colorNameArr;
         colorNameArr = ["Red", "Orange", "Yellow", 
                                 "Green", "Blue", "Violet"];
-        writeln("Changing to color : " , colorNameArr[curColor - 1]);
+        writeln("Changing to color : ", colorNameArr[curColor - 1]);
         return curColor; 
     }
 
-    /**
-        Method that activates or deactivates the eraser function. 
-        Accessed by pressing "E" key or by pressing button 3. 
-        **/
-        void eraserToggle(bool eraseBool, int color){
-            int temp_color = 0;
-            /// Activate eraser 
-            if (eraseBool == false) {
-                erasing = true;
-                temp_color = color;
-                color = -1;
-                writeln("You selected: ERASER ACTIVATE");
-            /// Deactivate eraser and restore previous color
-            } else {
-                erasing = false;
-                color = temp_color;
-                writeln("You selected: ERASER DEACTIVATE");
-            }
+    /***********************************
+    * Name: eraserToggle
+    * Description: Turn on or off the eraser by button click or keystroke. 
+    * Params: 
+        * eraseBool = whether the eraser is currently on or off 
+        * color = the color being used when eraser is activated
+    */
+    void eraserToggle(bool eraseBool, int color){
+        int temp_color = 0;
+        /// Activate eraser 
+        if (eraseBool == false) {
+            erasing = true;
+            temp_color = color;
+            color = -1;
+            writeln("You selected: ERASER ACTIVATE");
+        /// Deactivate eraser and restore previous color
+        } else {
+            erasing = false;
+            color = temp_color;
+            writeln("You selected: ERASER DEACTIVATE");
         }
-
-    void createMenu(Surface imgSurface){
-    /// **Tech debt: Create variables for window size so they can be changed proportionally**
-            /// **Tech debt: Move menu creation into its own function**
-            ///Draw bottom bar of menu skeleton
-            menuBarSetup(imgSurface);
-            ///Setting up brush size button display (Button 1)
-            button1Setup(imgSurface);
-            ///Setting up color button display (Button 2)
-            button2Setup(imgSurface);
-            ///Setting up eraser button display (Button 3)
-            button3Setup(imgSurface);
-            ///Setting up shape button display (Button 4)
-            button4Setup(imgSurface);
-            ///Setting up undo button display (Button 5)
-            button5Setup(imgSurface);
-            ///Setting up redo button display (Button 6)
-            button6Setup(imgSurface);
     }
 
 
+    /***********************************
+    * Name: createMenu
+    * Description: An encapsulation method that you can call only once in the application loop instead of calling each method individually 
+    * Params: 
+        * imgSurface = the surface to draw the menu on 
+    */
+    void createMenu(Surface imgSurface){
+        ///Draw bottom bar of menu skeleton
+        menuBarSetup(imgSurface);
+
+        ///Setting up brush size button display (Button 1)
+        button1Setup(imgSurface);
+
+        ///Setting up color button display (Button 2)
+        button2Setup(imgSurface);
+
+        ///Setting up eraser button display (Button 3)
+        button3Setup(imgSurface);
+
+        ///Setting up shape button display (Button 4)
+        button4Setup(imgSurface);
+
+        ///Setting up undo button display (Button 5)
+        button5Setup(imgSurface);
+
+        ///Setting up redo button display (Button 6)
+        button6Setup(imgSurface);
+    }
+
+    /***********************************
+    * Name: menuBarSetup 
+    * Description: Creates the bounding boxes for the menu buttons 
+    * Params: 
+        * imgSurface = the surface to draw the menu on 
+    */
     void menuBarSetup(Surface imgSurface){
+        /// Draw the bottom of the menu bar 
         int b1;
             for(b1 = 1; b1 <= 640; b1++){
                 imgSurface.lerp(b1 - 1, 50, b1, 50, 2, 255, 255, 255);  
@@ -842,18 +894,27 @@ class SDLApp{
 
         ///Draw divider bars for menu skeleton 
         int h1;
+
+        /// 6 buttons divided by the window width 
         int h2 = 640/6;
+
         int h3;
-        ///There needs to be 5 dividers, this is h1
+        /// There needs to be 5 dividers, this is h1
         for (h1 = 1; h1 <= 5; h1++){
             int divX = h1 * h2;
-            ///The dividers each need to be 50 pixels tall. that is h3
+            /// The dividers each need to be 50 pixels tall. that is h3
             for (h3 = 0; h3 < 50; h3++){
                 imgSurface.lerp(divX - 1, h3, divX, h3+1, 2, 255, 255, 255);
             }
         }
     }
 
+    /***********************************
+    * Name: button1Setup  
+    * Description: Draws the brush selection button by showing brushes to click on.
+    * Params: 
+        * imgSurface = the surface to draw the button on 
+    */
     void button1Setup(Surface imgSurface){
     int bs;
             int bsStart = 15;
@@ -866,6 +927,12 @@ class SDLApp{
             }
     }
 
+    /***********************************
+    * Name: button2Setup  
+    * Description: Draws the color selection button by showing the colors to click on. 
+    * Params: 
+        * imgSurface = the surface to draw the button on 
+    */
     void button2Setup(Surface imgSurface){
         int cn;
         int cn1;
@@ -880,6 +947,12 @@ class SDLApp{
         }
     }
 
+    /***********************************
+    * Name: button3Setup 
+    * Description: creates the eraser button by drawing a simple eraser icon 
+    * Params: 
+        * imgSurface = the surface to draw the button on 
+    */
     void button3Setup(Surface imgSurface){
         imgSurface.lerp(240, 40, 290, 40, 2, 224, 125, 19);
         imgSurface.lerp(230, 20, 275, 8, 1, 255, 255, 255);
@@ -889,6 +962,12 @@ class SDLApp{
         imgSurface.lerp(240, 40, 285, 28, 1, 255, 255, 255);
     }
 
+    /***********************************
+    * Name: button4Setup  
+    * Description: Draws the dividers and the shapes for the shape button
+    * Params:
+        * imgSurface = the surface to draw the button on
+    */
     void button4Setup(Surface imgSurface){
         ///Horizontal line across button 4 
         int s1;
@@ -925,11 +1004,12 @@ class SDLApp{
         menuTri.fillTriangle(tp1, tp2, tp3, 1, 255, 255, 255);
     }
 
-    /**
-    Sets up the Undo button, 
-    this method draws a red undo or go back arrow
-    which points to the left. 
-    **/
+    /***********************************
+    * Name: button5Setup  
+    * Description: Draws the "undo" button in red 
+    * Params: 
+        * imgSurface = the surface to draw the button on 
+    */
     void button5Setup(Surface imgSurface){
         /// Draw the red arrow 
         Rectangle undoRect = new Rectangle(&imgSurface);
@@ -942,11 +1022,12 @@ class SDLApp{
         undoTri.fillTriangle(tp1, tp2, tp3, 1, 24, 20, 195);
     }
 
-    /**
-    Sets up the Redo button, 
-    this method draws a blue redo or go forward arrow
-    which points to the right. 
-    **/
+    /***********************************
+    * Name: button6Setup  
+    * Description: Draws the "redo" button in blue
+    * Params: 
+        * imgSurface = the surface to draw the button on 
+    */
     void button6Setup(Surface imgSurface){
         /// Draw the blue arrow 
         Rectangle undoRect = new Rectangle(&imgSurface);
