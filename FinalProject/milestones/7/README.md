@@ -29,6 +29,7 @@ Run command 'dub' to load dependencies. If error message 'linker exited with sta
 
 For running on a windows or Linux machine:
 From the graphics_project directory, simply run the command: dub run
+If you want to run the release version, run this: dub run --build=release 
 
 Starting a painting party
 When the SDL window appears, press 'n' to start to connect the client to the server. You will then have to switch back to the terminal window. In that window, you will be prompted
