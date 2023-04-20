@@ -41,7 +41,7 @@ class Action {
     * Returns: The points that the action is referencing. 
     */
     Tuple!(int, int)[] getPoints() {
-        writeln("made it here");
+        // writeln("made it here");
         return this.points;
     }
 
