@@ -700,21 +700,21 @@ class SDLApp{
                 } else if (curr.s == 1) {
                     /// circle
                     Circle inboundCircle = new Circle(&imgSurface);
-                    inboundCircle.drawFromPoints(shapePoints, red, green, blue, 4);
+                    inboundCircle.drawFromPoints(shapePoints, red, green, blue, curr.bs);
                     nextAct = new Action(shapePoints,color, "circle");
                     state.addAction(nextAct); 
                     writeln("i got a circle");
                 } else if (curr.s == 2) {
                     /// rectangle
                     Rectangle inboundRec = new Rectangle(&imgSurface);
-                    inboundRec.drawFromPoints(shapePoints, red, green, blue, 4);
+                    inboundRec.drawFromPoints(shapePoints, red, green, blue, curr.bs);
                     nextAct = new Action(shapePoints,color, "rectangle");
                     state.addAction(nextAct);
                     writeln("i got a rectangle");
                 } else if (curr.s == 3) {
                     /// triangle
                     Triangle inboundTri = new Triangle(&imgSurface);
-                    inboundTri.drawFromPoints(shapePoints, red, green, blue, 4);
+                    inboundTri.drawFromPoints(shapePoints, red, green, blue, curr.bs);
                     nextAct = new Action(shapePoints,color, "triangle");
                     state.addAction(nextAct);
                     writeln("i got a triangle");
@@ -726,7 +726,7 @@ class SDLApp{
                 } else {
                     /// line
                     Line inboundLine = new Line(&imgSurface);
-                    inboundLine.drawFromPoints(shapePoints, red, green, blue, 4);
+                    inboundLine.drawFromPoints(shapePoints, red, green, blue, curr.bs);
                     nextAct = new Action(shapePoints,color, "line");
                     state.addAction(nextAct);
                     writeln("i got a line");
